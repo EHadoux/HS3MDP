@@ -7,6 +7,8 @@ _Online Monte-Carlo Planning in Large POMDPs_ by David Silver and Joel Veness.
 
 The original code can be found in this repository under the tag ```POMCP-1.0```.
 
+Traffic, Elevator and Sailboat problems are modified versions of those proposed by Samuel Ping-Man Choi his thesis _Reinforcement Learning in Non-stationary Environments_.
+
 ## Requirements
 * git
 * automake, autoconf, etc.
