@@ -13,10 +13,10 @@ The original code can be found in this repository under the tag ```POMCP-1.0```.
 * C++ Boost
 
 ## Installation
-- ```git clone``` this repository
-- run ```autoreconf -i```
-- run ```./configure``` (possibly with ```--enable-assert```)
-- run ```make```
+1. ```git clone``` this repository
+2. run ```autoreconf -i```
+3. run ```./configure``` (possibly with ```--enable-assert```)
+4. run ```make```
 
 You will find the executable ```pomcp``` in the ```src``` directory.
 
