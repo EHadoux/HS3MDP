@@ -1,5 +1,7 @@
 #include "tag.h"
 
+#define _unused(x) ((void)x)
+
 using namespace std;
 using namespace UTILS;
 
@@ -26,6 +28,7 @@ void TAG::Validate(const STATE& state) const
 {
     const TAG_STATE& tagstate = safe_cast<const TAG_STATE&>(state);
     assert(Inside(tagstate.AgentPos));
+    _unused(tagstate);
 }
 
 STATE* TAG::CreateStartState() const
@@ -198,6 +201,9 @@ void TAG::MoveOpponent(TAG_STATE& tagstate, int opp) const
 bool TAG::LocalMove(STATE& state, const HISTORY& history,
     int stepObs, const STATUS& status) const
 {
+    _unused(stepObs);
+    _unused(status);
+
     TAG_STATE& tagstate = safe_cast<TAG_STATE&>(state);
 
     int opp = Random(NumOpponents);
@@ -215,6 +221,8 @@ bool TAG::LocalMove(STATE& state, const HISTORY& history,
 void TAG::GeneratePreferred(const STATE& state, const HISTORY& history,
     vector<int>& actions, const STATUS& status) const
 {
+    _unused(status);
+
     const TAG_STATE& tagstate = safe_cast<const TAG_STATE&>(state);
     
     // If history is empty then we don't know where we are yet
@@ -233,11 +241,6 @@ void TAG::GeneratePreferred(const STATE& state, const HISTORY& history,
         if (history.Back().Action != COORD::Opposite(d)
             && Inside(tagstate.AgentPos + COORD::Compass[d]))
             actions.push_back(d);
-}
-
-void TAG::DisplayBeliefs(const BELIEF_STATE& beliefState, 
-    std::ostream& ostr) const
-{
 }
 
 void TAG::DisplayState(const STATE& state, std::ostream& ostr) const
@@ -270,6 +273,8 @@ void TAG::DisplayState(const STATE& state, std::ostream& ostr) const
 
 void TAG::DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const
 {
+    _unused(state);
+
     if (observation == NumCells)
         ostr << "On opponent" << endl;
     else

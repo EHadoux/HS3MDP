@@ -44,8 +44,6 @@ public:
     virtual bool LocalMove(STATE& state, const HISTORY& history,
         int stepObservation, const STATUS& status) const;
 
-    virtual void DisplayBeliefs(const BELIEF_STATE& beliefState,
-        std::ostream& ostr) const;
     virtual void DisplayState(const STATE& state, std::ostream& ostr) const;
     virtual void DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const;
     virtual void DisplayAction(int action, std::ostream& ostr) const;

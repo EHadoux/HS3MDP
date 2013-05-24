@@ -14,7 +14,15 @@ rocksample.cpp \
 simulator.cpp \
 tag.cpp \
 testsimulator.cpp \
-utils.cpp
+utils.cpp \
+controled.cpp \
+probamcts.cpp \
+beliefprobastate.cpp \
+probanode.cpp \
+environment.cpp \
+sailboat.cpp \
+traffic.cpp \
+elevator.cpp
 
 noinst_HEADERS = \
 battleship.h \
@@ -24,6 +32,7 @@ experiment.h \
 grid.h \
 history.h \
 mcts.h \
+probanode.h \
 memorypool.h \
 network.h \
 node.h \
@@ -33,7 +42,14 @@ simulator.h \
 statistic.h \
 tag.h \
 testsimulator.h \
-utils.h
+utils.h \
+controled.h \
+probamcts.h \
+beliefprobastate.h \
+environment.h \
+sailboat.h \
+traffic.h \
+elevator.h
 
 pomcp_LDFLAGS = $(BOOST_LDFLAGS)
 

@@ -7,6 +7,8 @@
 using namespace std;
 using namespace UTILS;
 
+#define _unused(x) ((void)x)
+
 BATTLESHIP::BATTLESHIP(int xsize, int ysize, int maxlength)
 :   XSize(xsize),
     YSize(ysize),
@@ -61,7 +63,6 @@ STATE* BATTLESHIP::CreateStartState() const
     }
     bsstate->NumRemaining = 0;
 
-    bool found;
     bsstate->Ships.clear();
     for (int length = MaxLength; length >= 2; --length)
     {
@@ -141,12 +142,15 @@ bool BATTLESHIP::Step(STATE& state, int action,
 bool BATTLESHIP::LocalMove(STATE& state, const HISTORY& history,
     int stepObs, const STATUS& status) const
 {
+    _unused(stepObs);
+    _unused(status);
+
     BATTLESHIP_STATE& bsstate = safe_cast<BATTLESHIP_STATE&>(state);
     bool refreshDiagonals = history.Size() &&
         bsstate.Cells(history.Back().Action).Occupied != history.Back().Observation;
 
     int mode = Random(3);
-    bool success;
+    bool success = false;
     switch (mode)
     {
         case 0:
@@ -300,6 +304,8 @@ bool BATTLESHIP::SwitchThreeShips(BATTLESHIP_STATE& bsstate) const
 void BATTLESHIP::GenerateLegal(const STATE& state, const HISTORY& history,
     vector<int>& legal, const STATUS& status) const
 {
+    _unused(history);
+
     const BATTLESHIP_STATE& bsstate = safe_cast<const BATTLESHIP_STATE&>(state);
     bool diagonals = Knowledge.Level(status.Phase) == KNOWLEDGE::SMART;
     if (diagonals)
@@ -427,10 +433,11 @@ void BATTLESHIP::DisplayState(const STATE& state, ostream& ostr) const
 
 void BATTLESHIP::DisplayObservation(const STATE& state, int observation, ostream& ostr) const
 {
+    _unused(state);
     if (observation)
-        cout << "Hit\n";
+        ostr << "Hit\n";
     else
-        cout << "Miss\n";
+        ostr << "Miss\n";
 }
 
 void BATTLESHIP::DisplayAction(int action, ostream& ostr) const

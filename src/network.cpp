@@ -1,6 +1,8 @@
 #include "network.h"
 #include "utils.h"
 
+#define _unused(x) ((void)x)
+
 using namespace std;
 using namespace UTILS;
 
@@ -62,12 +64,6 @@ STATE* NETWORK::Copy(const STATE& state) const
     return newstate; 
 }
 
-void NETWORK::Validate(const STATE& state) const
-{
-    const NETWORK_STATE& nstate = safe_cast<const NETWORK_STATE&>(state);
-    // what to validate?
-}
-
 STATE* NETWORK::CreateStartState() const
 {
     NETWORK_STATE* nstate = MemoryPool.Allocate();
@@ -91,7 +87,7 @@ bool NETWORK::Step(STATE& state, int action,
 
     vector<bool> neighbourFailure(NumMachines, false);
     for (int i = 0; i < NumMachines; i++)
-        for (int j = 0; j < Neighbours[i].size(); ++j)
+        for (unsigned int j = 0; j < Neighbours[i].size(); ++j)
             if (!nstate.Machines[Neighbours[i][j]])
                 neighbourFailure[i] = true;
 
@@ -138,11 +134,6 @@ bool NETWORK::Step(STATE& state, int action,
     return false;
 }
 
-void NETWORK::DisplayBeliefs(const BELIEF_STATE& beliefState, 
-    std::ostream& ostr) const
-{
-}
-
 void NETWORK::DisplayState(const STATE& state, std::ostream& ostr) const
 {
     const NETWORK_STATE& nstate = safe_cast<const NETWORK_STATE&>(state);
@@ -152,6 +143,7 @@ void NETWORK::DisplayState(const STATE& state, std::ostream& ostr) const
 
 void NETWORK::DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const
 {
+    _unused(state);
     switch (observation)
     {
     case 0:

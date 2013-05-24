@@ -1,11 +1,13 @@
 #include "simulator.h"
 
+#define _unused(x) ((void)x)
+
 using namespace std;
 using namespace UTILS;
 
 SIMULATOR::KNOWLEDGE::KNOWLEDGE()
-:   TreeLevel(LEGAL),
-    RolloutLevel(LEGAL),
+:   RolloutLevel(LEGAL),
+    TreeLevel(LEGAL),
     SmartTreeCount(10),
     SmartTreeValue(1.0)
 {
@@ -18,9 +20,9 @@ SIMULATOR::STATUS::STATUS()
 }
 
 SIMULATOR::SIMULATOR() 
-:   Discount(1.0),
-    NumActions(0),
+:   NumActions(0),
     NumObservations(0),
+    Discount(1.0),
     RewardRange(1.0)
 {
 }
@@ -28,7 +30,8 @@ SIMULATOR::SIMULATOR()
 SIMULATOR::SIMULATOR(int numActions, int numObservations, double discount)
 :   NumActions(numActions),
     NumObservations(numObservations),
-    Discount(discount)
+    Discount(discount),
+    RewardRange(1.0)
 { 
     assert(discount > 0 && discount <= 1);
 }
@@ -38,18 +41,26 @@ SIMULATOR::~SIMULATOR()
 }
 
 void SIMULATOR::Validate(const STATE& state) const 
-{ 
+{
+    _unused(state); 
 }
 
 bool SIMULATOR::LocalMove(STATE& state, const HISTORY& history,
     int stepObs, const STATUS& status) const
 {
+    _unused(state);
+    _unused(history);
+    _unused(stepObs);
+    _unused(status);
     return true;
 }
 
 void SIMULATOR::GenerateLegal(const STATE& state, const HISTORY& history, 
     std::vector<int>& actions, const STATUS& status) const
 {
+    _unused(state);
+    _unused(history);
+    _unused(status);
     for (int a = 0; a < NumActions; ++a)
         actions.push_back(a);
 }
@@ -57,6 +68,10 @@ void SIMULATOR::GenerateLegal(const STATE& state, const HISTORY& history,
 void SIMULATOR::GeneratePreferred(const STATE& state, const HISTORY& history, 
     std::vector<int>& actions, const STATUS& status) const
 {
+    _unused(state);
+    _unused(history);
+    _unused(status);
+    _unused(actions);
 }
 
 int SIMULATOR::SelectRandom(const STATE& state, const HISTORY& history,
@@ -98,18 +113,20 @@ void SIMULATOR::Prior(const STATE* state, const HISTORY& history,
         vnode->SetChildren(+LargeInteger, -Infinity);
     }
 
+
     if (Knowledge.TreeLevel >= KNOWLEDGE::LEGAL)
     {
         actions.clear();
         GenerateLegal(*state, history, actions, status);
 
         for (vector<int>::const_iterator i_action = actions.begin(); i_action != actions.end(); ++i_action)
-        {
-            int a = *i_action;
-            QNODE& qnode = vnode->Child(a);
+        {                        
+            int a = *i_action;            
+            QNODE& qnode = vnode->Child(a);            
             qnode.Value.Set(0, 0);
             qnode.AMAF.Set(0, 0);
-        }
+
+        }        
     }
     
     if (Knowledge.TreeLevel >= KNOWLEDGE::SMART)
@@ -134,19 +151,28 @@ bool SIMULATOR::HasAlpha() const
 
 void SIMULATOR::AlphaValue(const QNODE& qnode, double& q, int& n) const
 {
+    _unused(qnode);
+    _unused(q);
+    _unused(n);
 }
 
 void SIMULATOR::UpdateAlpha(QNODE& qnode, const STATE& state) const
 {
+    _unused(qnode);
+    _unused(state);
 }
 
 void SIMULATOR::DisplayBeliefs(const BELIEF_STATE& beliefState, 
     ostream& ostr) const
 {
+    _unused(beliefState);
+    _unused(ostr);
 }
 
 void SIMULATOR::DisplayState(const STATE& state, ostream& ostr) const 
 {
+    _unused(state);
+    _unused(ostr);
 }
 
 void SIMULATOR::DisplayAction(int action, ostream& ostr) const 
@@ -156,6 +182,7 @@ void SIMULATOR::DisplayAction(int action, ostream& ostr) const
 
 void SIMULATOR::DisplayObservation(const STATE& state, int observation, ostream& ostr) const
 {
+    _unused(state);
     ostr << "Observation " << observation << endl;
 }
 

@@ -103,7 +103,7 @@ public:
         const STATUS& status) const;
 
     // Generate set of legal actions
-    virtual void GenerateLegal(const STATE& state, const HISTORY& history, 
+    void GenerateLegal(const STATE& state, const HISTORY& history, 
         std::vector<int>& actions, const STATUS& status) const;
 
     // Generate set of preferred actions

@@ -1,6 +1,8 @@
 #include "pocman.h"
 #include "utils.h"
 
+#define _unused(x) ((void)x)
+
 using namespace std;
 using namespace UTILS;
 
@@ -12,13 +14,13 @@ POCMAN::POCMAN(int xsize, int ysize)
     FoodProb(0.5),
     ChaseProb(0.75),
     DefensiveSlip(0.25),
-    PowerNumSteps(15),
     RewardClearLevel(+1000),
     RewardDefault(-1),
     RewardDie(-100),
     RewardEatFood(+10),
     RewardEatGhost(+25),
-    RewardHitWall(-25)
+    RewardHitWall(-25),
+    PowerNumSteps(15)
 {
     NumActions = 4;
     NumObservations = 1 << 10;
@@ -140,6 +142,7 @@ void POCMAN::Validate(const STATE& state) const
         assert(Maze.Inside(pocstate.GhostPos[g]));
         assert(Passable(pocstate.GhostPos[g]));
     }
+    _unused(pocstate);
 }
 
 STATE* POCMAN::CreateStartState() const
@@ -257,6 +260,9 @@ int POCMAN::MakeObservations(const POCMAN_STATE& pocstate) const
 bool POCMAN::LocalMove(STATE& state, const HISTORY& history,
     int stepObs, const STATUS& status) const
 {
+    _unused(stepObs);
+    _unused(status);
+
     POCMAN_STATE& pocstate = safe_cast<POCMAN_STATE&>(state);
     
     int numGhosts = Random(1, 3); // Change 1 or 2 ghosts at a time
@@ -369,7 +375,6 @@ void POCMAN::MoveGhostRandom(POCMAN_STATE& pocstate, int g) const
     // Currently assumes there are no dead-ends.
     COORD newpos;
     int dir;
-    int tempc = 0;
     do
     {
         dir = Random(4);
@@ -450,6 +455,9 @@ bool POCMAN::SmellFood(const POCMAN_STATE& pocstate) const
 void POCMAN::GenerateLegal(const STATE& state, const HISTORY& history, 
     vector<int>& legal, const STATUS& status) const
 {
+    _unused(history);
+    _unused(status);
+
     const POCMAN_STATE& pocstate = safe_cast<const POCMAN_STATE&>(state);
 
     // Don't move into walls 
@@ -464,6 +472,8 @@ void POCMAN::GenerateLegal(const STATE& state, const HISTORY& history,
 void POCMAN::GeneratePreferred(const STATE& state, const HISTORY& history, 
     vector<int>& actions, const STATUS& status) const
 {
+    _unused(status);
+
     const POCMAN_STATE& pocstate = safe_cast<const POCMAN_STATE&>(state);
     if (history.Size())
     {
@@ -471,7 +481,7 @@ void POCMAN::GeneratePreferred(const STATE& state, const HISTORY& history,
         int observation = history.Back().Observation;
 
         // If power pill and can see a ghost then chase it
-        if (pocstate.PowerSteps > 0 && (observation & 15 != 0))
+        if (pocstate.PowerSteps > 0 && ((observation & 15) != 0))
         {
             for (int a = 0; a < 4; ++a)
                 if (CheckFlag(observation, a))

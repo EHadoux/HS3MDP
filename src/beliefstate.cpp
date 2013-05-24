@@ -1,13 +1,17 @@
 #include "beliefstate.h"
 #include "simulator.h"
 #include "utils.h"
+#include <iostream>
 
+using namespace std;
 using namespace UTILS;
 
 BELIEF_STATE::BELIEF_STATE()
 {
     Samples.clear();
 }
+
+BELIEF_STATE::~BELIEF_STATE(){};
 
 void BELIEF_STATE::Free(const SIMULATOR& simulator)
 {
@@ -30,21 +34,21 @@ void BELIEF_STATE::AddSample(STATE* state)
     Samples.push_back(state);
 }
 
-void BELIEF_STATE::Copy(const BELIEF_STATE& beliefs, const SIMULATOR& simulator)
+void BELIEF_STATE::Copy(const BELIEF_STATE* beliefs, const SIMULATOR& simulator)
 {
-    for (std::vector<STATE*>::const_iterator i_state = beliefs.Samples.begin();
-        i_state != beliefs.Samples.end(); ++i_state)
+    for (std::vector<STATE*>::const_iterator i_state = beliefs->Samples.begin();
+        i_state != beliefs->Samples.end(); ++i_state)
     {
         AddSample(simulator.Copy(**i_state));
     }
 }
 
-void BELIEF_STATE::Move(BELIEF_STATE& beliefs)
+void BELIEF_STATE::Move(BELIEF_STATE* beliefs)
 {
-    for (std::vector<STATE*>::const_iterator i_state = beliefs.Samples.begin();
-        i_state != beliefs.Samples.end(); ++i_state)
+    for (std::vector<STATE*>::const_iterator i_state = beliefs->Samples.begin();
+        i_state != beliefs->Samples.end(); ++i_state)
     {
         AddSample(*i_state);
     }
-    beliefs.Samples.clear();
+    beliefs->Samples.clear();
 }

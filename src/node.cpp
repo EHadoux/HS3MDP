@@ -69,12 +69,14 @@ VNODE* VNODE::Create()
 {
     VNODE* vnode = VNodePool.Allocate();
     vnode->Initialise();
+    vnode->BeliefState = new BELIEF_STATE();
     return vnode;
 }
 
 void VNODE::Free(VNODE* vnode, const SIMULATOR& simulator)
 {
-    vnode->BeliefState.Free(simulator);
+    vnode->BeliefState->Free(simulator);
+    delete vnode->BeliefState;
     VNodePool.Free(vnode);
     for (int action = 0; action < VNODE::NumChildren; action++)
         for (int observation = 0; observation < QNODE::NumChildren; observation++)

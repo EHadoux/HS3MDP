@@ -29,17 +29,18 @@ public:
     };
 
     MCTS(const SIMULATOR& simulator, const PARAMS& params);
-    ~MCTS();
+    virtual ~MCTS();
+    virtual void InitialiseRoot();
 
     int SelectAction();
-    bool Update(int action, int observation, double reward);
+    virtual bool Update(int action, int observation);
 
     void UCTSearch();
     void RolloutSearch();
 
     double Rollout(STATE& state);
 
-    const BELIEF_STATE& BeliefState() const { return Root->Beliefs(); }
+    virtual const BELIEF_STATE* BeliefState() const { return Root->Beliefs(); }
     const HISTORY& GetHistory() const { return History; }
     const SIMULATOR::STATUS& GetStatus() const { return Status; }
     void ClearStatistics();
@@ -50,7 +51,7 @@ public:
     static void UnitTest();
     static void InitFastUCB(double exploration);
 
-private:
+protected:
 
     const SIMULATOR& Simulator;
     int TreeDepth, PeakTreeDepth;
@@ -68,9 +69,9 @@ private:
     double SimulateV(STATE& state, VNODE* vnode);
     double SimulateQ(STATE& state, QNODE& qnode, int action);
     void AddRave(VNODE* vnode, double totalReward);
-    VNODE* ExpandNode(const STATE* state);
+    virtual VNODE* ExpandNode(const STATE* state);
     void AddSample(VNODE* node, const STATE& state);
-    void AddTransforms(VNODE* root, BELIEF_STATE& beliefs);
+    void AddTransforms(BELIEF_STATE* beliefs);
     STATE* CreateTransform() const;
     void Resample(BELIEF_STATE& beliefs);
 

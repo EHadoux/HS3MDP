@@ -1,6 +1,8 @@
 #include "rocksample.h"
 #include "utils.h"
 
+#define _unused(x) ((void)x)
+
 using namespace std;
 using namespace UTILS;
 
@@ -113,6 +115,7 @@ void ROCKSAMPLE::Validate(const STATE& state) const
 {
     const ROCKSAMPLE_STATE& rockstate = safe_cast<const ROCKSAMPLE_STATE&>(state);
     assert(Grid.Inside(rockstate.AgentPos));
+    _unused(rockstate);
 }
 
 STATE* ROCKSAMPLE::CreateStartState() const
@@ -243,6 +246,8 @@ bool ROCKSAMPLE::Step(STATE& state, int action,
 bool ROCKSAMPLE::LocalMove(STATE& state, const HISTORY& history,
     int stepObs, const STATUS& status) const
 {
+    _unused(status);
+
     ROCKSAMPLE_STATE& rockstate = safe_cast<ROCKSAMPLE_STATE&>(state);
     int rock = Random(NumRocks);
     rockstate.Rocks[rock].Valuable = !rockstate.Rocks[rock].Valuable;
@@ -269,6 +274,8 @@ bool ROCKSAMPLE::LocalMove(STATE& state, const HISTORY& history,
 void ROCKSAMPLE::GenerateLegal(const STATE& state, const HISTORY& history,
     vector<int>& legal, const STATUS& status) const
 {
+    _unused(history);
+    _unused(status);
 
     const ROCKSAMPLE_STATE& rockstate =
         safe_cast<const ROCKSAMPLE_STATE&>(state);
@@ -296,6 +303,7 @@ void ROCKSAMPLE::GenerateLegal(const STATE& state, const HISTORY& history,
 void ROCKSAMPLE::GeneratePreferred(const STATE& state, const HISTORY& history,
     vector<int>& actions, const STATUS& status) const
 {
+    _unused(status);
 
 	static const bool UseBlindPolicy = false;
 
@@ -439,11 +447,6 @@ int ROCKSAMPLE::SelectTarget(const ROCKSAMPLE_STATE& rockstate) const
     return bestRock;
 }
 
-void ROCKSAMPLE::DisplayBeliefs(const BELIEF_STATE& beliefState,
-    std::ostream& ostr) const
-{
-}
-
 void ROCKSAMPLE::DisplayState(const STATE& state, std::ostream& ostr) const
 {
     const ROCKSAMPLE_STATE& rockstate = safe_cast<const ROCKSAMPLE_STATE&>(state);
@@ -475,6 +478,7 @@ void ROCKSAMPLE::DisplayState(const STATE& state, std::ostream& ostr) const
 
 void ROCKSAMPLE::DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const
 {
+    _unused(state);
     switch (observation)
     {
     case E_NONE:

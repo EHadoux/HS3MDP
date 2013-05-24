@@ -94,6 +94,7 @@ inline int COORD::DirectionalDistance(COORD lhs, COORD rhs, int direction)
         case E_WEST: return lhs.X - rhs.X;
         default: assert(false);
     }
+    return -1;
 }
 
 inline std::ostream& operator<<(std::ostream& ostr, COORD& coord)

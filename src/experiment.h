@@ -35,7 +35,7 @@ public:
     struct PARAMS
     {
         PARAMS();
-        
+
         int NumRuns;
         int NumSteps;
         int SimSteps;
@@ -46,14 +46,15 @@ public:
         double Accuracy;
         int UndiscountedHorizon;
         bool AutoExploration;
+        bool ProbaMCTS;
     };
 
-    EXPERIMENT(const SIMULATOR& real, const SIMULATOR& simulator, 
-        const std::string& outputFile, 
+    EXPERIMENT(const SIMULATOR& real, const SIMULATOR& simulator,
+        const std::string& outputFile,
         EXPERIMENT::PARAMS& expParams, MCTS::PARAMS& searchParams);
 
     void Run();
-    void MultiRun();
+    bool MultiRun();
     void DiscountedReturn();
     void AverageReward();
 

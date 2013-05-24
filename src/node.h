@@ -69,10 +69,10 @@ public:
     VALUE<int> Value;
     VALUE<double> AMAF;
 
-    void Initialise();
+    virtual void Initialise();
 
-    VNODE*& Child(int c) { return Children[c]; }
-    VNODE* Child(int c) const { return Children[c]; }
+    virtual VNODE*& Child(int c) { return Children[c]; }
+    virtual VNODE* Child(int c) const { return Children[c]; }
     ALPHA& Alpha() { return AlphaData; }
     const ALPHA& Alpha() const { return AlphaData; }
 
@@ -81,7 +81,7 @@ public:
 
     static int NumChildren;
 
-private:
+protected:
 
     std::vector<VNODE*> Children;
     ALPHA AlphaData;
@@ -97,15 +97,16 @@ public:
 
     VALUE<int> Value;
 
-    void Initialise();
+    virtual void Initialise();
     static VNODE* Create();
     static void Free(VNODE* vnode, const SIMULATOR& simulator);
     static void FreeAll();
 
     QNODE& Child(int c) { return Children[c]; }
     const QNODE& Child(int c) const { return Children[c]; }
-    BELIEF_STATE& Beliefs() { return BeliefState; }
-    const BELIEF_STATE& Beliefs() const { return BeliefState; }
+    virtual BELIEF_STATE* Beliefs() { return BeliefState; }
+    virtual void Beliefs(BELIEF_STATE* b) { BeliefState = b; }
+    virtual const BELIEF_STATE* Beliefs() const { return BeliefState; }
 
     void SetChildren(int count, double value);
 
@@ -114,10 +115,10 @@ public:
 
     static int NumChildren;
 
-private:
+protected:
 
     std::vector<QNODE> Children;
-    BELIEF_STATE BeliefState;
+    BELIEF_STATE *BeliefState;
     static MEMORY_POOL<VNODE> VNodePool;
 };
 

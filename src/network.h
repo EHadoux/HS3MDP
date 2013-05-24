@@ -23,7 +23,6 @@ public:
     NETWORK(int numMachines, int ntype);
 
     virtual STATE* Copy(const STATE& state) const;
-    virtual void Validate(const STATE& state) const;
     virtual STATE* CreateStartState() const;
     virtual void FreeState(STATE* state) const;
     virtual bool Step(STATE& state, int action, 
@@ -32,8 +31,6 @@ public:
 //    virtual bool Prune(int action, const HISTORY& history) const;
 //    virtual int SelectRandom(const HISTORY& history) const;
 
-    virtual void DisplayBeliefs(const BELIEF_STATE& beliefState, 
-        std::ostream& ostr) const;
     virtual void DisplayState(const STATE& state, std::ostream& ostr) const;
     virtual void DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const;
     virtual void DisplayAction(int action, std::ostream& ostr) const;
