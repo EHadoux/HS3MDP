@@ -29,8 +29,11 @@ TRAFFIC::TRAFFIC()
 
 		for( int o = 0; o < NumObservations; o++ ) {
 			_transitions[m][o] = new double* [NumActions];
-			for( int a = 0; a < NumActions; a++ )
+			for( int a = 0; a < NumActions; a++ ) {
 				_transitions[m][o][a] = new double[NumObservations];
+				for( int oprime = 0; oprime < NumObservations; oprime++ )
+					_transitions[m][o][a][oprime] = 0;
+			}
 		}
 	}
 
@@ -175,6 +178,7 @@ bool TRAFFIC::Step(STATE& state, int action, int& observation, double& reward) c
 
 	env_state.stateIndex = i;
 	observation = i;
+	assert(_transitions[MDPIndex][stateIndex][action][observation] > 0);
 
 	if( timeToStay > 0 )
 		env_state.timeToStay = timeToStay - 1;

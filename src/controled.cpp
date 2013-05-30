@@ -202,6 +202,8 @@ bool CONTROLED::Step(STATE& state, int action, int& observation, double& reward)
 		assert(_timeToStay[MDPIndex][newMDP][i] > 0);
 	}
 
+	assert(GetTransition(MDPIndex, stateIndex, action, observation) > 0);
+
 	return false;
 }
 
