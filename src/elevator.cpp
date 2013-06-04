@@ -4,6 +4,8 @@
 #include <cmath>
 #include <vector>
 #include <cassert>
+#include <iostream>
+#include <map>
 
 #define _unused(x) ((void)x)
 
@@ -17,10 +19,12 @@
 using namespace std;
 using namespace UTILS;
 
-ELEVATOR::ELEVATOR(int numFloors, int numActions, int numMDP)
-: ENVIRONMENT(numActions, numFloors * pow(pow(2, numFloors), 2), numMDP)
+ELEVATOR::ELEVATOR(int numFloors, int numElevators)
+: ENVIRONMENT(pow(3, numElevators), pow(numFloors * pow(2, numFloors), numElevators) * pow(2, numFloors), 3)
 {
 	_numFloors = numFloors;
+	_numElevators = numElevators;
+	int numMDP = 3;
 	_MDPTransitions = new double* [numMDP];
 	_timeToStay = new double** [numMDP];
 
@@ -79,6 +83,7 @@ ELEVATOR::ELEVATOR(const ELEVATOR& other)
 	_MDPTransitions = other._MDPTransitions;
 	_timeToStay = other._timeToStay;
 	_numFloors = other._numFloors;
+	_numElevators = other._numElevators;
 }
 
 ELEVATOR::~ELEVATOR() {
@@ -95,41 +100,65 @@ ELEVATOR::~ELEVATOR() {
 	}
 }
 
-void ELEVATOR::FromObservation(int observation, int& floorIndex, vector<bool>& pickup, vector<bool>& dropoff) const {
+void ELEVATOR::FromObservation(int observation, vector<int>& floorIndex, vector<bool>& pickup, vector<vector<bool> >& dropoff) const {
 	int numFloors = GetNumFloors();
+	int numElevators = GetNumElevators();
 	int oldObs = observation;
 
+	floorIndex.assign(numElevators, 0);
 	pickup.assign(numFloors, false);
-	dropoff.assign(numFloors, false);
 
-	for( int i = numFloors - 1; i >= 0; i-- ) {
-		pickup[i] = (observation & 0x01);
-		observation >>= 1;
-	}
-	for( int i = numFloors - 1; i >= 0; i-- ) {
-		dropoff[i] = (observation & 0x01);
-		observation >>= 1;
+	for( int e = 0; e < numElevators; e++ ) {
+		dropoff[e].assign(numFloors, false);
+
+		for( int f = numFloors - 1; f >= 0; f-- ) {
+			dropoff[e][f] = (observation & 0x01);
+			observation >>= 1;
+		}
 	}
 
-	floorIndex = observation;
+	for( int f = numFloors - 1; f >= 0; f-- ) {
+			pickup[f] = (observation & 0x01);
+			observation >>= 1;
+	}
+
+	for( int e = 0; e < numElevators; e++ ) {
+		//Dependent of numFloors
+		floorIndex[e] = (observation & 0x03);
+		observation >>= 2;
+	}
 
 	assert(ToObservation(floorIndex, pickup, dropoff) == oldObs);
 }
 
-int ELEVATOR::ToObservation(int floorIndex, vector<bool> pickup, vector<bool> dropoff) const {
-	int observation = floorIndex;
-	int numFloors = GetNumFloors();
-	for( int f = 0; f < numFloors; f++ ) {
-		observation <<= 1;
-		observation |= dropoff[f];
+int ELEVATOR::ToObservation(const vector<int> &floorIndex, const vector<bool> &pickup, const vector<vector<bool> > &dropoff) const {
+	int observation = floorIndex.back();
+	//Dependent of numFloors
+	for( int e = floorIndex.size() - 2; e >= 0; e-- ) {
+		observation <<= 2;
+		observation |= floorIndex[e];
 	}
+	int numFloors = GetNumFloors();
 
 	for( int f = 0; f < numFloors; f++ ) {
 		observation <<= 1;
 		observation |= pickup[f];
 	}
 
+	for( int e = floorIndex.size() - 1; e >= 0; e-- ) {
+		for( int f = 0; f < numFloors; f++ ) {
+			observation <<= 1;
+			observation |= dropoff[e][f];
+		}
+	}
+
 	return observation;
+}
+
+int ELEVATOR::GetAction(int action, int elevatorNumber) const {
+	for( int e = 0; e < elevatorNumber; e++ )
+		action /= 3;
+	return action % 3;
 }
 
 bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) const
@@ -139,71 +168,76 @@ bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) 
 	int MDPIndex = env_state.MDPIndex;
 	int timeToStay = env_state.timeToStay;
 	int numFloors = GetNumFloors();
-	int floorIndex;
-	vector<bool> pickup, dropoff;
+	int numElevators = GetNumElevators();
+	int currentAction, newfloor;
+	vector<int> floorIndex;
+	vector<vector<bool> > dropoff;
+	vector<bool> templateVector, pickup;
+
+	dropoff.assign(numElevators, templateVector);
 	FromObservation(stateIndex, floorIndex, pickup, dropoff);
 
 	reward = 0;
 
-	for( int f = 0; f < numFloors; f++ ) {
+	for( int f = 0; f < numFloors; f++ )
 		if( pickup[f] )
 			reward -= 0.25;
-		if( dropoff[f] )
-			reward -= 0.25;
-	}
 
-	if( action == DOWN ) {
-		if( floorIndex > 0 )
-			floorIndex--;
-	} else if( action == UP ) {
-		if( floorIndex < (numFloors - 1))
-			floorIndex++;
-	} else if( action == OPEN) {
-		if( pickup[floorIndex] ) {
-			reward += 0.25;
-			pickup[floorIndex] = false;
+	for( int e = 0; e < numElevators; e++ ) {
+		currentAction = GetAction(action, e);
 
-			if( floorIndex == 0 )
-				dropoff[Random(numFloors-1) + 1] = true;
-			else if( floorIndex == (numFloors - 1) )
-				dropoff[Random(numFloors-1)] = true;
-			else {
-				int newfloor = Random(numFloors-1);
-				if( newfloor >= floorIndex )
-					newfloor++;
-				dropoff[newfloor] = true;
+		for( int f = 0; f < numFloors; f++ )
+			if( dropoff[e][f] )
+				reward -= 0.25;
+
+		if( currentAction == DOWN ) {
+			if( floorIndex[e] > 0 )
+				floorIndex[e]--;
+		} else if( currentAction == UP ) {
+			if( floorIndex[e] < (numFloors - 1))
+				floorIndex[e]++;
+		} else if( currentAction == OPEN) {
+			if( dropoff[e][floorIndex[e]] ) {
+				dropoff[e][floorIndex[e]] = false;
+				reward += 0.25;
+			}
+
+			if( pickup[floorIndex[e]] ) {
+				reward += 0.25;
+				pickup[floorIndex[e]] = false;
+
+				if( floorIndex[e] == 0 )
+					newfloor = Random(numFloors-1) + 1;
+				else if( floorIndex[e] == (numFloors - 1) )
+					newfloor = Random(numFloors-1);
+				else {
+					newfloor = Random(numFloors-1);
+					if( newfloor >= floorIndex[e] )
+						newfloor++;
+
+				}
+				dropoff[e][newfloor] = true;
 			}
 		}
-		if( dropoff[floorIndex] ) {
-			dropoff[floorIndex] = false;
-			reward += 0.25;
-		}
 	}
 
-	if( MDPIndex == UPTRAFFIC ) {
-		for( int f = 1; f < numFloors; f++ ) {
-			if( f == floorIndex && action == OPEN )
+	bool opened;
+	int r;
+	for( int f = 0; f < numFloors; f++ ) {
+		opened = false;
+		for( int e = 0; e < numElevators; e++ ) {
+			currentAction = GetAction(action, e);
+
+			if( currentAction == OPEN && f == floorIndex[e] ) {
+				pickup[f] = false;
+				opened = true;
 				continue;
-			if(Random(100) < 10)
-				pickup[f] = true;
-		}
-		if((Random(100) < 20) && !(floorIndex == 0 && action == OPEN))
-			pickup[0] = true;
-	} else if( MDPIndex == DOWNTRAFFIC ) {
-		for( int f = (numFloors-1); f > 0; f-- ) {
-			if( f == floorIndex && action == OPEN )
-				continue;
-			if(Random(100) < 20)
-				pickup[f] = true;
-		}
-		if((Random(100) < 10) && !(floorIndex == 0 && action == OPEN))
-			pickup[0] = true;
-	} else if( MDPIndex == BUSYTRAFFIC ) {
-		for( int f = 0; f < numFloors; f++ ) {
-			if( f == floorIndex && action == OPEN )
-				continue;
-			if(Random(100) < 20)
-				pickup[f] = true;
+			}
+			if( !opened ) {
+				r = Random(100);
+				if((((MDPIndex == UPTRAFFIC && f == 0 ) || (MDPIndex == DOWNTRAFFIC && f != 0) || MDPIndex == BUSYTRAFFIC) && r < 20) || r < 10)
+						pickup[f] = true;
+			}
 		}
 	}
 
@@ -237,61 +271,94 @@ bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) 
 		assert(_timeToStay[MDPIndex][newMDP][i] > 0);
 	}
 
-	assert(GetTransition(MDPIndex, stateIndex, action, observation) > 0);
+	if(GetTransition(MDPIndex, stateIndex, action, observation) == 0) {
+		cout << GetTransition(MDPIndex, stateIndex, action, observation) << endl;
+		cout << MDPIndex << " " << action << " " << stateIndex << " -> " << observation << endl;
+		assert(false);
+	}
 
 	return false;
 }
 
 double ELEVATOR::GetTransition(int mdp, int oldObs, int action, int newObs) const {
-	int numFloors = GetNumFloors();
-	int floorIndex, newfloor;
-	vector<bool> pickup, dropoff, newpickup, newdropoff;
+	int numFloors = GetNumFloors(), currentAction, numElevators = GetNumElevators();
+	vector<int> floorIndex, newfloor;
+	vector<bool> templateVector, pickup, newpickup;
+	map<int, int> openedfloor;
+	vector<vector<bool> > dropoff, newdropoff;
 	double ret = 1;
+
+	dropoff.assign(numElevators, templateVector);
+	newdropoff.assign(numElevators, templateVector);
 
 	FromObservation(oldObs, floorIndex, pickup, dropoff);
 	FromObservation(newObs, newfloor, newpickup, newdropoff);
 
-	switch(action) {
-		case OPEN:
-			if( floorIndex != newfloor )
+	for( int e = 0; e < numElevators; e++ ) {
+		currentAction = GetAction(action, e);
+
+		switch(currentAction) {
+			case OPEN:
+				if( openedfloor.find(floorIndex[e]) == openedfloor.end() )
+					openedfloor[floorIndex[e]] = e;
+				if( floorIndex[e] != newfloor[e] )
+					return 0;
+				break;
+			case UP:
+				if( !(newfloor[e] == (floorIndex[e]+1) || (newfloor[e] == floorIndex[e] && floorIndex[e] == (numFloors-1))))
+					return 0;
+				break;
+			case DOWN:
+				if( !(newfloor[e] == (floorIndex[e]-1) || (newfloor[e] == floorIndex[e] && floorIndex[e] == 0)))
+					return 0;
+				break;
+		}
+	}
+
+	bool otheropenedbefore;
+	map<int,int>::iterator it;
+	for( int e = 0; e < numElevators; e++ ) {
+		it = openedfloor.find(floorIndex[e]);
+		otheropenedbefore = (it != openedfloor.end() && it->second != e);
+		currentAction = GetAction(action, e);
+
+		if( currentAction == OPEN ) {
+			if( newpickup[floorIndex[e]] )
 				return 0;
-			break;
-		case UP:
-			if( !(newfloor == (floorIndex+1) || (newfloor == floorIndex && floorIndex == (numFloors-1))))
+			if( newdropoff[e][floorIndex[e]] )
 				return 0;
-			break;
-		case DOWN:
-			if( !(newfloor == (floorIndex-1) || (newfloor == floorIndex && floorIndex == 0)))
-				return 0;
-			break;
+
+			for( int f = 0; f < numFloors; f++ ) {
+				if( f == floorIndex[e] )
+					continue;
+
+				if( otheropenedbefore && !dropoff[e][f] && newdropoff[e][f] )
+					return 0;
+
+				if( !(dropoff[e][f]) ) {
+					if( pickup[floorIndex[e]] ) {
+						if( !otheropenedbefore ) {
+							if( !(newdropoff[e][f])  )
+								ret *= 1 - 1.0 / (numFloors - 1);
+							else
+								ret *= 1.0 / (numFloors - 1);
+						}
+					} else if( newdropoff[e][f] )
+						return 0;
+				} else if( !(newdropoff[e][f]) )
+					return 0;
+			}
+		} else
+			for( int f = 0; f < numFloors; f++ )
+				if( dropoff[e][f] != newdropoff[e][f] )
+					return 0;
 	}
 
 	for( int f = 0; f < numFloors; f++ ) {
-		if( action == OPEN ) {
-			if( f == floorIndex ) {
-				if( newpickup[f] )
-					return 0;
-				if( newdropoff[f] )
-					return 0;
-				continue;
-			}
-
-			if( !dropoff[f] ) {
-				if( pickup[floorIndex] ) {
-					if( !newdropoff[f] )
-						ret *= 1 - 1.0 / (numFloors - 1);
-					else
-						ret *= 1.0 / (numFloors - 1);
-				} else if( newdropoff[f] )
-					return 0;
-			} else if( !newdropoff[f] )
-				return 0;
-
-		} else
-			if( dropoff[f] != newdropoff[f] )
-				return 0;
-
 		if( !pickup[f] ) {
+			if( openedfloor.find(f) != openedfloor.end() )
+				continue;
+
 			if( !newpickup[f] ) {
 				if( ((mdp==UPTRAFFIC) && (f==0)) || ((mdp==DOWNTRAFFIC) && (f!=0)) || (mdp==BUSYTRAFFIC))
 					ret *= 0.8;
@@ -304,7 +371,7 @@ double ELEVATOR::GetTransition(int mdp, int oldObs, int action, int newObs) cons
 					ret *= 0.1;
 			}
 		} else
-			if( !newpickup[f] )
+			if( !newpickup[f] && openedfloor.find(f) == openedfloor.end() )
 				return 0;
 	}
 

@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
 	}
 	else if( problem == "elevator" )
 	{
-		real = new ELEVATOR(size, number, numMDP);
+		real = new ELEVATOR(4, size);
 		const ELEVATOR* elevator = safe_cast<const ELEVATOR*>(real);
 		if(show) {
 			cout << *elevator << endl;
