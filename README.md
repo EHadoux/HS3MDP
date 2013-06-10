@@ -9,6 +9,8 @@ The original code can be found in this repository under the tag ```POMCP-1.0```.
 
 Traffic, Elevator and Sailboat problems are modified versions of those proposed by Samuel Ping-Man Choi in his thesis _Reinforcement Learning in Non-stationary Environments_.
 
+The presentation on this work, in the 8th joint NII-LIP6 workshop, can be found [here](https://speakerdeck.com/ehadoux/extending-and-solving-hm-mdp).
+
 ## Requirements
 * git
 * automake, autoconf, etc.
