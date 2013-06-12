@@ -22,7 +22,8 @@ probanode.cpp \
 environment.cpp \
 sailboat.cpp \
 traffic.cpp \
-elevator.cpp
+elevator.cpp \
+monoelevator.cpp
 
 noinst_HEADERS = \
 battleship.h \
@@ -49,7 +50,8 @@ beliefprobastate.h \
 environment.h \
 sailboat.h \
 traffic.h \
-elevator.h
+elevator.h \
+monoelevator.h
 
 pomcp_LDFLAGS = $(BOOST_LDFLAGS)
 

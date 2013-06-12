@@ -243,7 +243,14 @@ bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) 
 
 	observation = ToObservation(floorIndex, pickup, dropoff);
 	env_state.stateIndex = observation;
+	NewModeAndTTS(env_state, timeToStay, MDPIndex);
 
+	assert(GetTransition(MDPIndex, stateIndex, action, observation) > 0);
+
+	return false;
+}
+
+void ELEVATOR::NewModeAndTTS(ENVIRONMENT_STATE& env_state, int timeToStay, int MDPIndex) const {
 	int p, cumsum, i;
 
 	if( timeToStay > 0 )
@@ -270,14 +277,6 @@ bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) 
 		env_state.timeToStay = i;
 		assert(_timeToStay[MDPIndex][newMDP][i] > 0);
 	}
-
-	if(GetTransition(MDPIndex, stateIndex, action, observation) == 0) {
-		cout << GetTransition(MDPIndex, stateIndex, action, observation) << endl;
-		cout << MDPIndex << " " << action << " " << stateIndex << " -> " << observation << endl;
-		assert(false);
-	}
-
-	return false;
 }
 
 double ELEVATOR::GetTransition(int mdp, int oldObs, int action, int newObs) const {
@@ -388,7 +387,7 @@ double ELEVATOR::GetTimeToStay(int oldmdp, int newmdp, int h) const {
 
 ostream& ELEVATOR::toString( ostream &flux ) const
 {
-	flux << "NumStates: " << NumObservations << " NumActions: " << NumActions << " NumMDP: " << GetNumMDP() << endl;
+	flux << "NumStates: " << NumObservations << " NumActions: " << NumActions << " NumMDP: " << GetNumMDP() << " NumElevators: " << GetNumElevators() << endl;
 
 	flux << "MDPTransitionsMatrix:" << endl;
 	for( int m = 0; m < GetNumMDP(); m++ ) {

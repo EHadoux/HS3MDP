@@ -2,6 +2,7 @@
 #include "sailboat.h"
 #include "traffic.h"
 #include "elevator.h"
+#include "monoelevator.h"
 #include "battleship.h"
 #include "mcts.h"
 #include "network.h"
@@ -186,8 +187,14 @@ int main(int argc, char* argv[])
 	}
 	else if( problem == "elevator" )
 	{
-		real = new ELEVATOR(4, size);
-		const ELEVATOR* elevator = safe_cast<const ELEVATOR*>(real);
+		const ELEVATOR* elevator;
+		if( number > 1 ) {
+			real = new ELEVATOR(4, number);
+			elevator = safe_cast<const ELEVATOR*>(real);
+		} else {
+			real = new MONO_ELEVATOR(size);
+			elevator = safe_cast<const MONO_ELEVATOR*>(real);
+		}
 		if(show) {
 			cout << *elevator << endl;
 			freeSim = true;
@@ -200,7 +207,10 @@ int main(int argc, char* argv[])
 			delete real;
 			return 0;
 		}
-		simulator = new ELEVATOR(*elevator);
+		if( number > 1 )
+			simulator = new ELEVATOR(*elevator);
+		else
+			simulator = new MONO_ELEVATOR(safe_cast<const MONO_ELEVATOR&>(*elevator));
 	}
 	else
 	{
