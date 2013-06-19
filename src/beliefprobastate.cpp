@@ -37,7 +37,7 @@ ENVIRONMENT_STATE* BELIEF_PROBA_STATE::CreateSample(const SIMULATOR& simulator) 
 	double p = RandomDouble(0, 100);
 	double cumsum = MH[0];
 	int i = 0;
-	while( cumsum < p ) {
+	while( cumsum <= p ) {
 		i++;
 		cumsum += MH[i];
 	}
