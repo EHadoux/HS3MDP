@@ -39,7 +39,7 @@ inline int Random(int min, int max)
 
 inline double RandomDouble(double min, double max)
 {
-    return (double) rand() / RAND_MAX * (max - min) + min;
+    return (double) rand() / RAND_MAX * (max - min - Tiny) + min;
 }
 
 inline void RandomSeed(int seed)
