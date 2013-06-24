@@ -1,6 +1,7 @@
 #include "experiment.h"
 #include "probamcts.h"
 #include "boost/timer.hpp"
+#include "optimalpolicy.h"
 
 using namespace std;
 
@@ -16,7 +17,9 @@ EXPERIMENT::PARAMS::PARAMS()
 	Accuracy(0.01),
 	UndiscountedHorizon(1000),
 	AutoExploration(true),
-	ProbaMCTS(false)
+	ProbaMCTS(false),
+	Optimal(false),
+	OptimalFile("")
 {
 }
 
@@ -43,11 +46,19 @@ void EXPERIMENT::Run()
 {
 	boost::timer timer;
 
+	STATE* state = Real.CreateStartState();
+	if (SearchParams.Verbose >= 1)
+		Real.DisplayState(*state, cout);
+
 	MCTS *mcts;
-	if( ExpParams.ProbaMCTS )
+	if( ExpParams.Optimal )
+		mcts = new OptimalPolicy(ExpParams.OptimalFile, state, Simulator, SearchParams);
+	else {
+		if( ExpParams.ProbaMCTS )
 		mcts = new PROBA_MCTS(Simulator, SearchParams);
 	else
 		mcts = new MCTS(Simulator, SearchParams);
+	}
 	mcts->InitialiseRoot();
 
 	double undiscountedReturn = 0.0;
@@ -56,10 +67,6 @@ void EXPERIMENT::Run()
 	bool terminal = false;
 	bool outOfParticles = false;
 	int t;
-
-	STATE* state = Real.CreateStartState();
-	if (SearchParams.Verbose >= 1)
-		Real.DisplayState(*state, cout);
 
 	for (t = 0; t < ExpParams.NumSteps; t++)
 	{

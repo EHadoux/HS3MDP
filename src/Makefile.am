@@ -23,7 +23,8 @@ environment.cpp \
 sailboat.cpp \
 traffic.cpp \
 elevator.cpp \
-monoelevator.cpp
+monoelevator.cpp \
+optimalpolicy.cpp
 
 noinst_HEADERS = \
 battleship.h \
@@ -51,7 +52,8 @@ environment.h \
 sailboat.h \
 traffic.h \
 elevator.h \
-monoelevator.h
+monoelevator.h \
+optimalpolicy.h
 
 pomcp_LDFLAGS = $(BOOST_LDFLAGS)
 

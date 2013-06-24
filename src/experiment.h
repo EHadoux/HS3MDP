@@ -5,6 +5,7 @@
 #include "simulator.h"
 #include "statistic.h"
 #include <fstream>
+#include <string>
 
 //----------------------------------------------------------------------------
 
@@ -47,6 +48,8 @@ public:
         int UndiscountedHorizon;
         bool AutoExploration;
         bool ProbaMCTS;
+        bool Optimal;
+        std::string OptimalFile;
     };
 
     EXPERIMENT(const SIMULATOR& real, const SIMULATOR& simulator,

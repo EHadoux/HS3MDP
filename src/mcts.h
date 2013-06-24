@@ -32,7 +32,7 @@ public:
     virtual ~MCTS();
     virtual void InitialiseRoot();
 
-    int SelectAction();
+    virtual int SelectAction();
     virtual bool Update(int action, int observation);
 
     void UCTSearch();
