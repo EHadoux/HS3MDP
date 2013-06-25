@@ -9,7 +9,6 @@ using namespace std;
 using namespace UTILS;
 
 #define _unused(x) ((void)x)
-#define MAXTIMETOSTAY 10
 
 BELIEF_PROBA_STATE::BELIEF_PROBA_STATE() {
 	_uniqueState = 0;

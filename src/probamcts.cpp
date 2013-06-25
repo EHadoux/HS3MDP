@@ -4,8 +4,6 @@
 #include <iostream>
 #include <cassert>
 
-#define MAXTIMETOSTAY 10
-
 using namespace std;
 
 PROBA_MCTS::PROBA_MCTS(const SIMULATOR& simulator, const PARAMS& params)
