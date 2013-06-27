@@ -2,6 +2,9 @@
 #define ENVIRONMENT_H
 
 #include "simulator.h"
+#include <string>
+
+using namespace std;
 
 class ENVIRONMENT_STATE : public STATE {
 public:
@@ -36,6 +39,8 @@ public:
 	virtual double GetMDPTransition(int oldmdp, int newmdp) const = 0;
 	virtual double GetTimeToStay(int oldmdp, int newmdp, int h) const = 0;
 	virtual double GetReward(int mdp, int obs, int action) const = 0;
+
+	void ToPOMDP(string filename) const;
 
 	void TestConstructor() const;
 

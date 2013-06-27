@@ -49,7 +49,7 @@ public:
         bool AutoExploration;
         bool ProbaMCTS;
         bool Optimal;
-        std::string OptimalFile;
+        std::string InputFile;
     };
 
     EXPERIMENT(const SIMULATOR& real, const SIMULATOR& simulator,

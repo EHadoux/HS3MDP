@@ -40,9 +40,9 @@ int main(int argc, char* argv[])
 	MCTS::PARAMS searchParams;
 	EXPERIMENT::PARAMS expParams;
 	SIMULATOR::KNOWLEDGE knowledge;
-	string problem, outputfile, policy;
+	string problem, outputfile;
 	int size, number, numMDP;
-	bool show = false, mytest = false, freeSim = false;
+	bool show = false, mytest = false, freeSim = false, topomdp;
 
 	options_description desc("Allowed options");
 	desc.add_options()
@@ -50,8 +50,7 @@ int main(int argc, char* argv[])
 		("test", "run unit tests")
 		("problem", value<string>(&problem), "problem to run")
 		("outputfile", value<string>(&outputfile)->default_value("output.txt"), "summary output file")
-		("optimalfile", value<string>(&expParams.OptimalFile), "optimal policy file")
-		("policy", value<string>(&policy), "policy file (explicit POMDPs only)")
+		("inputfile", value<string>(&expParams.InputFile), "Input file")
 		("size", value<int>(&size), "size of problem (problem specific)")
 		("numMDP", value<int>(&numMDP), "number of MDP (problem specific)")
 		("number", value<int>(&number), "number of elements in problem (problem specific)")
@@ -67,7 +66,7 @@ int main(int argc, char* argv[])
 		("show", value<bool>(&show), "show the environment and quit")
 		("mytest", value<bool>(&mytest), "test the environment and quit")
 		("optimal", value<bool>(&expParams.Optimal), "run optimal policy")
-
+		("topomdp", value<bool>(&topomdp), "create the pomdp file associated with this environment")
 		("autoexploration", value<bool>(&expParams.AutoExploration), "Automatically assign UCB exploration constant")
 		("exploration", value<double>(&searchParams.ExplorationConstant), "Manual value for UCB exploration constant")
 		("usetransforms", value<bool>(&searchParams.UseTransforms), "Use transforms")
@@ -146,6 +145,10 @@ int main(int argc, char* argv[])
 			controled->TestConstructor();
 			freeSim = true;
 		}
+		if( topomdp ) {
+			controled->ToPOMDP(outputfile);
+			freeSim = true;
+		}
 		if( freeSim ) {
 			delete real;
 			return 0;
@@ -164,6 +167,10 @@ int main(int argc, char* argv[])
 			sailboat->TestConstructor();
 			freeSim = true;
 		}
+		if( topomdp ) {
+			sailboat->ToPOMDP(outputfile);
+			freeSim = true;
+		}
 		if( freeSim ) {
 			delete real;
 			return 0;
@@ -180,6 +187,10 @@ int main(int argc, char* argv[])
 		}
 		if( mytest ) {
 			traffic->TestConstructor();
+			freeSim = true;
+		}
+		if( topomdp ) {
+			traffic->ToPOMDP(outputfile);
 			freeSim = true;
 		}
 		if( freeSim ) {
@@ -204,6 +215,10 @@ int main(int argc, char* argv[])
 		}
 		if( mytest ) {
 			elevator->TestConstructor();
+			freeSim = true;
+		}
+		if( topomdp ) {
+			elevator->ToPOMDP(outputfile);
 			freeSim = true;
 		}
 		if( freeSim ) {

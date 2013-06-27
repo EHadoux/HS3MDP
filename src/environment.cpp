@@ -3,6 +3,8 @@
 #include <cassert>
 #include <iostream>
 #include <cmath>
+#include <string>
+#include <fstream>
 
 #define _unused(x) ((void)x)
 
@@ -135,4 +137,54 @@ void ENVIRONMENT::TestConstructor() const {
 	assert(TestTimeToStaySumToOne());
 
 	cout << "Tests constructeur passés." << endl;
+}
+
+void ENVIRONMENT::ToPOMDP( string filename ) const {
+	ofstream f(filename.c_str());
+	double MDPTransition = 0, timeToStay = 0;
+	int numMDP = GetNumMDP(), maxToStay = GetMaxToStay(), numObs = GetNumObservations();
+
+	f << "discount: " << Discount << endl;
+	f << "values: reward" << endl;
+	f << "states: " << numMDP * maxToStay * numObs << endl;
+	f << "actions: " << GetNumActions() << endl;
+	f << "observations: " << numObs << endl << endl;
+	for( int a = 0; a < GetNumActions(); a++ ) {
+		f << "T: " << a << endl;
+		for( int h = 0; h < maxToStay; h++ )
+			for( int m = 0; m < numMDP; m++ )
+				for( int o = 0; o < numObs; o++ ) {
+					for( int hprime = 0; hprime < maxToStay; hprime++ )
+						for( int mprime = 0; mprime < numMDP; mprime++ ) {
+							MDPTransition = 0, timeToStay = 0;
+
+							if( h == 0 ) {
+								MDPTransition = GetMDPTransition(m, mprime) / 100;
+								timeToStay = GetTimeToStay(m, mprime, hprime) / 100;
+							} else if( hprime == (h-1) && m == mprime ) {
+								MDPTransition = 1;
+								timeToStay = 1;
+							}
+
+							for( int oprime = 0; oprime < numObs; oprime++ ) {
+								f << GetTransition(m, o, a, oprime) / 100 * MDPTransition * timeToStay << " ";
+							}
+						}
+					f << endl;
+				}
+		f << endl;
+	}
+
+	for( int i = 0; i < numMDP * maxToStay * numObs; i++ )
+		f << "O : * : " << i << " : " << i % numObs << " " << 1 << endl;
+	f << endl;
+
+	for( int a = 0; a < GetNumActions(); a++ )
+		for( int h = 0; h < GetMaxToStay(); h++ )
+			for( int m = 0; m < GetNumMDP(); m++ )
+				for( int o = 0; o < GetNumObservations(); o++ )
+					if( GetReward(m, o, a) != 0 )
+						f << "R: " << a << " : " << h * GetNumMDP() * GetNumObservations() + m * GetNumObservations() + o << " : * : * " << GetReward(m, o, a) << endl;
+	f << endl;
+	f.close();
 }

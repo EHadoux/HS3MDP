@@ -19,7 +19,7 @@ EXPERIMENT::PARAMS::PARAMS()
 	AutoExploration(true),
 	ProbaMCTS(false),
 	Optimal(false),
-	OptimalFile("")
+	InputFile("")
 {
 }
 
@@ -52,7 +52,7 @@ void EXPERIMENT::Run()
 
 	MCTS *mcts;
 	if( ExpParams.Optimal )
-		mcts = new OptimalPolicy(ExpParams.OptimalFile, state, Simulator, SearchParams);
+		mcts = new OptimalPolicy(ExpParams.InputFile, state, Simulator, SearchParams);
 	else {
 		if( ExpParams.ProbaMCTS )
 		mcts = new PROBA_MCTS(Simulator, SearchParams);
