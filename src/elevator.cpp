@@ -279,6 +279,13 @@ void ELEVATOR::NewModeAndTTS(ENVIRONMENT_STATE& env_state, int timeToStay, int M
 	}
 }
 
+double ELEVATOR::GetReward(int mdp, int obs, int action) const {
+	_unused(mdp);
+	_unused(obs);
+	_unused(action);
+	assert(false);
+}
+
 double ELEVATOR::GetTransition(int mdp, int oldObs, int action, int newObs) const {
 	int numFloors = GetNumFloors(), currentAction, numElevators = GetNumElevators();
 	vector<int> floorIndex, newfloor;

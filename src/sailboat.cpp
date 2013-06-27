@@ -157,10 +157,8 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 	assert(i < cote * cote);
 	reward = ((i / cote) + 1) * ((i % cote) + 1);
 
-	if( i == (NumObservations - 1)) {
-		reward = cote * cote;
+	if( reward == cote * cote )
 		ret = true;
-	}
 
 	sailboatState.stateIndex = i;
 	observation = i;
@@ -193,6 +191,13 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 	assert(GetTransition(MDPIndex, stateIndex, action, observation) > 0);
 
 	return ret;
+}
+
+double SAILBOAT::GetReward(int mdp, int obs, int action) const {
+	_unused(mdp);
+	_unused(action);
+	_unused(obs);
+	assert(false);
 }
 
 double SAILBOAT::GetTransition(int mdp, int oldObs, int action, int newObs) const {

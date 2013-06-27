@@ -35,6 +35,7 @@ public:
 	virtual double GetTransition(int mdp, int oldObs, int action, int newObs) const = 0;
 	virtual double GetMDPTransition(int oldmdp, int newmdp) const = 0;
 	virtual double GetTimeToStay(int oldmdp, int newmdp, int h) const = 0;
+	virtual double GetReward(int mdp, int obs, int action) const = 0;
 
 	void TestConstructor() const;
 

@@ -17,6 +17,7 @@ public:
 	double GetTransition(int mdp, int oldObs, int action, int newObs) const;
 	double GetMDPTransition(int oldmdp, int newmdp) const;
 	double GetTimeToStay(int oldmdp, int newmdp, int h) const;
+	double GetReward(int mdp, int obs, int action) const;
 	int GetCote() const { return _cote; }
 
 	void DisplayState(const STATE& state, std::ostream& ostr) const;

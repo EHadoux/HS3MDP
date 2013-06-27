@@ -164,7 +164,7 @@ bool CONTROLED::Step(STATE& state, int action, int& observation, double& reward)
 	int MDPIndex = env_state.MDPIndex;
 	int timeToStay = env_state.timeToStay;
 
-	reward = _rewards[MDPIndex][stateIndex][action];
+	reward = GetReward(MDPIndex, stateIndex, action);
 	int p = Random(100) + 1;
 	int cumsum = _transitions[MDPIndex][stateIndex][action][0];
 	int i = 0;
@@ -205,6 +205,10 @@ bool CONTROLED::Step(STATE& state, int action, int& observation, double& reward)
 	assert(GetTransition(MDPIndex, stateIndex, action, observation) > 0);
 
 	return false;
+}
+
+double CONTROLED::GetReward(int mdp, int obs, int action) const {
+	return _rewards[mdp][obs][action];
 }
 
 double CONTROLED::GetTransition(int mdp, int oldObs, int action, int newObs) const {
