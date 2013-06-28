@@ -64,11 +64,11 @@ bool ENVIRONMENT::LocalMove(STATE& state, const HISTORY& history, int stepObs, c
 	_unused(status);
 
 	ENVIRONMENT_STATE& env_state = safe_cast<ENVIRONMENT_STATE&>(state);
-	env_state.stateIndex = Random(NumObservations);
+	//env_state.stateIndex = Random(NumObservations);
 	if( env_state.stateIndex != history.Back().Observation )
 		return false;
-	env_state.timeToStay = Random(GetMaxToStay());
-	env_state.MDPIndex = Random(GetNumMDP());
+	//env_state.timeToStay = Random(GetMaxToStay());
+	//env_state.MDPIndex = Random(GetNumMDP());
 
 	return true;
 }
