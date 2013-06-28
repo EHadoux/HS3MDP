@@ -7,6 +7,8 @@
 #include <iostream>
 #include <math.h>
 
+using namespace std;
+
 class BELIEF_STATE;
 
 class STATE : public MEMORY_OBJECT
@@ -28,12 +30,12 @@ public:
         };
 
         KNOWLEDGE();
-        
+
         int RolloutLevel;
         int TreeLevel;
         int SmartTreeCount;
         double SmartTreeValue;
-        
+
         int Level(int phase) const
         {
             assert(phase < STATUS::NUM_PHASES);
@@ -47,14 +49,14 @@ public:
     struct STATUS
     {
         STATUS();
-        
+
         enum
         {
             TREE,
             ROLLOUT,
             NUM_PHASES
         };
-        
+
         enum
         {
             CONSISTENT,
@@ -62,13 +64,13 @@ public:
             RESAMPLED,
             OUT_OF_PARTICLES
         };
-        
+
         int Phase;
         int Particles;
     };
 
     SIMULATOR();
-    SIMULATOR(int numActions, int numObservations, double discount = 1.0);    
+    SIMULATOR(int numActions, int numObservations, double discount = 1.0);
     virtual ~SIMULATOR();
 
     // Create start start state (can be stochastic)
@@ -77,14 +79,14 @@ public:
     // Free memory for state
     virtual void FreeState(STATE* state) const = 0;
 
-    // Update state according to action, and get observation and reward. 
+    // Update state according to action, and get observation and reward.
     // Return value of true indicates termination of episode (if episodic)
-    virtual bool Step(STATE& state, int action, 
+    virtual bool Step(STATE& state, int action,
         int& observation, double& reward) const = 0;
-        
+
     // Create new state and copy argument (must be same type)
     virtual STATE* Copy(const STATE& state) const = 0;
-    
+
     // Sanity check
     virtual void Validate(const STATE& state) const;
 
@@ -103,11 +105,11 @@ public:
         const STATUS& status) const;
 
     // Generate set of legal actions
-    void GenerateLegal(const STATE& state, const HISTORY& history, 
+    void GenerateLegal(const STATE& state, const HISTORY& history,
         std::vector<int>& actions, const STATUS& status) const;
 
     // Generate set of preferred actions
-    virtual void GeneratePreferred(const STATE& state, const HISTORY& history, 
+    virtual void GeneratePreferred(const STATE& state, const HISTORY& history,
         std::vector<int>& actions, const STATUS& status) const;
 
     // For explicit POMDP computation only
@@ -116,12 +118,14 @@ public:
     virtual void UpdateAlpha(QNODE& qnode, const STATE& state) const;
 
     // Textual display
-    virtual void DisplayBeliefs(const BELIEF_STATE& beliefState, 
+    virtual void DisplayBeliefs(const BELIEF_STATE& beliefState,
         std::ostream& ostr) const;
     virtual void DisplayState(const STATE& state, std::ostream& ostr) const;
     virtual void DisplayAction(int action, std::ostream& ostr) const;
     virtual void DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const;
     virtual void DisplayReward(double reward, std::ostream& ostr) const;
+
+    virtual ostream& toString( ostream &flux ) const;
 
     // Accessors
     void SetKnowledge(const KNOWLEDGE& knowledge) { Knowledge = knowledge; }
@@ -131,7 +135,7 @@ public:
     double GetDiscount() const { return Discount; }
     double GetRewardRange() const { return RewardRange; }
     double GetHorizon(double accuracy, int undiscountedHorizon = 100) const;
-    
+
 protected:
 
     int NumActions, NumObservations;
@@ -139,4 +143,5 @@ protected:
     KNOWLEDGE Knowledge;
 };
 
+ostream& operator<<( ostream &flux, SIMULATOR const& sim );
 #endif // SIMULATOR_H

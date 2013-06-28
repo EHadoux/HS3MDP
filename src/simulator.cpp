@@ -19,7 +19,7 @@ SIMULATOR::STATUS::STATUS()
 {
 }
 
-SIMULATOR::SIMULATOR() 
+SIMULATOR::SIMULATOR()
 :   NumActions(0),
     NumObservations(0),
     Discount(1.0),
@@ -32,17 +32,17 @@ SIMULATOR::SIMULATOR(int numActions, int numObservations, double discount)
     NumObservations(numObservations),
     Discount(discount),
     RewardRange(1.0)
-{ 
+{
     assert(discount > 0 && discount <= 1);
 }
 
-SIMULATOR::~SIMULATOR() 
-{ 
+SIMULATOR::~SIMULATOR()
+{
 }
 
-void SIMULATOR::Validate(const STATE& state) const 
+void SIMULATOR::Validate(const STATE& state) const
 {
-    _unused(state); 
+    _unused(state);
 }
 
 bool SIMULATOR::LocalMove(STATE& state, const HISTORY& history,
@@ -55,7 +55,7 @@ bool SIMULATOR::LocalMove(STATE& state, const HISTORY& history,
     return true;
 }
 
-void SIMULATOR::GenerateLegal(const STATE& state, const HISTORY& history, 
+void SIMULATOR::GenerateLegal(const STATE& state, const HISTORY& history,
     std::vector<int>& actions, const STATUS& status) const
 {
     _unused(state);
@@ -65,7 +65,7 @@ void SIMULATOR::GenerateLegal(const STATE& state, const HISTORY& history,
         actions.push_back(a);
 }
 
-void SIMULATOR::GeneratePreferred(const STATE& state, const HISTORY& history, 
+void SIMULATOR::GeneratePreferred(const STATE& state, const HISTORY& history,
     std::vector<int>& actions, const STATUS& status) const
 {
     _unused(state);
@@ -86,7 +86,7 @@ int SIMULATOR::SelectRandom(const STATE& state, const HISTORY& history,
         if (!actions.empty())
             return actions[Random(actions.size())];
     }
-        
+
     if (Knowledge.RolloutLevel >= KNOWLEDGE::LEGAL)
     {
         actions.clear();
@@ -102,7 +102,7 @@ void SIMULATOR::Prior(const STATE* state, const HISTORY& history,
     VNODE* vnode, const STATUS& status) const
 {
     static vector<int> actions;
-    
+
     if (Knowledge.TreeLevel == KNOWLEDGE::PURE || state == 0)
     {
         vnode->SetChildren(0, 0);
@@ -120,15 +120,15 @@ void SIMULATOR::Prior(const STATE* state, const HISTORY& history,
         GenerateLegal(*state, history, actions, status);
 
         for (vector<int>::const_iterator i_action = actions.begin(); i_action != actions.end(); ++i_action)
-        {                        
-            int a = *i_action;            
-            QNODE& qnode = vnode->Child(a);            
+        {
+            int a = *i_action;
+            QNODE& qnode = vnode->Child(a);
             qnode.Value.Set(0, 0);
             qnode.AMAF.Set(0, 0);
 
-        }        
+        }
     }
-    
+
     if (Knowledge.TreeLevel >= KNOWLEDGE::SMART)
     {
         actions.clear();
@@ -140,7 +140,7 @@ void SIMULATOR::Prior(const STATE* state, const HISTORY& history,
             QNODE& qnode = vnode->Child(a);
             qnode.Value.Set(Knowledge.SmartTreeCount, Knowledge.SmartTreeValue);
             qnode.AMAF.Set(Knowledge.SmartTreeCount, Knowledge.SmartTreeValue);
-        }    
+        }
     }
 }
 
@@ -162,20 +162,20 @@ void SIMULATOR::UpdateAlpha(QNODE& qnode, const STATE& state) const
     _unused(state);
 }
 
-void SIMULATOR::DisplayBeliefs(const BELIEF_STATE& beliefState, 
+void SIMULATOR::DisplayBeliefs(const BELIEF_STATE& beliefState,
     ostream& ostr) const
 {
     _unused(beliefState);
     _unused(ostr);
 }
 
-void SIMULATOR::DisplayState(const STATE& state, ostream& ostr) const 
+void SIMULATOR::DisplayState(const STATE& state, ostream& ostr) const
 {
     _unused(state);
     _unused(ostr);
 }
 
-void SIMULATOR::DisplayAction(int action, ostream& ostr) const 
+void SIMULATOR::DisplayAction(int action, ostream& ostr) const
 {
     ostr << "Action " << action << endl;
 }
@@ -191,9 +191,18 @@ void SIMULATOR::DisplayReward(double reward, std::ostream& ostr) const
     ostr << "Reward " << reward << endl;
 }
 
-double SIMULATOR::GetHorizon(double accuracy, int undiscountedHorizon) const 
-{ 
+double SIMULATOR::GetHorizon(double accuracy, int undiscountedHorizon) const
+{
     if (Discount == 1)
         return undiscountedHorizon;
     return log(accuracy) / log(Discount);
+}
+
+ostream& SIMULATOR::toString( ostream &flux ) const {
+    return flux;
+}
+
+ostream& operator<<( ostream &flux, SIMULATOR const& sim ) {
+    sim.toString(flux);
+    return flux;
 }

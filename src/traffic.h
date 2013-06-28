@@ -32,5 +32,5 @@ private:
 	double* createTimeToStay();
 };
 
-ostream& operator<<( ostream &flux, TRAFFIC const& controled );
+ostream& operator<<( ostream &flux, TRAFFIC const& traffic );
 #endif

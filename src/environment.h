@@ -3,6 +3,7 @@
 
 #include "simulator.h"
 #include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -25,7 +26,6 @@ public:
 
 	virtual bool Step(STATE& state, int action, int& observation, double& reward) const = 0;
 	virtual bool LocalMove(STATE& state, const HISTORY& history, int stepObs, const STATUS& status) const;
-
 
 	virtual void DisplayState(const STATE& state, std::ostream& ostr) const;
 	virtual void DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const;

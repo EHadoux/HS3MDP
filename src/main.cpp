@@ -136,104 +136,50 @@ int main(int argc, char* argv[])
 	else if (problem == "controled")
 	{
 		real = new CONTROLED(size, number, numMDP);
-		const CONTROLED* controled = safe_cast<const CONTROLED*>(real);
-		if(show) {
-			cout << *controled << endl;
-			freeSim = true;
-		}
-		if( mytest ) {
-			controled->TestConstructor();
-			freeSim = true;
-		}
-		if( topomdp ) {
-			controled->ToPOMDP(outputfile);
-			freeSim = true;
-		}
-		if( freeSim ) {
-			delete real;
-			return 0;
-		}
-		simulator = new CONTROLED(*controled);
+		simulator = new CONTROLED(safe_cast<const CONTROLED&>(*real));
 	}
 	else if( problem == "sailboat" )
 	{
 		real = new SAILBOAT(size);
-		const SAILBOAT* sailboat = safe_cast<const SAILBOAT*>(real);
-		if(show) {
-			cout << *sailboat << endl;
-			freeSim = true;
-		}
-		if( mytest ) {
-			sailboat->TestConstructor();
-			freeSim = true;
-		}
-		if( topomdp ) {
-			sailboat->ToPOMDP(outputfile);
-			freeSim = true;
-		}
-		if( freeSim ) {
-			delete real;
-			return 0;
-		}
-		simulator = new SAILBOAT(*sailboat);
+		simulator = new SAILBOAT(safe_cast<const SAILBOAT&>(*real));
 	}
 	else if( problem == "traffic" )
 	{
 		real = new TRAFFIC();
-		const TRAFFIC* traffic = safe_cast<const TRAFFIC*>(real);
-		if(show) {
-			cout << *traffic << endl;
-			freeSim = true;
-		}
-		if( mytest ) {
-			traffic->TestConstructor();
-			freeSim = true;
-		}
-		if( topomdp ) {
-			traffic->ToPOMDP(outputfile);
-			freeSim = true;
-		}
-		if( freeSim ) {
-			delete real;
-			return 0;
-		}
-		simulator = new TRAFFIC(*traffic);
+		simulator = new TRAFFIC(safe_cast<const TRAFFIC&>(*real));
 	}
 	else if( problem == "elevator" )
 	{
-		const ELEVATOR* elevator;
 		if( number > 1 ) {
 			real = new ELEVATOR(4, number);
-			elevator = safe_cast<const ELEVATOR*>(real);
+			simulator = new ELEVATOR(safe_cast<const ELEVATOR&>(*real));
 		} else {
 			real = new MONO_ELEVATOR(size);
-			elevator = safe_cast<const MONO_ELEVATOR*>(real);
+			simulator = new MONO_ELEVATOR(safe_cast<const MONO_ELEVATOR&>(*real));
 		}
-		if(show) {
-			cout << *elevator << endl;
-			freeSim = true;
-		}
-		if( mytest ) {
-			elevator->TestConstructor();
-			freeSim = true;
-		}
-		if( topomdp ) {
-			elevator->ToPOMDP(outputfile);
-			freeSim = true;
-		}
-		if( freeSim ) {
-			delete real;
-			return 0;
-		}
-		if( number > 1 )
-			simulator = new ELEVATOR(*elevator);
-		else
-			simulator = new MONO_ELEVATOR(safe_cast<const MONO_ELEVATOR&>(*elevator));
 	}
 	else
 	{
 		cout << "Unknown problem" << endl;
 		exit(1);
+	}
+
+	if( show ) {
+		cout << *real << endl;
+		freeSim = true;
+	}
+	if( mytest ) {
+		safe_cast<ENVIRONMENT*>(real)->TestConstructor();
+		freeSim = true;
+	}
+	if( topomdp ) {
+		safe_cast<ENVIRONMENT*>(real)->ToPOMDP(outputfile);
+		freeSim = true;
+	}
+	if( freeSim ) {
+		delete real;
+		delete simulator;
+		return 0;
 	}
 
 	simulator->SetKnowledge(knowledge);
