@@ -7,7 +7,7 @@
 class MEMORY_OBJECT
 {
 public:
-
+    MEMORY_OBJECT() {}
     void SetAllocated() { Allocated = true; }
     void ClearAllocated() { Allocated = false; }
     bool IsAllocated() const { return Allocated; }
@@ -44,8 +44,8 @@ public:
         Free(obj);
     }
 
-    T* Allocate() 
-    { 
+    T* Allocate()
+    {
         if (FreeList.empty())
             NewChunk();
         T* obj = FreeList.back();
@@ -55,15 +55,15 @@ public:
         NumAllocated++;
         return obj;
     }
-    
-    void Free(T* obj) 
-    { 
+
+    void Free(T* obj)
+    {
         assert(obj->IsAllocated());
         obj->ClearAllocated();
         FreeList.push_back(obj);
         NumAllocated--;
     }
-    
+
     void DeleteAll()
     {
         for (ChunkIterator i_chunk = Chunks.begin(); i_chunk != Chunks.end(); ++i_chunk)
@@ -72,7 +72,7 @@ public:
         FreeList.clear();
         NumAllocated = 0;
     }
-    
+
     int GetNumAllocated() const { return NumAllocated; }
 
 private:

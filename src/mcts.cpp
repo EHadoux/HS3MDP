@@ -279,12 +279,9 @@ int MCTS::GreedyUCB(VNODE* vnode, bool ucb) const
 
 	for (int action = 0; action < Simulator.GetNumActions(); action++)
 	{
-		double q, alphaq;
-		int n, alphan;
-
 		QNODE& qnode = vnode->Child(action);
-		q = qnode.Value.GetValue();
-		n = qnode.Value.GetCount();
+		double q = qnode.Value.GetValue();
+		double n = qnode.Value.GetCount();
 
 		if (Params.UseRave && qnode.AMAF.GetCount() > 0)
 		{
@@ -295,6 +292,8 @@ int MCTS::GreedyUCB(VNODE* vnode, bool ucb) const
 
 		if (hasalpha && n > 0)
 		{
+			double alphaq;
+			int alphan;
 			Simulator.AlphaValue(qnode, alphaq, alphan);
 			q = (n * q + alphan * alphaq) / (n + alphan);
 			//cout << "N = " << n << ", alphaN = " << alphan << endl;

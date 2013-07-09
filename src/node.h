@@ -25,7 +25,7 @@ template<class COUNT>
 class VALUE
 {
 public:
-
+    VALUE() { Count = 0; Total = 0; }
     void Set(double count, double value)
     {
         Count = count;

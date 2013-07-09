@@ -105,56 +105,56 @@ int main(int argc, char* argv[])
 		return 0;
 	}
 
-	SIMULATOR* real = 0;
+	SIMULATOR* real      = 0;
 	SIMULATOR* simulator = 0;
 
 	if (problem == "battleship")
 	{
-		real = new BATTLESHIP(size, size, number);
+		real      = new BATTLESHIP(size, size, number);
 		simulator = new BATTLESHIP(size, size, number);
 	}
 	else if (problem == "pocman")
 	{
-		real = new FULL_POCMAN;
+		real      = new FULL_POCMAN;
 		simulator = new FULL_POCMAN;
 	}
 	else if (problem == "network")
 	{
-		real = new NETWORK(size, number);
+		real      = new NETWORK(size, number);
 		simulator = new NETWORK(size, number);
 	}
 	else if (problem == "rocksample")
 	{
-		real = new ROCKSAMPLE(size, number);
+		real      = new ROCKSAMPLE(size, number);
 		simulator = new ROCKSAMPLE(size, number);
 	}
 	else if (problem == "tag")
 	{
-		real = new TAG(number);
+		real      = new TAG(number);
 		simulator = new TAG(number);
 	}
 	else if (problem == "controled")
 	{
-		real = new CONTROLED(size, number, numMDP);
+		real      = new CONTROLED(size, number, numMDP);
 		simulator = new CONTROLED(safe_cast<const CONTROLED&>(*real));
 	}
 	else if( problem == "sailboat" )
 	{
-		real = new SAILBOAT(size);
+		real      = new SAILBOAT(size);
 		simulator = new SAILBOAT(safe_cast<const SAILBOAT&>(*real));
 	}
 	else if( problem == "traffic" )
 	{
-		real = new TRAFFIC();
+		real      = new TRAFFIC();
 		simulator = new TRAFFIC(safe_cast<const TRAFFIC&>(*real));
 	}
 	else if( problem == "elevator" )
 	{
 		if( number > 1 ) {
-			real = new ELEVATOR(4, number);
+			real      = new ELEVATOR(4, number);
 			simulator = new ELEVATOR(safe_cast<const ELEVATOR&>(*real));
 		} else {
-			real = new MONO_ELEVATOR(size);
+			real      = new MONO_ELEVATOR(size);
 			simulator = new MONO_ELEVATOR(safe_cast<const MONO_ELEVATOR&>(*real));
 		}
 	}

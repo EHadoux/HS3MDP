@@ -13,19 +13,19 @@ using namespace UTILS;
 
 ENVIRONMENT::ENVIRONMENT(int numActions, int numObservations, int numMDP)
 : SIMULATOR(numActions, numObservations, 0.9) {
-	_numMDP = numMDP;
+	_numMDP             = numMDP;
 	_startingStateIndex = Random(numObservations);
-	_maxToStay = 10;
-	_copy = false;
+	_maxToStay          = 10;
+	_copy               = false;
 }
 
 ENVIRONMENT::ENVIRONMENT(const ENVIRONMENT& other)
 : SIMULATOR(other.NumActions, other.NumObservations, 0.9)
 {
-	_numMDP = other._numMDP;
+	_numMDP             = other._numMDP;
 	_startingStateIndex = other._startingStateIndex;
-	_maxToStay = other._maxToStay;
-	_copy = true;
+	_maxToStay          = other._maxToStay;
+	_copy               = true;
 }
 
 ENVIRONMENT::~ENVIRONMENT() {}
@@ -36,9 +36,9 @@ ENVIRONMENT_STATE* ENVIRONMENT::Allocate() const {
 
 ENVIRONMENT_STATE* ENVIRONMENT::CreateStartState() const {
 	ENVIRONMENT_STATE* state = MemoryPool.Allocate();
-	state->stateIndex = _startingStateIndex;
-	state->MDPIndex = Random(GetNumMDP());
-	state->timeToStay = 0;
+	state->stateIndex        = _startingStateIndex;
+	state->MDPIndex          = Random(GetNumMDP());
+	state->timeToStay        = 0;
 
 	return state;
 }
@@ -46,8 +46,9 @@ ENVIRONMENT_STATE* ENVIRONMENT::CreateStartState() const {
 ENVIRONMENT_STATE* ENVIRONMENT::Copy(const STATE& state) const
 {
 	const ENVIRONMENT_STATE& env_state = safe_cast<const ENVIRONMENT_STATE&>(state);
-	ENVIRONMENT_STATE* newstate = MemoryPool.Allocate();
-	*newstate = env_state;
+	ENVIRONMENT_STATE* newstate        = MemoryPool.Allocate();
+	*newstate                          = env_state;
+
 	return newstate;
 }
 
@@ -103,9 +104,8 @@ bool ENVIRONMENT::TestTransitionsSumToOne() const {
 }
 
 bool ENVIRONMENT::TestMDPSumToOne() const {
-	double sum;
 	for( int m = 0; m < GetNumMDP(); m++ ) {
-		sum = 0;
+		double sum = 0;
 		for( int mprime = 0; mprime < GetNumMDP(); mprime++ )
 			sum += GetMDPTransition(m, mprime);
 		if( abs(sum - 100.0) > 1e-10 )
@@ -138,7 +138,7 @@ void ENVIRONMENT::TestConstructor() const {
 void ENVIRONMENT::ToPOMDP( string filename ) const {
 	ofstream f(filename.c_str());
 	double MDPTransition = 0, timeToStay = 0;
-	int numMDP = GetNumMDP(), maxToStay = GetMaxToStay(), numObs = GetNumObservations();
+	int numMDP           = GetNumMDP(), maxToStay = GetMaxToStay(), numObs = GetNumObservations();
 
 	f << "discount: " << Discount << endl;
 	f << "values: reward" << endl;

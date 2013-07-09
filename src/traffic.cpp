@@ -130,9 +130,13 @@ double* TRAFFIC::createTimeToStay() {
 TRAFFIC::TRAFFIC(const TRAFFIC& other)
 : ENVIRONMENT(other)
 {
+	// cppcheck-suppress copyCtorPointerCopying
 	_rewards = other._rewards;
+	// cppcheck-suppress copyCtorPointerCopying
 	_transitions = other._transitions;
+	// cppcheck-suppress copyCtorPointerCopying
 	_MDPTransitions = other._MDPTransitions;
+	// cppcheck-suppress copyCtorPointerCopying
 	_timeToStay = other._timeToStay;
 }
 

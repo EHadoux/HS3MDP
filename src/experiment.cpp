@@ -183,7 +183,6 @@ void EXPERIMENT::DiscountedReturn()
 	ExpParams.SimSteps = Simulator.GetHorizon(ExpParams.Accuracy, ExpParams.UndiscountedHorizon);
 	ExpParams.NumSteps = Real.GetHorizon(ExpParams.Accuracy, ExpParams.UndiscountedHorizon);
 
-	bool timedout;
 	for (int i = ExpParams.MinDoubles; i <= ExpParams.MaxDoubles; i++)
 	{
 		SearchParams.NumSimulations = 1 << i;
@@ -195,7 +194,7 @@ void EXPERIMENT::DiscountedReturn()
 		SearchParams.MaxAttempts = SearchParams.NumTransforms * ExpParams.TransformAttempts;
 
 		Results.Clear();
-		timedout = MultiRun();
+		bool timedout = MultiRun();
 
 		cout << "Simulations = " << SearchParams.NumSimulations << endl
 			<< "Runs = " << Results.Time.GetCount() << endl

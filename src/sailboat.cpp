@@ -19,24 +19,22 @@ using namespace UTILS;
 SAILBOAT::SAILBOAT(int numStates)
 : ENVIRONMENT(2, numStates, 4)
 {
-	_cote = sqrt(numStates);
-
-	int numMDP = GetNumMDP();
-
+	_cote           = sqrt(numStates);
+	int numMDP      = GetNumMDP();
 	_MDPTransitions = new double* [numMDP];
-	_timeToStay = new double** [numMDP];
+	_timeToStay     = new double** [numMDP];
 
 	for( int m = 0; m < numMDP; m++ ) {
 		_MDPTransitions[m] = new double[numMDP];
-		_timeToStay[m] = new double* [numMDP];
+		_timeToStay[m]     = new double* [numMDP];
 		for( int mprime = 0; mprime < numMDP; mprime++ ) {
 			_MDPTransitions[m][mprime] = 0;
-			_timeToStay[m][mprime] = createTimeToStay();
+			_timeToStay[m][mprime]     = createTimeToStay();
 		}
 
 		_MDPTransitions[m][(((m-1) < 0) ? (numMDP-1) : (m-1))] = 10;
-		_MDPTransitions[m][m] = 80;
-		_MDPTransitions[m][(m+1)%numMDP] = 10;
+		_MDPTransitions[m][m]                                  = 80;
+		_MDPTransitions[m][(m+1)%numMDP]                       = 10;
 
 	}
 
@@ -44,10 +42,10 @@ SAILBOAT::SAILBOAT(int numStates)
 }
 
 double* SAILBOAT::createTimeToStay() {
-	int maxToStay = GetMaxToStay();
-	double *timeToStay = new double[maxToStay];
+	int maxToStay        = GetMaxToStay();
+	double *timeToStay   = new double[maxToStay];
 	double gaussienne[5] = {5, 25, 40, 25, 5};
-	int mu = Random(maxToStay / 2);
+	int mu               = Random(maxToStay / 2);
 
 	for( int i = 0; i < maxToStay; i++ ) {
 		if( (mu - 2) <= i && i <= (mu + 2) )
@@ -58,15 +56,15 @@ double* SAILBOAT::createTimeToStay() {
 
 	//Pour sommer a 1
 	int cumIndex = 0;
-	int cumSum = 0;
+	int cumSum   = 0;
 	while( cumIndex + mu - 2 < 0 ) {
 		cumSum += gaussienne[cumIndex];
 		cumIndex++;
 	}
 	timeToStay[0] += cumSum;
+	cumIndex      = 0;
+	cumSum        = 0;
 
-	cumIndex = 0;
-	cumSum = 0;
 	while( mu + 2 - cumIndex > (maxToStay-1) ) {
 		cumSum += gaussienne[4 - cumIndex];
 		cumIndex++;
@@ -80,9 +78,11 @@ double* SAILBOAT::createTimeToStay() {
 SAILBOAT::SAILBOAT(const SAILBOAT& other)
 : ENVIRONMENT(other)
 {
-	_cote = other._cote;
+	_cote           = other._cote;
+	// cppcheck-suppress copyCtorPointerCopying
 	_MDPTransitions = other._MDPTransitions;
-	_timeToStay = other._timeToStay;
+	// cppcheck-suppress copyCtorPointerCopying
+	_timeToStay     = other._timeToStay;
 }
 
 SAILBOAT::~SAILBOAT() {
@@ -102,15 +102,13 @@ SAILBOAT::~SAILBOAT() {
 bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) const
 {
 	ENVIRONMENT_STATE& sailboatState = safe_cast<ENVIRONMENT_STATE&>(state);
-	int stateIndex = sailboatState.stateIndex;
-	int MDPIndex = sailboatState.MDPIndex;
-	int timeToStay = sailboatState.timeToStay;
-	int cote = GetCote();
-
-	int p = Random(100);
-	int i = stateIndex;
-	int cumsum;
-	bool ret = false;
+	int stateIndex                   = sailboatState.stateIndex;
+	int MDPIndex                     = sailboatState.MDPIndex;
+	int timeToStay                   = sailboatState.timeToStay;
+	int cote                         = GetCote();
+	int p                            = Random(100);
+	int i                            = stateIndex;
+	bool ret                         = false;
 
 	switch(MDPIndex) {
 		case NORTH:
@@ -161,14 +159,14 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 		ret = true;
 
 	sailboatState.stateIndex = i;
-	observation = i;
+	observation              = i;
 
 	if( timeToStay > 0 )
 		sailboatState.timeToStay = timeToStay - 1;
 	else {
-		p = Random(100) + 1;
-		cumsum = _MDPTransitions[MDPIndex][0];
-		i = 0;
+		p          = Random(100) + 1;
+		int cumsum = _MDPTransitions[MDPIndex][0];
+		i          = 0;
 		while( cumsum < p ) {
 			i++;
 			cumsum += _MDPTransitions[MDPIndex][i];
@@ -177,9 +175,9 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
 		sailboatState.MDPIndex = newMDP;
 
-		p = Random(100) + 1;
+		p      = Random(100) + 1;
 		cumsum = _timeToStay[MDPIndex][newMDP][0];
-		i = 0;
+		i      = 0;
 		while( cumsum < p ) {
 			i++;
 			cumsum += _timeToStay[MDPIndex][newMDP][i];
@@ -202,7 +200,7 @@ double SAILBOAT::GetReward(int mdp, int obs, int action) const {
 
 double SAILBOAT::GetTransition(int mdp, int oldObs, int action, int newObs) const {
 	int cote = GetCote();
-	int x = oldObs % cote, y = oldObs / cote, newx = newObs % cote, newy = newObs / cote;
+	int x    = oldObs % cote, y = oldObs / cote, newx = newObs % cote, newy = newObs / cote;
 
 	if( abs(x-newx) > 1 || abs(y-newy) > 1 )
 		return 0;

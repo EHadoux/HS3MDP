@@ -80,7 +80,9 @@ double* ELEVATOR::createTimeToStay() {
 ELEVATOR::ELEVATOR(const ELEVATOR& other)
 : ENVIRONMENT(other)
 {
+	// cppcheck-suppress copyCtorPointerCopying
 	_MDPTransitions = other._MDPTransitions;
+	// cppcheck-suppress copyCtorPointerCopying
 	_timeToStay = other._timeToStay;
 	_numFloors = other._numFloors;
 	_numElevators = other._numElevators;
@@ -221,10 +223,9 @@ bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) 
 		}
 	}
 
-	bool opened;
 	int r;
 	for( int f = 0; f < numFloors; f++ ) {
-		opened = false;
+		bool opened = false;
 		for( int e = 0; e < numElevators; e++ ) {
 			currentAction = GetAction(action, e);
 
@@ -251,14 +252,12 @@ bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) 
 }
 
 void ELEVATOR::NewModeAndTTS(ENVIRONMENT_STATE& env_state, int timeToStay, int MDPIndex) const {
-	int p, cumsum, i;
-
 	if( timeToStay > 0 )
 		env_state.timeToStay = timeToStay - 1;
 	else {
-		p = Random(100) + 1;
-		cumsum = _MDPTransitions[MDPIndex][0];
-		i = 0;
+		int p = Random(100) + 1;
+		int cumsum = _MDPTransitions[MDPIndex][0];
+		int i = 0;
 		while( cumsum < p ) {
 			i++;
 			cumsum += _MDPTransitions[MDPIndex][i];
@@ -321,11 +320,10 @@ double ELEVATOR::GetTransition(int mdp, int oldObs, int action, int newObs) cons
 		}
 	}
 
-	bool otheropenedbefore;
 	map<int,int>::iterator it;
 	for( int e = 0; e < numElevators; e++ ) {
 		it = openedfloor.find(floorIndex[e]);
-		otheropenedbefore = (it != openedfloor.end() && it->second != e);
+		bool otheropenedbefore = (it != openedfloor.end() && it->second != e);
 		currentAction = GetAction(action, e);
 
 		if( currentAction == OPEN ) {

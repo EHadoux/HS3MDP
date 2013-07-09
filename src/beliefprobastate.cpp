@@ -30,13 +30,12 @@ void BELIEF_PROBA_STATE::Free(const SIMULATOR& simulator) {
 }
 
 ENVIRONMENT_STATE* BELIEF_PROBA_STATE::CreateSample(const SIMULATOR& simulator) const {
-	const ENVIRONMENT& env_sim = safe_cast<const ENVIRONMENT&>(simulator);
+	const ENVIRONMENT& env_sim   = safe_cast<const ENVIRONMENT&>(simulator);
 	ENVIRONMENT_STATE *env_state = env_sim.Copy(*_uniqueState);
-
-	double p = RandomDouble(0, 100);
-	double cumsum = MH[0];
-	int i = 0;
-	while( cumsum <= p ) {
+	double p                     = RandomDouble(0, 100);
+	double cumsum                = MH[0];
+	int i                        = 0;
+	while( (cumsum <= p) && (cumsum < 100) ) {
 		i++;
 		cumsum += MH[i];
 	}
@@ -44,7 +43,7 @@ ENVIRONMENT_STATE* BELIEF_PROBA_STATE::CreateSample(const SIMULATOR& simulator) 
 	assert(MH[i] != 0);
 	assert(i < (env_sim.GetMaxToStay() * env_sim.GetNumMDP()));
 
-	env_state->MDPIndex = i / env_sim.GetMaxToStay();
+	env_state->MDPIndex   = i / env_sim.GetMaxToStay();
 	env_state->timeToStay = i % env_sim.GetMaxToStay();
 	env_state->stateIndex = _uniqueState->stateIndex;
 
@@ -60,13 +59,13 @@ void BELIEF_PROBA_STATE::AddSample(STATE* state) {
 void BELIEF_PROBA_STATE::Copy(const BELIEF_STATE* beliefs, const SIMULATOR& simulator) {
 	const BELIEF_PROBA_STATE* bs = safe_cast<const BELIEF_PROBA_STATE*>(beliefs);
 	const ENVIRONMENT &Simulator = safe_cast<const ENVIRONMENT&>(simulator);
-	_uniqueState = Simulator.Copy(*bs->_uniqueState);
+	_uniqueState                 = Simulator.Copy(*bs->_uniqueState);
 }
 
 void BELIEF_PROBA_STATE::Move(BELIEF_STATE* beliefs) {
 	BELIEF_PROBA_STATE* bs = safe_cast<BELIEF_PROBA_STATE*>(beliefs);
-	_uniqueState = bs->_uniqueState;
-	bs->_uniqueState = 0;
+	_uniqueState           = bs->_uniqueState;
+	bs->_uniqueState       = 0;
 }
 
 void BELIEF_PROBA_STATE::SetState(ENVIRONMENT_STATE* state) {

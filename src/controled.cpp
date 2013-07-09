@@ -12,22 +12,22 @@ using namespace UTILS;
 CONTROLED::CONTROLED(int numStates, int numActions, int numMDP)
 : ENVIRONMENT(numActions, numStates, numMDP)
 {
-	_rewards = new double** [numMDP];
-	_transitions = new double*** [numMDP];
+	_rewards        = new double** [numMDP];
+	_transitions    = new double*** [numMDP];
 	_MDPTransitions = new double* [numMDP];
-	_timeToStay = new double** [numMDP];
+	_timeToStay     = new double** [numMDP];
 
 	for( int m = 0; m < numMDP; m++ ) {
-		_rewards[m] = createRewards();
-		_transitions[m] = createTransitions();
+		_rewards[m]        = createRewards();
+		_transitions[m]    = createTransitions();
 		_MDPTransitions[m] = new double [numMDP];
-		_timeToStay[m] = new double* [numMDP];
+		_timeToStay[m]     = new double* [numMDP];
 
 		for( int mprime = 0; mprime < numMDP; mprime++ ) {
-			_timeToStay[m][mprime] = createTimeToStay();
+			_timeToStay[m][mprime]     = createTimeToStay();
 			_MDPTransitions[m][mprime] = 0;
 		}
-		_MDPTransitions[m][m] = 90;
+		_MDPTransitions[m][m]            = 90;
 		_MDPTransitions[m][(m+1)%numMDP] = 10;
 	}
 }
@@ -35,7 +35,7 @@ CONTROLED::CONTROLED(int numStates, int numActions, int numMDP)
 double** CONTROLED::createRewards() {
 	double **rewards = new double* [NumObservations];
 	set<int> s;
-	int toFeed = NumObservations/5, state, action;
+	int toFeed = NumObservations/5, state;
 	if(toFeed == 0)
 		toFeed = 1;
 
@@ -50,8 +50,7 @@ double** CONTROLED::createRewards() {
 			state = Random(NumObservations);
 		} while(!s.insert(state).second);
 
-		action = Random(NumActions);
-		rewards[state][action] = 1;
+		rewards[state][Random(NumActions)] = 1;
 	}
 
 	return rewards;
@@ -75,7 +74,7 @@ double*** CONTROLED::createTransitions() {
 			state = -1;
 			while(lim > 0 && s.size() < (unsigned int)(toConnect) ) {
 				proba = Random(lim) + 1;
-				lim -= proba;
+				lim   -= proba;
 				do {
 					state = Random(NumObservations);
 				} while(!s.insert(state).second);
@@ -91,10 +90,10 @@ double*** CONTROLED::createTransitions() {
 }
 
 double* CONTROLED::createTimeToStay() {
-	int maxToStay = GetMaxToStay();
-	double *timeToStay = new double[maxToStay];
+	int maxToStay        = GetMaxToStay();
+	double *timeToStay   = new double[maxToStay];
 	double gaussienne[5] = {5, 25, 40, 25, 5};
-	int mu = Random(maxToStay);
+	int mu               = Random(maxToStay);
 
 	for( int i = 0; i < maxToStay; i++ ) {
 		if( (mu - 2) <= i && i <= (mu + 2) )
@@ -105,15 +104,15 @@ double* CONTROLED::createTimeToStay() {
 
 	//Pour sommer a 1
 	int cumIndex = 0;
-	int cumSum = 0;
+	int cumSum   = 0;
 	while( cumIndex + mu - 2 < 0 ) {
 		cumSum += gaussienne[cumIndex];
 		cumIndex++;
 	}
 	timeToStay[0] += cumSum;
+	cumIndex      = 0;
+	cumSum        = 0;
 
-	cumIndex = 0;
-	cumSum = 0;
 	while( mu + 2 - cumIndex > (maxToStay-1) ) {
 		cumSum += gaussienne[4 - cumIndex];
 		cumIndex++;
@@ -127,10 +126,14 @@ double* CONTROLED::createTimeToStay() {
 CONTROLED::CONTROLED(const CONTROLED& other)
 : ENVIRONMENT(other)
 {
-	_rewards = other._rewards;
-	_transitions = other._transitions;
+	// cppcheck-suppress copyCtorPointerCopying
+	_rewards        = other._rewards;
+	// cppcheck-suppress copyCtorPointerCopying
+	_transitions    = other._transitions;
+	// cppcheck-suppress copyCtorPointerCopying
 	_MDPTransitions = other._MDPTransitions;
-	_timeToStay = other._timeToStay;
+	// cppcheck-suppress copyCtorPointerCopying
+	_timeToStay     = other._timeToStay;
 }
 
 CONTROLED::~CONTROLED() {
@@ -160,21 +163,21 @@ CONTROLED::~CONTROLED() {
 bool CONTROLED::Step(STATE& state, int action, int& observation, double& reward) const
 {
 	ENVIRONMENT_STATE& env_state = safe_cast<ENVIRONMENT_STATE&>(state);
-	int stateIndex = env_state.stateIndex;
-	int MDPIndex = env_state.MDPIndex;
-	int timeToStay = env_state.timeToStay;
+	int stateIndex               = env_state.stateIndex;
+	int MDPIndex                 = env_state.MDPIndex;
+	int timeToStay               = env_state.timeToStay;
 
-	reward = GetReward(MDPIndex, stateIndex, action);
-	int p = Random(100) + 1;
-	int cumsum = _transitions[MDPIndex][stateIndex][action][0];
-	int i = 0;
+	reward                       = GetReward(MDPIndex, stateIndex, action);
+	int p                        = Random(100) + 1;
+	int cumsum                   = _transitions[MDPIndex][stateIndex][action][0];
+	int i                        = 0;
 	while( cumsum < p ) {
 		i++;
 		cumsum += _transitions[MDPIndex][stateIndex][action][i];
 	}
 
 	env_state.stateIndex = i;
-	observation = i;
+	observation          = i;
 	assert(_transitions[MDPIndex][stateIndex][action][observation] > 0);
 
 	if( timeToStay > 0 )
@@ -187,13 +190,13 @@ bool CONTROLED::Step(STATE& state, int action, int& observation, double& reward)
 			i++;
 			cumsum += _MDPTransitions[MDPIndex][i];
 		}
-		int newMDP = i;
+		int newMDP         = i;
 		env_state.MDPIndex = newMDP;
 		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
 
-		p = Random(100) + 1;
+		p      = Random(100) + 1;
 		cumsum = _timeToStay[MDPIndex][newMDP][0];
-		i = 0;
+		i      = 0;
 		while( cumsum < p ) {
 			i++;
 			cumsum += _timeToStay[MDPIndex][newMDP][i];
