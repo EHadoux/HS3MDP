@@ -15,7 +15,7 @@ ENVIRONMENT::ENVIRONMENT(int numActions, int numObservations, int numMDP)
 : SIMULATOR(numActions, numObservations, 0.9) {
 	_numMDP             = numMDP;
 	_startingStateIndex = Random(numObservations);
-	_maxToStay          = 10;
+	_maxToStay          = 5;
 	_copy               = false;
 }
 
