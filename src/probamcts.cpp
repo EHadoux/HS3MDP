@@ -17,7 +17,7 @@ void PROBA_MCTS::InitialiseRoot() {
 
 	PRoot->SetState(startState);
 	int size  = env_sim.GetNumMDP() * env_sim.GetMaxToStay();
-	PRoot->MH = new double[size];
+	//PRoot->MH = new double[size];
 	for( int i = 0; i < size; i++ )
 		PRoot->MH[i] = 100.0 / size;
 }
@@ -51,7 +51,7 @@ bool PROBA_MCTS::Update(int action, int observation) {
 	History.Add(action, observation);
 	BELIEF_PROBA_STATE *beliefs     = new BELIEF_PROBA_STATE();
 	BELIEF_PROBA_STATE *rootBeliefs = static_cast<BELIEF_PROBA_STATE*>(Root->Beliefs());
-	beliefs->MH                     = new double[numMDP * maxToStay];
+	//beliefs->MH                     = new double[numMDP * maxToStay];
 	beliefs->Copy(rootBeliefs, simulator);
 
 	// Find matching vnode from the rest of the tree

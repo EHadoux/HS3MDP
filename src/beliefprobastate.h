@@ -4,6 +4,7 @@
 #include "beliefstate.h"
 #include "simulator.h"
 #include "environment.h"
+#include <vector>
 
 #define _unused(x) ((void)x)
 
@@ -24,7 +25,7 @@ public:
 	void SetState(ENVIRONMENT_STATE* state);
 	ENVIRONMENT_STATE* GetState() {return _uniqueState;}
 
-	double* MH;
+	vector<double> MH;
 
 private:
 	ENVIRONMENT_STATE* _uniqueState;
