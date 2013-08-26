@@ -410,7 +410,7 @@ STATE* MCTS::CreateTransform() const
 }
 
 double MCTS::UCB[UCB_N][UCB_n];
-bool MCTS::InitialisedFastUCB = true;
+bool MCTS::InitialisedFastUCB = false;
 
 void MCTS::InitFastUCB(double exploration)
 {
@@ -491,11 +491,12 @@ void MCTS::UnitTestGreedy()
 	TEST_SIMULATOR testSimulator(5, 5, 0);
 	PARAMS params;
 	MCTS mcts(testSimulator, params);
+	mcts.InitialiseRoot();
 	int numAct = testSimulator.GetNumActions();
 
 	VNODE* vnode = mcts.ExpandNode(testSimulator.CreateStartState());
 	vnode->Value.Set(1, 0);
-	vnode->Child(0).Value.Set(0, 1);
+	vnode->Child(0).Value.Set(1, 1);
 	for (int action = 1; action < numAct; action++)
 		vnode->Child(action).Value.Set(0, 0);
 	assert(mcts.GreedyUCB(vnode, false) == 0);
@@ -506,6 +507,7 @@ void MCTS::UnitTestUCB()
 	TEST_SIMULATOR testSimulator(5, 5, 0);
 	PARAMS params;
 	MCTS mcts(testSimulator, params);
+	mcts.InitialiseRoot();
 	int numAct = testSimulator.GetNumActions();
 	int numObs = testSimulator.GetNumObservations();
 
@@ -557,6 +559,7 @@ void MCTS::UnitTestRollout()
 	params.NumSimulations = 1000;
 	params.MaxDepth = 10;
 	MCTS mcts(testSimulator, params);
+	mcts.InitialiseRoot();
 	double totalReward = 0;
 	for (int n = 0; n < mcts.Params.NumSimulations; ++n)
 	{
@@ -578,6 +581,7 @@ void MCTS::UnitTestSearch(int depth)
 	params.MaxDepth = depth + 1;
 	params.NumSimulations = pow(10, depth + 1);
 	MCTS mcts(testSimulator, params);
+	mcts.InitialiseRoot();
 	mcts.UCTSearch();
 	double rootValue = mcts.Root->Value.GetValue();
 	double optimalValue = testSimulator.OptimalValue();
