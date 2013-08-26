@@ -37,8 +37,8 @@ TRAFFIC::TRAFFIC()
 		}
 	}
 
-	_MDPTransitions[0][0] = _MDPTransitions[1][1] = 90;
-	_MDPTransitions[1][0] = _MDPTransitions[0][1] = 10;
+	_MDPTransitions[0][0] = _MDPTransitions[1][1] = 0;
+	_MDPTransitions[1][0] = _MDPTransitions[0][1] = 100;
 
 	int offset1 = 0, offset2 = 0, offset3 = 6;
 	for( int m = 0; m < 2; m++ ) {

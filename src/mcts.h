@@ -26,6 +26,7 @@ public:
         double RaveDiscount;
         double RaveConstant;
         bool DisableTree;
+        bool ShowDistribution;
     };
 
     MCTS(const SIMULATOR& simulator, const PARAMS& params);

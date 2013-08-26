@@ -3,6 +3,7 @@
 #include "environment.h"
 #include <iostream>
 #include <cassert>
+#include <iomanip>
 
 using namespace std;
 
@@ -82,8 +83,15 @@ bool PROBA_MCTS::Update(int action, int observation) {
 	}
 
 	assert(sum != 0);
-	for( int i = 0; i < numMDP * maxToStay; i++ )
+	for( int i = 0; i < numMDP * maxToStay; i++ ) {
 		beliefs->MH[i] = beliefs->MH[i] / sum * 100.0;
+		if( Params.ShowDistribution )
+			cout << setw(10) << beliefs->MH[i] << " ";
+	}
+	if( Params.ShowDistribution ) {
+		cout << oldObs << " " << action << " " << observation;
+		cout << endl;
+	}
 
 	// Find a state to initialise prior (only requires fully observed state)
 	ENVIRONMENT_STATE* state = 0;

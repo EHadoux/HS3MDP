@@ -1,6 +1,7 @@
 #include "mcts.h"
 #include "testsimulator.h"
-#include <math.h>
+#include "environment.h"
+#include <iomanip>
 
 #include <algorithm>
 
@@ -24,7 +25,8 @@ MCTS::PARAMS::PARAMS()
 	UseRave(false),
 	RaveDiscount(1.0),
 	RaveConstant(0.01),
-	DisableTree(false)
+	DisableTree(false),
+	ShowDistribution(false)
 {
 }
 
@@ -77,6 +79,23 @@ bool MCTS::Update(int action, int observation)
 	// If we still have no particles, fail
 	if (beliefs->Empty() && (!vnode || vnode->Beliefs()->Empty()))
 		return false;
+
+	if( Params.ShowDistribution ) {
+		vector<int> count;
+		const ENVIRONMENT &esim = safe_cast<const ENVIRONMENT&>(Simulator);
+		count.assign(esim.GetMaxToStay() * esim.GetNumMDP(), 0);
+		double sum = 0.0;
+
+		for( int i = 0; i < beliefs->GetNumSamples(); i++ ) {
+			const ENVIRONMENT_STATE *es = safe_cast<const ENVIRONMENT_STATE*>(beliefs->GetSample(i));
+			count.at(es->MDPIndex * esim.GetMaxToStay() + es->timeToStay)++;
+			sum += 1;
+		}
+
+		for( int i = 0; i < esim.GetMaxToStay() * esim.GetNumMDP(); i++ )
+			cout << setw(10) << count.at(i) * 100.0 / sum << " ";
+		cout << sum << endl;
+	}
 
 	if (Params.Verbose >= 1)
 		Simulator.DisplayBeliefs(*beliefs, cout);

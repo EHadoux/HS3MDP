@@ -27,3 +27,5 @@ Makefile
 Makefile.in
 config.status
 output/
+*.txt
+*.nfs*

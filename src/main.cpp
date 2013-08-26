@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 	SIMULATOR::KNOWLEDGE knowledge;
 	string problem, outputfile;
 	int size, number, numMDP;
-	bool show = false, mytest = false, freeSim = false, topomdp;
+	bool freeSim = false, topomdp;
 
 	options_description desc("Allowed options");
 	desc.add_options()
@@ -63,8 +63,8 @@ int main(int argc, char* argv[])
 		("num-steps", value<int>(&expParams.NumSteps), "number of steps to run when using average reward")
 		("verbose", value<int>(&searchParams.Verbose), "verbosity level")
 		("probaMCTS", value<bool>(&expParams.ProbaMCTS), "use probaMCTS instead of original MCTS")
-		("show", value<bool>(&show), "show the environment and quit")
-		("mytest", value<bool>(&mytest), "test the environment and quit")
+		("show", "show the environment and quit")
+		("mytest", "test the environment and quit")
 		("optimal", value<bool>(&expParams.Optimal), "run optimal policy")
 		("topomdp", value<bool>(&topomdp), "create the pomdp file associated with this environment")
 		("autoexploration", value<bool>(&expParams.AutoExploration), "Automatically assign UCB exploration constant")
@@ -80,6 +80,7 @@ int main(int argc, char* argv[])
 		("smarttreecount", value<int>(&knowledge.SmartTreeCount), "Prior count for preferred actions during smart tree search")
 		("smarttreevalue", value<double>(&knowledge.SmartTreeValue), "Prior value for preferred actions during smart tree search")
 		("disabletree", value<bool>(&searchParams.DisableTree), "Use 1-ply rollout action selection")
+		("showdistribution", value<bool>(&searchParams.ShowDistribution), "show current distribution (particles or probabilities)")
 		;
 
 	variables_map vm;
@@ -164,11 +165,11 @@ int main(int argc, char* argv[])
 		exit(1);
 	}
 
-	if( show ) {
+	if( vm.count("show") ) {
 		cout << *real << endl;
 		freeSim = true;
 	}
-	if( mytest ) {
+	if( vm.count("mytest") ) {
 		safe_cast<ENVIRONMENT*>(real)->TestConstructor();
 		freeSim = true;
 	}

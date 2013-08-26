@@ -4,9 +4,6 @@
 #include "utils.h"
 #include <iostream>
 #include <cassert>
-#include <random>
-//#include <boost/random/mersenne_twister.hpp>
-//#include <boost/random/discrete_distribution.hpp>
 
 using namespace std;
 using namespace UTILS;
@@ -15,18 +12,11 @@ using namespace UTILS;
 
 BELIEF_PROBA_STATE::BELIEF_PROBA_STATE() {
 	_uniqueState = 0;
-	//MH = 0;
 }
 
-BELIEF_PROBA_STATE::~BELIEF_PROBA_STATE() {
-	//if(MH)
-	//	delete[] MH;
-}
+BELIEF_PROBA_STATE::~BELIEF_PROBA_STATE() {}
 
 void BELIEF_PROBA_STATE::Free(const SIMULATOR& simulator) {
-	//if(MH)
-	//	delete[] MH;
-	//MH = 0;
 	if( _uniqueState )
 		simulator.FreeState(_uniqueState);
 	_uniqueState = 0;
@@ -39,8 +29,8 @@ ENVIRONMENT_STATE* BELIEF_PROBA_STATE::CreateSample(const SIMULATOR& simulator) 
 
 	mt19937 gen;
 	discrete_distribution<> dist(MH.begin(), MH.end());
-	//discrete_distribution<> dist(MH);
 	i = dist(gen);
+
 	assert(MH[i] != 0);
 	assert(i < (env_sim.GetMaxToStay() * env_sim.GetNumMDP()));
 
