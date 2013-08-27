@@ -26,7 +26,7 @@ public:
     virtual void Validate(const STATE& state) const;
     virtual STATE* CreateStartState() const;
     virtual void FreeState(STATE* state) const;
-    virtual bool Step(STATE& state, int action, 
+    virtual bool Step(STATE& state, int action,
         int& observation, double& reward) const;
 
     virtual bool LocalMove(STATE& state, const HISTORY& history,
@@ -36,7 +36,7 @@ public:
     void GeneratePreferred(const STATE& state, const HISTORY& history,
         std::vector<int>& legal, const STATUS& status) const;
 
-    virtual void DisplayBeliefs(const BELIEF_STATE& beliefState, 
+    virtual void DisplayBeliefs(const BELIEF_STATE& beliefState,
         std::ostream& ostr) const;
     virtual void DisplayState(const STATE& state, std::ostream& ostr) const;
     virtual void DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const;
@@ -46,18 +46,18 @@ protected:
 
     POCMAN(int xsize, int ysize);
 
-    enum { 
+    enum {
         E_PASSABLE,
         E_SEED,
         E_POWER
     };
 
     GRID<int> Maze;
-    int NumGhosts, PassageY, GhostRange, SmellRange, HearRange;
+    int NumGhosts = 0, PassageY, GhostRange = 0, SmellRange, HearRange;
     COORD PocmanHome, GhostHome;
     double FoodProb, ChaseProb, DefensiveSlip;
-    double RewardClearLevel, RewardDefault, RewardDie; 
-    double RewardEatFood, RewardEatGhost, RewardHitWall; 
+    double RewardClearLevel, RewardDefault, RewardDie;
+    double RewardEatFood, RewardEatGhost, RewardHitWall;
     int PowerNumSteps;
 
 private:
@@ -67,7 +67,7 @@ private:
     void MoveGhostDefensive(POCMAN_STATE& pocstate, int g) const;
     void MoveGhostRandom(POCMAN_STATE& pocstate, int g) const;
     void NewLevel(POCMAN_STATE& pocstate) const;
-    int SeeGhost(const POCMAN_STATE& pocstate, int action) const;    
+    int SeeGhost(const POCMAN_STATE& pocstate, int action) const;
     bool HearGhost(const POCMAN_STATE& pocstate) const;
     bool SmellFood(const POCMAN_STATE& pocstate) const;
     COORD NextPos(const COORD& from, int dir) const;

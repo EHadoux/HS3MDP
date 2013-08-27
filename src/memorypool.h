@@ -7,7 +7,7 @@
 class MEMORY_OBJECT
 {
 public:
-    MEMORY_OBJECT() {}
+    MEMORY_OBJECT() { Allocated = false; }
     void SetAllocated() { Allocated = true; }
     void ClearAllocated() { Allocated = false; }
     bool IsAllocated() const { return Allocated; }

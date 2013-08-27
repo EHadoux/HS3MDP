@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 	SIMULATOR::KNOWLEDGE knowledge;
 	string problem, outputfile;
 	int size, number, numMDP;
-	bool freeSim = false, topomdp;
+	bool freeSim = false, topomdp = false;
 
 	options_description desc("Allowed options");
 	desc.add_options()

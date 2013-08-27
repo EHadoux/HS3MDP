@@ -27,16 +27,13 @@ public:
 
 private:
 
-    int Count;
-    double Mean;
-    double Variance;
-    double Min, Max;
+    int Count = 0;
+    double Mean = 0;
+    double Variance = 0;
+    double Min = +Infinity, Max = -Infinity;
 };
 
-inline STATISTIC::STATISTIC()
-{
-    Clear();
-}
+inline STATISTIC::STATISTIC() {}
 
 inline STATISTIC::STATISTIC(double val, int count)
 {
@@ -107,7 +104,7 @@ inline double STATISTIC::GetMin() const
 {
     return Min;
 }
-    
+
 inline void STATISTIC::Print(const std::string& name, std::ostream& ostr) const
 {
     ostr << name << ": " << Mean << " [" << Min << ", " << Max << "]" << std::endl;

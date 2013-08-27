@@ -55,9 +55,9 @@ public:
 protected:
 
     const SIMULATOR& Simulator;
-    int TreeDepth, PeakTreeDepth;
+    int TreeDepth, PeakTreeDepth = 0;
     PARAMS Params;
-    VNODE* Root;
+    VNODE* Root = 0;
     HISTORY History;
     SIMULATOR::STATUS Status;
 
