@@ -27,8 +27,12 @@ CONTROLED::CONTROLED(int numStates, int numActions, int numMDP)
 			_timeToStay[m][mprime]     = createTimeToStay();
 			_MDPTransitions[m][mprime] = 0;
 		}
-		_MDPTransitions[m][m]            = 90;
-		_MDPTransitions[m][(m+1)%numMDP] = 10;
+		if( numMDP > 2 ) {
+			_MDPTransitions[m][(m+1)%numMDP] = 50;
+			_MDPTransitions[m][(m+2)%numMDP] = 25;
+			_MDPTransitions[m][(m+3)%numMDP] = 25;
+		} else
+			_MDPTransitions[m][(m+1)%numMDP] = 100;
 	}
 }
 

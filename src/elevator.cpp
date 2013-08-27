@@ -33,11 +33,11 @@ ELEVATOR::ELEVATOR(int numFloors, int numElevators)
 		_timeToStay[m] = new double* [numMDP];
 
 		for( int mprime = 0; mprime < numMDP; mprime++ ) {
-			_MDPTransitions[m][mprime] = 5;
+			_MDPTransitions[m][mprime] = 45;
 			_timeToStay[m][mprime] = createTimeToStay();
 		}
 
-		_MDPTransitions[m][m] = 100 - (numMDP - 1) * 5;
+		_MDPTransitions[m][m] = 5;
 	}
 
 	_startingStateIndex = 0;

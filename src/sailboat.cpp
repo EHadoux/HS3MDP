@@ -32,9 +32,9 @@ SAILBOAT::SAILBOAT(int numStates)
 			_timeToStay[m][mprime]     = createTimeToStay();
 		}
 
-		_MDPTransitions[m][(((m-1) < 0) ? (numMDP-1) : (m-1))] = 10;
-		_MDPTransitions[m][m]                                  = 80;
-		_MDPTransitions[m][(m+1)%numMDP]                       = 10;
+		_MDPTransitions[m][(((m-1) < 0) ? (numMDP-1) : (m-1))] = 45;
+		_MDPTransitions[m][m]                                  = 10;
+		_MDPTransitions[m][(m+1)%numMDP]                       = 45;
 
 	}
 
