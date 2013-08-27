@@ -37,7 +37,7 @@ ELEVATOR::ELEVATOR(int numFloors, int numElevators)
 			_timeToStay[m][mprime] = createTimeToStay();
 		}
 
-		_MDPTransitions[m][m] = 5;
+		_MDPTransitions[m][m] = 10;
 	}
 
 	_startingStateIndex = 0;
