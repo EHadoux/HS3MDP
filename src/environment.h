@@ -15,7 +15,7 @@ public:
 class ENVIRONMENT : public SIMULATOR {
 
 public:
-	ENVIRONMENT(int numActions, int numObservations, int numMDP);
+	ENVIRONMENT(int numActions, int numObservations, int numMDP, int maxToStay);
 	ENVIRONMENT(const ENVIRONMENT& other);
 	virtual ~ENVIRONMENT();
 

@@ -10,7 +10,7 @@ using namespace std;
 using namespace UTILS;
 
 CONTROLED::CONTROLED(int numStates, int numActions, int numMDP)
-: ENVIRONMENT(numActions, numStates, numMDP)
+: ENVIRONMENT(numActions, numStates, numMDP, 5)
 {
 	_rewards        = new double** [numMDP];
 	_transitions    = new double*** [numMDP];

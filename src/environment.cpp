@@ -11,11 +11,11 @@
 using namespace std;
 using namespace UTILS;
 
-ENVIRONMENT::ENVIRONMENT(int numActions, int numObservations, int numMDP)
+ENVIRONMENT::ENVIRONMENT(int numActions, int numObservations, int numMDP, int maxToStay)
 : SIMULATOR(numActions, numObservations, 0.9) {
 	_numMDP             = numMDP;
 	_startingStateIndex = Random(numObservations);
-	_maxToStay          = 10;
+	_maxToStay          = maxToStay;
 	_copy               = false;
 }
 
