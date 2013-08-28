@@ -128,9 +128,13 @@ bool ENVIRONMENT::TestTimeToStaySumToOne() const {
 }
 
 void ENVIRONMENT::TestConstructor() const {
+	cout << "Starting constructor tests." << endl;
 	assert(TestTransitionsSumToOne());
+	cout << "State transitions sum to one." << endl;
 	assert(TestMDPSumToOne());
+	cout << "MDP transitions sum to one." << endl;
 	assert(TestTimeToStaySumToOne());
+	cout << "Time to stay sum to one." << endl;
 
 	cout << "Tests constructeur passés." << endl;
 }
