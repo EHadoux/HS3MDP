@@ -15,12 +15,12 @@ void PROBA_MCTS::InitialiseRoot() {
 	ENVIRONMENT_STATE* startState = env_sim.CreateStartState();
 	Root                          = ExpandNode(startState);
 	BELIEF_PROBA_STATE* PRoot     = safe_cast<BELIEF_PROBA_STATE*>(Root->Beliefs());
+	int numMDP                    = env_sim.GetNumMDP(), maxToStay = env_sim.GetMaxToStay();
 
 	PRoot->SetState(startState);
-	int size  = env_sim.GetNumMDP() * env_sim.GetMaxToStay();
-	PRoot->MH.resize(size);
-	for( int i = 0; i < size; i++ )
-		PRoot->MH[i] = 100.0 / size;
+	PRoot->MH.resize(numMDP * maxToStay);
+	for( int i = 0; i < numMDP; i++ )
+		PRoot->MH[i * maxToStay + 0] = 100.0 / numMDP;
 }
 
 PROBA_VNODE* PROBA_MCTS::ExpandNode(const STATE* state)
