@@ -65,7 +65,7 @@ bool PROBA_MCTS::Update(int action, int observation) {
 		for( int hprime = 0; hprime < maxToStay; hprime++ ) {
 			msum = init;
 			if( hprime + 1 < maxToStay )
-				msum *= rootBeliefs->MH[mprime * maxToStay + hprime + 1];
+				msum *= rootBeliefs->MH[mprime * maxToStay + hprime + 1] * 100 * 100;
 			else
 				msum *= 0;
 

@@ -44,6 +44,15 @@ void MCTS::InitialiseRoot() {
 
 	for (int i = 0; i < Params.NumStartStates; i++)
 		Root->Beliefs()->AddSample(Simulator.CreateStartState());
+
+	if( Params.ShowDistribution ) {
+		const ENVIRONMENT& esim = safe_cast<const ENVIRONMENT&>(Simulator);
+		int numMDP                 = esim.GetNumMDP(), maxToStay = esim.GetMaxToStay();
+
+		_displayMH.resize(numMDP * maxToStay);
+		for( int i = 0; i < numMDP; i++ )
+			_displayMH[i * maxToStay + 0] = 100.0 / numMDP;
+	}
 }
 
 MCTS::~MCTS()
@@ -54,6 +63,16 @@ MCTS::~MCTS()
 
 bool MCTS::Update(int action, int observation)
 {
+
+	int oldObs = 0;
+	if( Params.ShowDistribution ) {
+		if( History.Size() > 0 )
+			oldObs = History.Back().Observation;
+		else {
+			const ENVIRONMENT &esim = safe_cast<const ENVIRONMENT&>(Simulator);
+			oldObs = esim.GetStartingObservation();
+		}
+	}
 	History.Add(action, observation);
 	BELIEF_STATE *beliefs = new BELIEF_STATE();
 
@@ -83,18 +102,53 @@ bool MCTS::Update(int action, int observation)
 	if( Params.ShowDistribution ) {
 		vector<int> count;
 		const ENVIRONMENT &esim = safe_cast<const ENVIRONMENT&>(Simulator);
-		count.assign(esim.GetMaxToStay() * esim.GetNumMDP(), 0);
+		int numMDP              = esim.GetNumMDP(), maxToStay = esim.GetMaxToStay();
+		count.assign(maxToStay * numMDP, 0);
 		double sum = 0.0;
 
 		for( int i = 0; i < beliefs->GetNumSamples(); i++ ) {
 			const ENVIRONMENT_STATE *es = safe_cast<const ENVIRONMENT_STATE*>(beliefs->GetSample(i));
-			count.at(es->MDPIndex * esim.GetMaxToStay() + es->timeToStay)++;
+			count.at(es->MDPIndex * maxToStay + es->timeToStay)++;
 			sum += 1;
 		}
 
-		for( int i = 0; i < esim.GetMaxToStay() * esim.GetNumMDP(); i++ )
+		for( int i = 0; i < maxToStay * numMDP; i++ )
 			cout << setw(10) << count.at(i) * 100.0 / sum << " ";
 		cout << sum << endl;
+
+		double pmh, pmm, pssam, msum, phmm;
+		sum = 0;
+		vector<double> MH;
+		MH.assign(maxToStay * numMDP, 0);
+		for( int mprime = 0; mprime < numMDP; mprime++ ) {
+			double init = esim.GetTransition(mprime, oldObs, action, observation);
+			for( int hprime = 0; hprime < maxToStay; hprime++ ) {
+				msum = init;
+				if( hprime + 1 < maxToStay )
+					msum *= _displayMH[mprime * maxToStay + hprime + 1] * 100 * 100;
+				else
+					msum *= 0;
+
+					for( int m = 0; m < numMDP; m++ ) {
+						pmm   = esim.GetMDPTransition(m,mprime);
+						pssam = esim.GetTransition(m, oldObs, action, observation);
+						pmh   = _displayMH[m * maxToStay + 0];
+						phmm  = esim.GetTimeToStay(m, mprime, hprime);
+						msum  += pmm * pssam * pmh * phmm;
+					}
+
+					MH[mprime * maxToStay + hprime] = msum;
+					sum += msum;
+				}
+			}
+
+		assert(sum != 0);
+		for( int i = 0; i < numMDP * maxToStay; i++ ) {
+			_displayMH[i] = MH[i] / sum * 100.0;
+			cout << setw(10) << _displayMH[i] << " ";
+		}
+		cout << oldObs << " " << action << " " << observation << endl << endl;
+
 	}
 
 	if (Params.Verbose >= 1)

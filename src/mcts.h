@@ -4,6 +4,7 @@
 #include "simulator.h"
 #include "node.h"
 #include "statistic.h"
+#include <vector>
 
 class MCTS
 {
@@ -87,6 +88,10 @@ protected:
     static void UnitTestUCB();
     static void UnitTestRollout();
     static void UnitTestSearch(int depth);
+
+private:
+    std::vector<double> _displayMH;
+
 };
 
 #endif // MCTS_H
