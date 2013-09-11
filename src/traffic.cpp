@@ -250,9 +250,9 @@ ostream& TRAFFIC::toString( ostream &flux ) const
 		for( int a = 0; a < NumActions; a++ ) {
 			flux << "MDP: " << m << " action: " << a << endl;
 			for( int o = 0; o < NumObservations; o++ ) {
-				flux << " " << setw(2) << o << ": ";
+				flux << " " << setw(4) << o << ": ";
 				for( int oprime = 0; oprime < NumObservations; oprime++ )
-					flux << setw(2) << _transitions[m][o][a][oprime] << " ";
+					flux << setw(4) << _transitions[m][o][a][oprime] << " ";
 				flux << endl;
 			}
 			flux << endl;
@@ -262,18 +262,18 @@ ostream& TRAFFIC::toString( ostream &flux ) const
 
 	flux << "MDPTransitionsMatrix:" << endl;
 	for( int m = 0; m < GetNumMDP(); m++ ) {
-		flux << m << ":";
+		flux << m << ": ";
 		for( int n = 0; n < GetNumMDP(); n++ )
-			flux << setw(3) << _MDPTransitions[m][n] << " ";
+			flux << setw(4) << _MDPTransitions[m][n] << " ";
 		flux << endl;
 	}
 
 	flux << "TimeToStayMatrix:" << endl;
 	for( int m = 0; m < GetNumMDP(); m++ )
 		for( int n = 0; n < GetNumMDP(); n++ ) {
-			flux << setw(3) << m << " -> " << setw(2) << n << ": ";
+			flux << setw(4) << m << " -> " << setw(2) << n << ": ";
 			for( int i = 0; i < GetMaxToStay(); i++ )
-				flux << setw(3) << _timeToStay[m][n][i] << " ";
+				flux << setw(4) << _timeToStay[m][n][i] << " ";
 			flux << endl;
 	}
 

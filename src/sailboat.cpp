@@ -319,18 +319,18 @@ ostream& SAILBOAT::toString( ostream &flux ) const
 
 	flux << "MDPTransitionsMatrix:" << endl;
 	for( int m = 0; m < GetNumMDP(); m++ ) {
-		flux << m << ":";
+		flux << m << ": ";
 		for( int n = 0; n < GetNumMDP(); n++ )
-			flux << setw(3) << _MDPTransitions[m][n] << " ";
+			flux << setw(4) << _MDPTransitions[m][n] << " ";
 		flux << endl;
 	} flux << endl;
 
 	flux << "TimeToStayMatrix:" << endl;
 	for( int m = 0; m < GetNumMDP(); m++ )
 		for( int n = 0; n < GetNumMDP(); n++ ) {
-			flux << setw(3) << m << " -> " << setw(2) << n << ": ";
+			flux << setw(2) << m << " -> " << setw(2) << n << ": ";
 			for( int i = 0; i < GetMaxToStay(); i++ )
-				flux << setw(3) << _timeToStay[m][n][i] << " ";
+				flux << setw(4) << _timeToStay[m][n][i] << " ";
 			flux << endl;
 	}
 

@@ -396,9 +396,9 @@ ostream& ELEVATOR::toString( ostream &flux ) const
 
 	flux << "MDPTransitionsMatrix:" << endl;
 	for( int m = 0; m < GetNumMDP(); m++ ) {
-		flux << m << ":";
+		flux << m << ": ";
 		for( int mprime = 0; mprime < GetNumMDP(); mprime++ )
-			flux << setw(3) << _MDPTransitions[m][mprime] << " ";
+			flux << setw(4) << _MDPTransitions[m][mprime] << " ";
 		flux << endl;
 	} flux << endl;
 
@@ -407,7 +407,7 @@ ostream& ELEVATOR::toString( ostream &flux ) const
 		for( int mprime = 0; mprime < GetNumMDP(); mprime++ ) {
 			flux << setw(3) << m << " -> " << setw(2) << mprime << ": ";
 			for( int i = 0; i < GetMaxToStay(); i++ )
-				flux << setw(3) << _timeToStay[m][mprime][i] << " ";
+				flux << setw(4) << _timeToStay[m][mprime][i] << " ";
 			flux << endl;
 	}
 
