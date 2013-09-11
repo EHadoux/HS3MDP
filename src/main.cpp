@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
 	SIMULATOR::KNOWLEDGE knowledge;
 	string problem, outputfile;
 	int size, number, numMDP;
-	bool freeSim = false, topomdp = false;
+	bool freeSim = false;
 
 	options_description desc("Allowed options");
 	desc.add_options()
@@ -66,7 +66,7 @@ int main(int argc, char* argv[])
 		("show", "show the environment and quit")
 		("mytest", "test the environment and quit")
 		("optimal", value<bool>(&expParams.Optimal), "run optimal policy")
-		("topomdp", value<bool>(&topomdp), "create the pomdp file associated with this environment")
+		("topomdp", "create the pomdp file associated with this environment")
 		("autoexploration", value<bool>(&expParams.AutoExploration), "Automatically assign UCB exploration constant")
 		("exploration", value<double>(&searchParams.ExplorationConstant), "Manual value for UCB exploration constant")
 		("usetransforms", value<bool>(&searchParams.UseTransforms), "Use transforms")
@@ -173,7 +173,7 @@ int main(int argc, char* argv[])
 		safe_cast<ENVIRONMENT*>(real)->TestConstructor();
 		freeSim = true;
 	}
-	if( topomdp ) {
+	if( vm.count("topomdp") ) {
 		safe_cast<ENVIRONMENT*>(real)->ToPOMDP(outputfile);
 		freeSim = true;
 	}
