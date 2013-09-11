@@ -8,7 +8,7 @@ using namespace std;
 
 class CONTROLED : public ENVIRONMENT {
 public:
-	CONTROLED(int numStates, int numActions, int numMDP);
+	CONTROLED(int numStates, int numActions, int numMDP, int maxToStay = 5);
 	CONTROLED(const CONTROLED& other);
 	~CONTROLED();
 

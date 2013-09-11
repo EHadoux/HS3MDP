@@ -17,8 +17,8 @@
 using namespace std;
 using namespace UTILS;
 
-MONO_ELEVATOR::MONO_ELEVATOR(int numFloors)
-: ELEVATOR(numFloors, 1)
+MONO_ELEVATOR::MONO_ELEVATOR(int numFloors, int maxToStay)
+: ELEVATOR(numFloors, 1, maxToStay)
 {}
 
 MONO_ELEVATOR::MONO_ELEVATOR(const MONO_ELEVATOR& other)

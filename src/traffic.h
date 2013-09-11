@@ -8,7 +8,7 @@ using namespace std;
 
 class TRAFFIC : public ENVIRONMENT {
 public:
-	TRAFFIC();
+	TRAFFIC(int maxToStay = 5);
 	TRAFFIC(const TRAFFIC& other);
 	~TRAFFIC();
 

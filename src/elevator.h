@@ -9,7 +9,7 @@ using namespace std;
 
 class ELEVATOR : public ENVIRONMENT {
 public:
-	ELEVATOR(int numFloors, int numElevator);
+	ELEVATOR(int numFloors, int numElevator, int maxToStay = 5);
 	ELEVATOR(const ELEVATOR& other);
 	~ELEVATOR();
 

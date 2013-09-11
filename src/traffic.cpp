@@ -8,8 +8,8 @@
 using namespace std;
 using namespace UTILS;
 
-TRAFFIC::TRAFFIC()
-: ENVIRONMENT(2, 8, 2, 5)
+TRAFFIC::TRAFFIC(int maxToStay)
+: ENVIRONMENT(2, 8, 2, maxToStay)
    {
    	int numMDP = GetNumMDP();
 	_rewards = new double** [numMDP];

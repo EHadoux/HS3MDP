@@ -16,8 +16,8 @@
 using namespace std;
 using namespace UTILS;
 
-SAILBOAT::SAILBOAT(int numStates)
-: ENVIRONMENT(2, numStates, 4, 5)
+SAILBOAT::SAILBOAT(int numStates, int maxToStay)
+: ENVIRONMENT(2, numStates, 4, maxToStay)
 {
 	_cote           = sqrt(numStates);
 	int numMDP      = GetNumMDP();

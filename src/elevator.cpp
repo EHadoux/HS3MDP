@@ -19,8 +19,8 @@
 using namespace std;
 using namespace UTILS;
 
-ELEVATOR::ELEVATOR(int numFloors, int numElevators)
-: ENVIRONMENT(pow(3, numElevators), pow(numFloors * pow(2, numFloors), numElevators) * pow(2, numFloors), 3, 5)
+ELEVATOR::ELEVATOR(int numFloors, int numElevators, int maxToStay)
+: ENVIRONMENT(pow(3, numElevators), pow(numFloors * pow(2, numFloors), numElevators) * pow(2, numFloors), 3, maxToStay)
 {
 	_numFloors = numFloors;
 	_numElevators = numElevators;

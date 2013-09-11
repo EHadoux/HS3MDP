@@ -41,7 +41,7 @@ int main(int argc, char* argv[])
 	EXPERIMENT::PARAMS expParams;
 	SIMULATOR::KNOWLEDGE knowledge;
 	string problem, outputfile;
-	int size, number, numMDP;
+	int size, number, numMDP, maxToStay = 5;
 	bool freeSim = false;
 
 	options_description desc("Allowed options");
@@ -81,6 +81,7 @@ int main(int argc, char* argv[])
 		("smarttreevalue", value<double>(&knowledge.SmartTreeValue), "Prior value for preferred actions during smart tree search")
 		("disabletree", value<bool>(&searchParams.DisableTree), "Use 1-ply rollout action selection")
 		("showdistribution", value<bool>(&searchParams.ShowDistribution), "show current distribution (particles or probabilities)")
+		("maxtostay", value<int>(&maxToStay), "maximum time to stay in a mode (min = 1)")
 		;
 
 	variables_map vm;
@@ -104,6 +105,11 @@ int main(int argc, char* argv[])
 		cout << "Running unit tests" << endl;
 		UnitTests();
 		return 0;
+	}
+	if( maxToStay < 1 )
+	{
+		cout << "maxtostay must be > 0" << endl;
+		return 1;
 	}
 
 	SIMULATOR* real      = 0;
@@ -136,26 +142,26 @@ int main(int argc, char* argv[])
 	}
 	else if (problem == "controled")
 	{
-		real      = new CONTROLED(size, number, numMDP);
+		real      = new CONTROLED(size, number, numMDP, maxToStay);
 		simulator = new CONTROLED(safe_cast<const CONTROLED&>(*real));
 	}
 	else if( problem == "sailboat" )
 	{
-		real      = new SAILBOAT(size);
+		real      = new SAILBOAT(size, maxToStay);
 		simulator = new SAILBOAT(safe_cast<const SAILBOAT&>(*real));
 	}
 	else if( problem == "traffic" )
 	{
-		real      = new TRAFFIC();
+		real      = new TRAFFIC(maxToStay);
 		simulator = new TRAFFIC(safe_cast<const TRAFFIC&>(*real));
 	}
 	else if( problem == "elevator" )
 	{
 		if( number > 1 ) {
-			real      = new ELEVATOR(4, number);
+			real      = new ELEVATOR(4, number, maxToStay);
 			simulator = new ELEVATOR(safe_cast<const ELEVATOR&>(*real));
 		} else {
-			real      = new MONO_ELEVATOR(size);
+			real      = new MONO_ELEVATOR(size, maxToStay);
 			simulator = new MONO_ELEVATOR(safe_cast<const MONO_ELEVATOR&>(*real));
 		}
 	}

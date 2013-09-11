@@ -8,7 +8,7 @@ using namespace std;
 
 class MONO_ELEVATOR : public ELEVATOR {
 public:
-	MONO_ELEVATOR(int numFloors);
+	MONO_ELEVATOR(int numFloors, int maxToStay = 5);
 	MONO_ELEVATOR(const MONO_ELEVATOR& other);
 
 	bool Step(STATE& state, int action, int& observation, double& reward) const;
