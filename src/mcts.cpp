@@ -47,11 +47,11 @@ void MCTS::InitialiseRoot() {
 
 	if( Params.ShowDistribution ) {
 		const ENVIRONMENT& esim = safe_cast<const ENVIRONMENT&>(Simulator);
-		int numMDP                 = esim.GetNumMDP(), maxToStay = esim.GetMaxToStay();
+		int numMDP              = esim.GetNumMDP(), maxToStay = esim.GetMaxToStay();
 
 		_displayMH.resize(numMDP * maxToStay);
 		for( int i = 0; i < numMDP; i++ )
-			_displayMH[i * maxToStay + 0] = 100.0 / numMDP;
+			_displayMH[i * maxToStay + 0] = 1.0 / numMDP;
 	}
 }
 
@@ -113,7 +113,7 @@ bool MCTS::Update(int action, int observation)
 		}
 
 		for( int i = 0; i < maxToStay * numMDP; i++ )
-			cout << setw(10) << count.at(i) * 100.0 / sum << " ";
+			cout << setw(10) << count.at(i) * 1.0 / sum << " ";
 		cout << sum << endl;
 
 		double pmh, pmm, pssam, msum, phmm;
@@ -125,7 +125,7 @@ bool MCTS::Update(int action, int observation)
 			for( int hprime = 0; hprime < maxToStay; hprime++ ) {
 				msum = init;
 				if( hprime + 1 < maxToStay )
-					msum *= _displayMH[mprime * maxToStay + hprime + 1] * 100 * 100;
+					msum *= _displayMH[mprime * maxToStay + hprime + 1];
 				else
 					msum *= 0;
 
@@ -144,7 +144,7 @@ bool MCTS::Update(int action, int observation)
 
 		assert(sum != 0);
 		for( int i = 0; i < numMDP * maxToStay; i++ ) {
-			_displayMH[i] = MH[i] / sum * 100.0;
+			_displayMH[i] = MH[i] / sum;
 			cout << setw(10) << _displayMH[i] << " ";
 		}
 		cout << oldObs << " " << action << " " << observation << endl << endl;

@@ -97,7 +97,7 @@ bool ENVIRONMENT::TestTransitionsSumToOne() const {
 				sum = 0;
 				for( int oprime = 0; oprime < NumObservations; oprime++ )
 					sum += GetTransition(m, o, a, oprime);
-				if( abs(sum - 100.0) > 1e-10 )
+				if( abs(sum - 1.0) > 1e-10 )
 					return false;
 			}
 	return true;
@@ -108,7 +108,7 @@ bool ENVIRONMENT::TestMDPSumToOne() const {
 		double sum = 0;
 		for( int mprime = 0; mprime < GetNumMDP(); mprime++ )
 			sum += GetMDPTransition(m, mprime);
-		if( abs(sum - 100.0) > 1e-10 )
+		if( abs(sum - 1.0) > 1e-10 )
 			return false;
 	}
 	return true;
@@ -121,7 +121,7 @@ bool ENVIRONMENT::TestTimeToStaySumToOne() const {
 			sum = 0;
 			for( int t = 0; t < GetMaxToStay(); t++ )
 				sum += GetTimeToStay(m, mprime, t);
-			if( abs(sum - 100.0) > 1e-10 )
+			if( abs(sum - 1.0) > 1e-10 )
 				return false;
 	}
 	return true;
@@ -159,15 +159,15 @@ void ENVIRONMENT::ToPOMDP( string filename ) const {
 							MDPTransition = 0, timeToStay = 0;
 
 							if( h == 0 ) {
-								MDPTransition = GetMDPTransition(m, mprime) / 100;
-								timeToStay = GetTimeToStay(m, mprime, hprime) / 100;
+								MDPTransition = GetMDPTransition(m, mprime);
+								timeToStay = GetTimeToStay(m, mprime, hprime);
 							} else if( hprime == (h-1) && m == mprime ) {
 								MDPTransition = 1;
 								timeToStay = 1;
 							}
 
 							for( int oprime = 0; oprime < numObs; oprime++ ) {
-								f << GetTransition(m, o, a, oprime) / 100 * MDPTransition * timeToStay << " ";
+								f << GetTransition(m, o, a, oprime) * MDPTransition * timeToStay << " ";
 							}
 						}
 					f << endl;

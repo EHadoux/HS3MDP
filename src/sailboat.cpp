@@ -32,9 +32,9 @@ SAILBOAT::SAILBOAT(int numStates)
 			_timeToStay[m][mprime]     = createTimeToStay();
 		}
 
-		_MDPTransitions[m][(((m-1) < 0) ? (numMDP-1) : (m-1))] = 45;
-		_MDPTransitions[m][m]                                  = 10;
-		_MDPTransitions[m][(m+1)%numMDP]                       = 45;
+		_MDPTransitions[m][(((m-1) < 0) ? (numMDP-1) : (m-1))] = 0.1;
+		_MDPTransitions[m][m]                                  = 0.8;
+		_MDPTransitions[m][(m+1)%numMDP]                       = 0.1;
 
 	}
 
@@ -44,7 +44,7 @@ SAILBOAT::SAILBOAT(int numStates)
 double* SAILBOAT::createTimeToStay() {
 	int maxToStay        = GetMaxToStay();
 	double *timeToStay   = new double[maxToStay];
-	double gaussienne[5] = {5, 25, 40, 25, 5};
+	double gaussienne[5] = {0.05, 0.25, 0.40, 0.25, 0.05};
 	int mu               = Random(maxToStay / 2);
 
 	for( int i = 0; i < maxToStay; i++ ) {
@@ -55,8 +55,8 @@ double* SAILBOAT::createTimeToStay() {
 	}
 
 	//Pour sommer a 1
-	int cumIndex = 0;
-	int cumSum   = 0;
+	int cumIndex  = 0;
+	double cumSum = 0;
 	while( cumIndex + mu - 2 < 0 ) {
 		cumSum += gaussienne[cumIndex];
 		cumIndex++;
@@ -106,16 +106,16 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 	int MDPIndex                     = sailboatState.MDPIndex;
 	int timeToStay                   = sailboatState.timeToStay;
 	int cote                         = GetCote();
-	int p                            = Random(100);
+	double p                         = (double)rand() / RAND_MAX;
 	int i                            = stateIndex;
 	bool ret                         = false;
 
 	switch(MDPIndex) {
 		case NORTH:
 			if( action == W_E ) {
-				if( p < 80 && i < ((cote - 1) * cote))
+				if( p < 0.80 && i < ((cote - 1) * cote))
 					i += cote;
-				else if( p < 90 && i < ((cote - 1) * cote) && (i % cote) < (cote - 1) )
+				else if( p < 0.90 && i < ((cote - 1) * cote) && (i % cote) < (cote - 1) )
 					i += (cote + 1);
 				else if( i < ((cote - 1) * cote) && (i % cote) > 0 )
 					i += (cote - 1);
@@ -123,9 +123,9 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 			} break;
 		case SOUTH:
 			if( action == W_E ) {
-				if( p < 80 && i > (cote - 1))
+				if( p < 0.80 && i > (cote - 1))
 					i -= cote;
-				else if( p < 90 && i > (cote - 1) && (i % cote) > 0 )
+				else if( p < 0.90 && i > (cote - 1) && (i % cote) > 0 )
 					i -= (cote + 1);
 				else if( i > (cote - 1) && (i % cote) < (cote - 1) )
 					i -= (cote - 1);
@@ -133,9 +133,9 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 			} break;
 		case WEST:
 			if( action == N_S ) {
-				if( p < 80 && (i % cote) < (cote - 1))
+				if( p < 0.80 && (i % cote) < (cote - 1))
 					i += 1;
-				else if( p < 90 && i < ((cote - 1) * cote) && (i % cote) < (cote - 1) )
+				else if( p < 0.90 && i < ((cote - 1) * cote) && (i % cote) < (cote - 1) )
 					i += (cote + 1);
 				else if( i > (cote - 1) && (i % cote) < (cote - 1) )
 					i += (-cote + 1);
@@ -143,9 +143,9 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 			} break;
 		case EAST:
 			if( action == N_S ) {
-				if( p < 80 && (i % cote) > 0)
+				if( p < 0.80 && (i % cote) > 0)
 					i -= 1;
-				else if( p < 90 && i > (cote - 1) && (i % cote) > 0 )
+				else if( p < 0.90 && i > (cote - 1) && (i % cote) > 0 )
 					i -= (cote + 1);
 				else if( i < ((cote - 1) * cote) && (i % cote) > 0 )
 					i -= (-cote + 1);
@@ -164,8 +164,8 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 	if( timeToStay > 0 )
 		sailboatState.timeToStay = timeToStay - 1;
 	else {
-		p          = Random(100) + 1;
-		int cumsum = _MDPTransitions[MDPIndex][0];
+		p             = (double)rand() / RAND_MAX;
+		double cumsum = _MDPTransitions[MDPIndex][0];
 		i          = 0;
 		while( cumsum < p ) {
 			i++;
@@ -175,7 +175,7 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
 		sailboatState.MDPIndex = newMDP;
 
-		p      = Random(100) + 1;
+		p      = (double)rand() / RAND_MAX;
 		cumsum = _timeToStay[MDPIndex][newMDP][0];
 		i      = 0;
 		while( cumsum < p ) {
@@ -210,68 +210,68 @@ double SAILBOAT::GetTransition(int mdp, int oldObs, int action, int newObs) cons
 		if( action == W_E ) {
 			if( (newy - y) == 1 ) {
 				if( abs(newx - x) == 1 )
-					return 10;
+					return 0.1;
 				else
-					return 80;
+					return 0.8;
 			} else if( newy == y && x == newx ) {
 				if( y == (cote - 1) )
-					return 100;
+					return 1;
 				else if( x == 0 || x == (cote - 1) )
-					return 10;
+					return 0.1;
 			}
 		} else if( oldObs == newObs )
-			return 100;
+			return 1;
 		break;
 
 	case SOUTH:
 		if( action == W_E ) {
 			if( (newy - y) == -1 ) {
 				if( abs(newx - x) == 1 )
-					return 10;
+					return 0.1;
 				else
-					return 80;
+					return 0.8;
 			} else if( newy == y && x == newx ) {
 				if( y == 0 )
-					return 100;
+					return 1;
 				else if( x == 0 || x == (cote - 1) )
-					return 10;
+					return 0.1;
 			}
 		} else if( oldObs == newObs )
-			return 100;
+			return 1;
 		break;
 
 	case WEST:
 		if( action == N_S ) {
 			if( (newx - x) == 1 ) {
 				if( abs(newy - y) == 1 )
-					return 10;
+					return 0.1;
 				else
-					return 80;
+					return 0.8;
 			} else if( newx == x && y == newy ) {
 				if( x == (cote - 1) )
-					return 100;
+					return 1;
 				else if( y == 0 || y == (cote - 1) )
-					return 10;
+					return 0.1;
 			}
 		} else if( oldObs == newObs )
-			return 100;
+			return 1;
 		break;
 
 	case EAST:
 		if( action == N_S ) {
 			if( (newx - x) == -1 ) {
 				if( abs(newy - y) == 1 )
-					return 10;
+					return 0.1;
 				else
-					return 80;
+					return 0.8;
 			} else if( newx == x && y == newy ) {
 				if( x == 0 )
-					return 100;
+					return 1;
 				else if( y == 0 || y == (cote - 1) )
-					return 10;
+					return 0.1;
 			}
 		} else if( oldObs == newObs )
-			return 100;
+			return 1;
 		break;
 	}
 

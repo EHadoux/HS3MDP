@@ -20,7 +20,7 @@ void PROBA_MCTS::InitialiseRoot() {
 	PRoot->SetState(startState);
 	PRoot->MH.resize(numMDP * maxToStay);
 	for( int i = 0; i < numMDP; i++ )
-		PRoot->MH[i * maxToStay + 0] = 100.0 / numMDP;
+		PRoot->MH[i * maxToStay + 0] = 1.0 / numMDP;
 }
 
 PROBA_VNODE* PROBA_MCTS::ExpandNode(const STATE* state)
@@ -65,7 +65,7 @@ bool PROBA_MCTS::Update(int action, int observation) {
 		for( int hprime = 0; hprime < maxToStay; hprime++ ) {
 			msum = init;
 			if( hprime + 1 < maxToStay )
-				msum *= rootBeliefs->MH[mprime * maxToStay + hprime + 1] * 100 * 100;
+				msum *= rootBeliefs->MH[mprime * maxToStay + hprime + 1];
 			else
 				msum *= 0;
 
@@ -84,7 +84,7 @@ bool PROBA_MCTS::Update(int action, int observation) {
 
 	assert(sum != 0);
 	for( int i = 0; i < numMDP * maxToStay; i++ ) {
-		beliefs->MH[i] = beliefs->MH[i] / sum * 100.0;
+		beliefs->MH[i] = beliefs->MH[i] / sum;
 		if( Params.ShowDistribution )
 			cout << setw(10) << beliefs->MH[i] << " ";
 	}

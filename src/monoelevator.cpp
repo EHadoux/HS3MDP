@@ -114,25 +114,25 @@ bool MONO_ELEVATOR::Step(STATE& state, int action, int& observation, double& rew
 		for( int f = 1; f < numFloors; f++ ) {
 			if( f == floorIndex && action == OPEN )
 				continue;
-			if(Random(100) < 10)
+			if(((double)rand() / RAND_MAX) < 0.10)
 				pickup[f] = true;
 		}
-		if((Random(100) < 20) && !(floorIndex == 0 && action == OPEN))
+		if((((double)rand() / RAND_MAX) < 0.20) && !(floorIndex == 0 && action == OPEN))
 			pickup[0] = true;
 	} else if( MDPIndex == DOWNTRAFFIC ) {
 		for( int f = (numFloors-1); f > 0; f-- ) {
 			if( f == floorIndex && action == OPEN )
 				continue;
-			if(Random(100) < 20)
+			if(((double)rand() / RAND_MAX) < 0.20)
 				pickup[f] = true;
 		}
-		if((Random(100) < 10) && !(floorIndex == 0 && action == OPEN))
+		if((((double)rand() / RAND_MAX) < 0.10) && !(floorIndex == 0 && action == OPEN))
 			pickup[0] = true;
 	} else if( MDPIndex == BUSYTRAFFIC ) {
 		for( int f = 0; f < numFloors; f++ ) {
 			if( f == floorIndex && action == OPEN )
 				continue;
-			if(Random(100) < 20)
+			if(((double)rand() / RAND_MAX) < 0.20)
 				pickup[f] = true;
 		}
 	}
@@ -212,7 +212,7 @@ double MONO_ELEVATOR::GetTransition(int mdp, int oldObs, int action, int newObs)
 				return 0;
 	}
 
-	return ret * 100;
+	return ret;
 }
 
 ostream& operator<<( ostream &flux, MONO_ELEVATOR const& elevator ) {

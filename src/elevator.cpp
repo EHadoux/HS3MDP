@@ -33,11 +33,11 @@ ELEVATOR::ELEVATOR(int numFloors, int numElevators)
 		_timeToStay[m] = new double* [numMDP];
 
 		for( int mprime = 0; mprime < numMDP; mprime++ ) {
-			_MDPTransitions[m][mprime] = 45;
+			_MDPTransitions[m][mprime] = 0.45;
 			_timeToStay[m][mprime] = createTimeToStay();
 		}
 
-		_MDPTransitions[m][m] = 10;
+		_MDPTransitions[m][m] = 0.10;
 	}
 
 	_startingStateIndex = 0;
@@ -46,7 +46,7 @@ ELEVATOR::ELEVATOR(int numFloors, int numElevators)
 double* ELEVATOR::createTimeToStay() {
 	int maxToStay = GetMaxToStay();
 	double *timeToStay = new double[maxToStay];
-	double gaussienne[5] = {5, 25, 40, 25, 5};
+	double gaussienne[5] = {0.05, 0.25, 0.40, 0.25, 0.05};
 	int mu = Random(maxToStay);
 
 	for( int i = 0; i < maxToStay; i++ ) {
@@ -57,8 +57,8 @@ double* ELEVATOR::createTimeToStay() {
 	}
 
 	//Pour sommer a 1
-	int cumIndex = 0;
-	int cumSum = 0;
+	int cumIndex  = 0;
+	double cumSum = 0;
 	while( cumIndex + mu - 2 < 0 ) {
 		cumSum += gaussienne[cumIndex];
 		cumIndex++;
@@ -223,7 +223,7 @@ bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) 
 		}
 	}
 
-	int r;
+	double r;
 	for( int f = 0; f < numFloors; f++ ) {
 		bool opened = false;
 		for( int e = 0; e < numElevators; e++ ) {
@@ -235,8 +235,8 @@ bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) 
 				continue;
 			}
 			if( !opened ) {
-				r = Random(100);
-				if((((MDPIndex == UPTRAFFIC && f == 0 ) || (MDPIndex == DOWNTRAFFIC && f != 0) || MDPIndex == BUSYTRAFFIC) && r < 20) || r < 10)
+				r = (double)rand() / RAND_MAX;
+				if((((MDPIndex == UPTRAFFIC && f == 0 ) || (MDPIndex == DOWNTRAFFIC && f != 0) || MDPIndex == BUSYTRAFFIC) && r < 0.20) || r < 0.10)
 						pickup[f] = true;
 			}
 		}
@@ -255,8 +255,8 @@ void ELEVATOR::NewModeAndTTS(ENVIRONMENT_STATE& env_state, int timeToStay, int M
 	if( timeToStay > 0 )
 		env_state.timeToStay = timeToStay - 1;
 	else {
-		int p = Random(100) + 1;
-		int cumsum = _MDPTransitions[MDPIndex][0];
+		double p = (double)rand() / RAND_MAX;
+		double cumsum = _MDPTransitions[MDPIndex][0];
 		int i = 0;
 		while( cumsum < p ) {
 			i++;
@@ -266,7 +266,7 @@ void ELEVATOR::NewModeAndTTS(ENVIRONMENT_STATE& env_state, int timeToStay, int M
 		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
 		env_state.MDPIndex = newMDP;
 
-		p = Random(100) + 1;
+		p = (double)rand() / RAND_MAX;
 		cumsum = _timeToStay[MDPIndex][newMDP][0];
 		i = 0;
 		while( cumsum < p ) {
@@ -379,7 +379,7 @@ double ELEVATOR::GetTransition(int mdp, int oldObs, int action, int newObs) cons
 				return 0;
 	}
 
-	return ret * 100;
+	return ret;
 }
 
 double ELEVATOR::GetMDPTransition(int oldmdp, int newmdp) const {

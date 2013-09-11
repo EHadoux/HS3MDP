@@ -37,8 +37,8 @@ TRAFFIC::TRAFFIC()
 		}
 	}
 
-	_MDPTransitions[0][0] = _MDPTransitions[1][1] = 0;
-	_MDPTransitions[1][0] = _MDPTransitions[0][1] = 100;
+	_MDPTransitions[0][0] = _MDPTransitions[1][1] = 0.9;
+	_MDPTransitions[1][0] = _MDPTransitions[0][1] = 0.1;
 
 	int offset1 = 0, offset2 = 0, offset3 = 6;
 	for( int m = 0; m < 2; m++ ) {
@@ -51,32 +51,32 @@ TRAFFIC::TRAFFIC()
 			offset2 = 4;
 		}
 		for( int a = 0; a < 2; a++ ) {
-			_transitions[m][0][a][a] = _transitions[m][1][a][a] = _transitions[m][3][a][a] = _transitions[m][4][a][a] = 63;
-			_transitions[m][0][a][a+offset1] = _transitions[m][1][a][a+offset1] = _transitions[m][4][a][a+offset1] = _transitions[m][3][a][a+offset1] = 27;
-			_transitions[m][0][a][a+offset2] = _transitions[m][1][a][a+offset2] = _transitions[m][4][a][a+offset2] = _transitions[m][3][a][a+offset2] = 7;
-			_transitions[m][0][a][a+offset3] = _transitions[m][1][a][a+offset3] = _transitions[m][4][a][a+offset3] = _transitions[m][3][a][a+offset3] = 3;
+			_transitions[m][0][a][a] = _transitions[m][1][a][a] = _transitions[m][3][a][a] = _transitions[m][4][a][a] = 0.63;
+			_transitions[m][0][a][a+offset1] = _transitions[m][1][a][a+offset1] = _transitions[m][4][a][a+offset1] = _transitions[m][3][a][a+offset1] = 0.27;
+			_transitions[m][0][a][a+offset2] = _transitions[m][1][a][a+offset2] = _transitions[m][4][a][a+offset2] = _transitions[m][3][a][a+offset2] = 0.07;
+			_transitions[m][0][a][a+offset3] = _transitions[m][1][a][a+offset3] = _transitions[m][4][a][a+offset3] = _transitions[m][3][a][a+offset3] = 0.03;
 		}
 	}
 
-	_transitions[0][5][0][4] = _transitions[0][7][0][4] = 90;
-	_transitions[0][5][1][5] = _transitions[0][7][1][5] = 90;
-	_transitions[1][2][0][2] = _transitions[1][6][0][2] = 90;
-	_transitions[1][2][1][3] = _transitions[1][6][1][3] = 90;
+	_transitions[0][5][0][4] = _transitions[0][7][0][4] = 0.90;
+	_transitions[0][5][1][5] = _transitions[0][7][1][5] = 0.90;
+	_transitions[1][2][0][2] = _transitions[1][6][0][2] = 0.90;
+	_transitions[1][2][1][3] = _transitions[1][6][1][3] = 0.90;
 
-	_transitions[0][2][0][2] = _transitions[0][6][0][2] = 70;
-	_transitions[0][2][1][3] = _transitions[0][6][1][3] = 70;
-	_transitions[1][5][0][4] = _transitions[1][7][0][4] = 70;
-	_transitions[1][5][1][5] = _transitions[1][7][1][5] = 70;
+	_transitions[0][2][0][2] = _transitions[0][6][0][2] = 0.70;
+	_transitions[0][2][1][3] = _transitions[0][6][1][3] = 0.70;
+	_transitions[1][5][0][4] = _transitions[1][7][0][4] = 0.70;
+	_transitions[1][5][1][5] = _transitions[1][7][1][5] = 0.70;
 
-	_transitions[0][2][0][6] = _transitions[0][6][0][6] = 30;
-	_transitions[0][2][1][7] = _transitions[0][6][1][7] = 30;
-	_transitions[1][5][0][6] = _transitions[1][7][0][6] = 30;
-	_transitions[1][5][1][7] = _transitions[1][7][1][7] = 30;
+	_transitions[0][2][0][6] = _transitions[0][6][0][6] = 0.30;
+	_transitions[0][2][1][7] = _transitions[0][6][1][7] = 0.30;
+	_transitions[1][5][0][6] = _transitions[1][7][0][6] = 0.30;
+	_transitions[1][5][1][7] = _transitions[1][7][1][7] = 0.30;
 
-	_transitions[0][5][0][6] = _transitions[0][7][0][6] = 10;
-	_transitions[0][5][1][7] = _transitions[0][7][1][7] = 10;
-	_transitions[1][2][0][6] = _transitions[1][6][0][6] = 10;
-	_transitions[1][2][1][7] = _transitions[1][6][1][7] = 10;
+	_transitions[0][5][0][6] = _transitions[0][7][0][6] = 0.10;
+	_transitions[0][5][1][7] = _transitions[0][7][1][7] = 0.10;
+	_transitions[1][2][0][6] = _transitions[1][6][0][6] = 0.10;
+	_transitions[1][2][1][7] = _transitions[1][6][1][7] = 0.10;
 }
 
 double** TRAFFIC::createRewards() {
@@ -96,7 +96,7 @@ double** TRAFFIC::createRewards() {
 double* TRAFFIC::createTimeToStay() {
 	int maxToStay = GetMaxToStay();
 	double *timeToStay = new double[maxToStay];
-	double gaussienne[5] = {5, 25, 40, 25, 5};
+	double gaussienne[5] = {0.05, 0.25, 0.40, 0.25, 0.05};
 	int mu = Random(maxToStay);
 
 	for( int i = 0; i < maxToStay; i++ ) {
@@ -107,8 +107,8 @@ double* TRAFFIC::createTimeToStay() {
 	}
 
 	//Pour sommer a 1
-	int cumIndex = 0;
-	int cumSum = 0;
+	int cumIndex  = 0;
+	double cumSum = 0;
 	while( cumIndex + mu - 2 < 0 ) {
 		cumSum += gaussienne[cumIndex];
 		cumIndex++;
@@ -172,8 +172,8 @@ bool TRAFFIC::Step(STATE& state, int action, int& observation, double& reward) c
 	int timeToStay = env_state.timeToStay;
 
 	reward = GetReward(MDPIndex, stateIndex, action);
-	int p = Random(100) + 1;
-	int cumsum = _transitions[MDPIndex][stateIndex][action][0];
+	double p = (double)rand() / RAND_MAX;
+	double cumsum = _transitions[MDPIndex][stateIndex][action][0];
 	int i = 0;
 	while( cumsum < p ) {
 		i++;
@@ -187,7 +187,7 @@ bool TRAFFIC::Step(STATE& state, int action, int& observation, double& reward) c
 	if( timeToStay > 0 )
 		env_state.timeToStay = timeToStay - 1;
 	else {
-		p = Random(100) + 1;
+		p = (double)rand() / RAND_MAX;
 		cumsum = _MDPTransitions[MDPIndex][0];
 		i = 0;
 		while( cumsum < p ) {
@@ -198,7 +198,7 @@ bool TRAFFIC::Step(STATE& state, int action, int& observation, double& reward) c
 		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
 		env_state.MDPIndex = newMDP;
 
-		p = Random(100) + 1;
+		p = (double)rand() / RAND_MAX;
 		cumsum = _timeToStay[MDPIndex][newMDP][0];
 		i = 0;
 		while( cumsum < p ) {

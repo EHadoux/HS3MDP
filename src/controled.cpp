@@ -28,11 +28,11 @@ CONTROLED::CONTROLED(int numStates, int numActions, int numMDP)
 			_MDPTransitions[m][mprime] = 0;
 		}
 		if( numMDP > 2 ) {
-			_MDPTransitions[m][(m+1)%numMDP] = 50;
-			_MDPTransitions[m][(m+2)%numMDP] = 25;
-			_MDPTransitions[m][(m+3)%numMDP] = 25;
+			_MDPTransitions[m][(m+1)%numMDP] = 0.5;
+			_MDPTransitions[m][(m+2)%numMDP] = 0.25;
+			_MDPTransitions[m][(m+3)%numMDP] = 0.25;
 		} else
-			_MDPTransitions[m][(m+1)%numMDP] = 100;
+			_MDPTransitions[m][(m+1)%numMDP] = 1;
 	}
 }
 
@@ -83,10 +83,10 @@ double*** CONTROLED::createTransitions() {
 					state = Random(NumObservations);
 				} while(!s.insert(state).second);
 				assert(state != -1);
-				transitions[o][a][state] = proba;
+				transitions[o][a][state] = proba / 100.0;
 			}
 			if( lim > 0 )
-				transitions[o][a][state] += lim;
+				transitions[o][a][state] += lim / 100.0;
 			s.clear();
 		}
 	}
@@ -96,7 +96,7 @@ double*** CONTROLED::createTransitions() {
 double* CONTROLED::createTimeToStay() {
 	int maxToStay        = GetMaxToStay();
 	double *timeToStay   = new double[maxToStay];
-	double gaussienne[5] = {5, 25, 40, 25, 5};
+	double gaussienne[5] = {0.05, 0.25, 0.40, 0.25, 0.05};
 	int mu               = Random(maxToStay);
 
 	for( int i = 0; i < maxToStay; i++ ) {
@@ -108,7 +108,7 @@ double* CONTROLED::createTimeToStay() {
 
 	//Pour sommer a 1
 	int cumIndex = 0;
-	int cumSum   = 0;
+	double cumSum   = 0;
 	while( cumIndex + mu - 2 < 0 ) {
 		cumSum += gaussienne[cumIndex];
 		cumIndex++;
@@ -172,8 +172,8 @@ bool CONTROLED::Step(STATE& state, int action, int& observation, double& reward)
 	int timeToStay               = env_state.timeToStay;
 
 	reward                       = GetReward(MDPIndex, stateIndex, action);
-	int p                        = Random(100) + 1;
-	int cumsum                   = _transitions[MDPIndex][stateIndex][action][0];
+	double p                     = (double)rand() / RAND_MAX;
+	double cumsum                = _transitions[MDPIndex][stateIndex][action][0];
 	int i                        = 0;
 	while( cumsum < p ) {
 		i++;
@@ -187,7 +187,7 @@ bool CONTROLED::Step(STATE& state, int action, int& observation, double& reward)
 	if( timeToStay > 0 )
 		env_state.timeToStay = timeToStay - 1;
 	else {
-		p = Random(100) + 1;
+		p = (double)rand() / RAND_MAX;
 		cumsum = _MDPTransitions[MDPIndex][0];
 		i = 0;
 		while( cumsum < p ) {
@@ -198,7 +198,7 @@ bool CONTROLED::Step(STATE& state, int action, int& observation, double& reward)
 		env_state.MDPIndex = newMDP;
 		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
 
-		p      = Random(100) + 1;
+		p      = (double)rand() / RAND_MAX;
 		cumsum = _timeToStay[MDPIndex][newMDP][0];
 		i      = 0;
 		while( cumsum < p ) {
