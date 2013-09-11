@@ -82,6 +82,8 @@ int main(int argc, char* argv[])
 		("disabletree", value<bool>(&searchParams.DisableTree), "Use 1-ply rollout action selection")
 		("showdistribution", value<bool>(&searchParams.ShowDistribution), "show current distribution (particles or probabilities)")
 		("maxtostay", value<int>(&maxToStay), "maximum time to stay in a mode (min = 1)")
+		("runprocesses", value<int>(&expParams.RunProcesses), "number of processes for the runs")
+		("runseed", value<long>(&expParams.RunSeed), "seed for the runs (not the environment generation)")
 		;
 
 	variables_map vm;

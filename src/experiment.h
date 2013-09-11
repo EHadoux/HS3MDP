@@ -49,6 +49,8 @@ public:
         bool AutoExploration;
         bool ProbaMCTS;
         bool Optimal;
+        int RunProcesses;
+        long RunSeed;
         std::string InputFile;
     };
 

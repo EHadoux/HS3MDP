@@ -19,6 +19,8 @@ EXPERIMENT::PARAMS::PARAMS()
 	AutoExploration(true),
 	ProbaMCTS(false),
 	Optimal(false),
+	RunProcesses(1),
+	RunSeed(time(NULL)),
 	InputFile("")
 {
 }
@@ -68,7 +70,7 @@ void EXPERIMENT::Run()
 	bool outOfParticles = false;
 	int t;
 
-	for (t = 0; t < ExpParams.NumSteps; t++)
+	for (t = 0; t < ExpParams.NumSteps / ExpParams.RunProcesses; t++)
 	{
 		int observation;
 		double reward;
@@ -98,7 +100,7 @@ void EXPERIMENT::Run()
 		if (outOfParticles)
 			break;
 
-		if (timer.elapsed() > ExpParams.TimeOut)
+		if (timer.elapsed() > ExpParams.TimeOut / ExpParams.RunProcesses)
 		{
 			cout << "Timed out after " << t << " steps in "
 				<< Results.Time.GetTotal() << "seconds" << endl;
@@ -163,7 +165,7 @@ bool EXPERIMENT::MultiRun()
 		cout << "Starting run " << n + 1 << " with "
 			<< SearchParams.NumSimulations << " simulations... " << endl;
 		Run();
-		if (Results.Time.GetTotal() > ExpParams.TimeOut)
+		if (Results.Time.GetTotal() > ExpParams.TimeOut / ExpParams.RunProcesses)
 		{
 			timedout = true;
 			cout << "Timed out after " << n << " runs in "
@@ -177,6 +179,10 @@ bool EXPERIMENT::MultiRun()
 void EXPERIMENT::DiscountedReturn()
 {
 	cout << "Main runs" << endl;
+	if( ExpParams.RunProcesses > 1 ) {
+		cout << "Seed: " << ExpParams.RunSeed << endl;
+		UTILS::RandomSeed(ExpParams.RunSeed);
+	}
 	OutputFile << "Simulations\tRuns\tUndiscounted return\tUndiscounted error\tDiscounted return\tDiscounted error\tTime\n";
 
 	SearchParams.MaxDepth = Simulator.GetHorizon(ExpParams.Accuracy, ExpParams.UndiscountedHorizon);
