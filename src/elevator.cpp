@@ -235,7 +235,7 @@ bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) 
 				continue;
 			}
 			if( !opened ) {
-				r = (double)rand() / RAND_MAX;
+				r = rand_01();
 				if((((MDPIndex == UPTRAFFIC && f == 0 ) || (MDPIndex == DOWNTRAFFIC && f != 0) || MDPIndex == BUSYTRAFFIC) && r < 0.20) || r < 0.10)
 						pickup[f] = true;
 			}
@@ -255,10 +255,10 @@ void ELEVATOR::NewModeAndTTS(ENVIRONMENT_STATE& env_state, int timeToStay, int M
 	if( timeToStay > 0 )
 		env_state.timeToStay = timeToStay - 1;
 	else {
-		double p = (double)rand() / RAND_MAX;
+		double p = rand_01();
 		double cumsum = _MDPTransitions[MDPIndex][0];
 		int i = 0;
-		while( cumsum < p ) {
+		while( cumsum <= p ) {
 			i++;
 			cumsum += _MDPTransitions[MDPIndex][i];
 		}
@@ -266,10 +266,10 @@ void ELEVATOR::NewModeAndTTS(ENVIRONMENT_STATE& env_state, int timeToStay, int M
 		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
 		env_state.MDPIndex = newMDP;
 
-		p = (double)rand() / RAND_MAX;
+		p = rand_01();
 		cumsum = _timeToStay[MDPIndex][newMDP][0];
 		i = 0;
-		while( cumsum < p ) {
+		while( cumsum <= p ) {
 			i++;
 			cumsum += _timeToStay[MDPIndex][newMDP][i];
 		}

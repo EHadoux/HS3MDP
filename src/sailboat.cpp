@@ -106,7 +106,7 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 	int MDPIndex                     = sailboatState.MDPIndex;
 	int timeToStay                   = sailboatState.timeToStay;
 	int cote                         = GetCote();
-	double p                         = (double)rand() / RAND_MAX;
+	double p                         = rand_01();
 	int i                            = stateIndex;
 	bool ret                         = false;
 
@@ -164,10 +164,10 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 	if( timeToStay > 0 )
 		sailboatState.timeToStay = timeToStay - 1;
 	else {
-		p             = (double)rand() / RAND_MAX;
+		p             = rand_01();
 		double cumsum = _MDPTransitions[MDPIndex][0];
 		i          = 0;
-		while( cumsum < p ) {
+		while( cumsum <= p ) {
 			i++;
 			cumsum += _MDPTransitions[MDPIndex][i];
 		}
@@ -175,10 +175,10 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
 		sailboatState.MDPIndex = newMDP;
 
-		p      = (double)rand() / RAND_MAX;
+		p      = rand_01();
 		cumsum = _timeToStay[MDPIndex][newMDP][0];
 		i      = 0;
-		while( cumsum < p ) {
+		while( cumsum <= p ) {
 			i++;
 			cumsum += _timeToStay[MDPIndex][newMDP][i];
 		}

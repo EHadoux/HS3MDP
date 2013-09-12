@@ -114,25 +114,25 @@ bool MONO_ELEVATOR::Step(STATE& state, int action, int& observation, double& rew
 		for( int f = 1; f < numFloors; f++ ) {
 			if( f == floorIndex && action == OPEN )
 				continue;
-			if(((double)rand() / RAND_MAX) < 0.10)
+			if(rand_01() < 0.10)
 				pickup[f] = true;
 		}
-		if((((double)rand() / RAND_MAX) < 0.20) && !(floorIndex == 0 && action == OPEN))
+		if((rand_01() < 0.20) && !(floorIndex == 0 && action == OPEN))
 			pickup[0] = true;
 	} else if( MDPIndex == DOWNTRAFFIC ) {
 		for( int f = (numFloors-1); f > 0; f-- ) {
 			if( f == floorIndex && action == OPEN )
 				continue;
-			if(((double)rand() / RAND_MAX) < 0.20)
+			if(rand_01() < 0.20)
 				pickup[f] = true;
 		}
-		if((((double)rand() / RAND_MAX) < 0.10) && !(floorIndex == 0 && action == OPEN))
+		if((rand_01() < 0.10) && !(floorIndex == 0 && action == OPEN))
 			pickup[0] = true;
 	} else if( MDPIndex == BUSYTRAFFIC ) {
 		for( int f = 0; f < numFloors; f++ ) {
 			if( f == floorIndex && action == OPEN )
 				continue;
-			if(((double)rand() / RAND_MAX) < 0.20)
+			if(rand_01() < 0.20)
 				pickup[f] = true;
 		}
 	}

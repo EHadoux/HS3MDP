@@ -4,6 +4,7 @@
 #include "simulator.h"
 #include <string>
 #include <iostream>
+#include <random>
 
 using namespace std;
 
@@ -50,11 +51,14 @@ protected:
 	bool TestTransitionsSumToOne() const;
 	bool TestMDPSumToOne() const;
 	bool TestTimeToStaySumToOne() const;
+	double rand_01() const;
 
 private:
 	mutable MEMORY_POOL<ENVIRONMENT_STATE> MemoryPool;
 	int _maxToStay;
 	int _numMDP;
 	int _copy;
+	mutable mt19937_64 _gen;
+	mutable uniform_real_distribution<> _dis;
 };
 #endif
