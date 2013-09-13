@@ -28,6 +28,8 @@ public:
 
 	vector<double> MH;
 
+	static void UnitTest();
+
 private:
 	ENVIRONMENT_STATE* _uniqueState;
 };

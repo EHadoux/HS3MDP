@@ -10,6 +10,7 @@
 #include "rocksample.h"
 #include "tag.h"
 #include "experiment.h"
+#include "beliefprobastate.h"
 #include <boost/program_options.hpp>
 
 using namespace std;
@@ -23,6 +24,8 @@ void UnitTests()
 	COORD::UnitTest();
 	cout << "Testing MCTS" << endl;
 	MCTS::UnitTest();
+	cout << "Testing BELIEF_PROBA_STATE" << endl;
+	BELIEF_PROBA_STATE::UnitTest();
 }
 
 void disableBufferedIO(void)
