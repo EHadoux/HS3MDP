@@ -63,11 +63,10 @@ bool PROBA_MCTS::Update(int action, int observation) {
 	for( int mprime = 0; mprime < numMDP; mprime++ ) {
 		double init = simulator.GetTransition(mprime, oldObs, action, observation);
 		for( int hprime = 0; hprime < maxToStay; hprime++ ) {
-			msum = init;
 			if( hprime + 1 < maxToStay )
-				msum *= rootBeliefs->MH[mprime * maxToStay + hprime + 1];
+				msum = init * rootBeliefs->MH[mprime * maxToStay + hprime + 1];
 			else
-				msum *= 0;
+				msum = 0;
 
 			for( int m = 0; m < numMDP; m++ ) {
 				pmm   = simulator.GetMDPTransition(m,mprime);

@@ -123,24 +123,23 @@ bool MCTS::Update(int action, int observation)
 		for( int mprime = 0; mprime < numMDP; mprime++ ) {
 			double init = esim.GetTransition(mprime, oldObs, action, observation);
 			for( int hprime = 0; hprime < maxToStay; hprime++ ) {
-				msum = init;
 				if( hprime + 1 < maxToStay )
-					msum *= _displayMH[mprime * maxToStay + hprime + 1];
+					msum = init * _displayMH[mprime * maxToStay + hprime + 1];
 				else
-					msum *= 0;
+					msum = 0;
 
-					for( int m = 0; m < numMDP; m++ ) {
-						pmm   = esim.GetMDPTransition(m,mprime);
-						pssam = esim.GetTransition(m, oldObs, action, observation);
-						pmh   = _displayMH[m * maxToStay + 0];
-						phmm  = esim.GetTimeToStay(m, mprime, hprime);
-						msum  += pmm * pssam * pmh * phmm;
-					}
-
-					MH[mprime * maxToStay + hprime] = msum;
-					sum += msum;
+				for( int m = 0; m < numMDP; m++ ) {
+					pmm   = esim.GetMDPTransition(m,mprime);
+					pssam = esim.GetTransition(m, oldObs, action, observation);
+					pmh   = _displayMH[m * maxToStay + 0];
+					phmm  = esim.GetTimeToStay(m, mprime, hprime);
+					msum  += pmm * pssam * pmh * phmm;
 				}
+
+				MH[mprime * maxToStay + hprime] = msum;
+				sum += msum;
 			}
+		}
 
 		assert(sum != 0);
 		for( int i = 0; i < numMDP * maxToStay; i++ ) {
