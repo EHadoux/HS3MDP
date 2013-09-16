@@ -54,6 +54,7 @@ bool PROBA_MCTS::Update(int action, int observation) {
 	BELIEF_PROBA_STATE *rootBeliefs = static_cast<BELIEF_PROBA_STATE*>(Root->Beliefs());
 	beliefs->MH.resize(numMDP * maxToStay);
 	beliefs->Copy(rootBeliefs, simulator);
+	beliefs->GetState()->stateIndex = observation;
 
 	// Find matching vnode from the rest of the tree
 	QNODE& qnode       = Root->Child(action);
@@ -108,7 +109,6 @@ bool PROBA_MCTS::Update(int action, int observation) {
 	newRoot->Beliefs()->Free(simulator);
 	delete newRoot->Beliefs();
 	simulator.FreeState(state);
-	beliefs->GetState()->stateIndex = observation;
 	newRoot->Beliefs(beliefs);
 	Root = newRoot;
 	return true;
