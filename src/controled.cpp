@@ -107,8 +107,8 @@ double* CONTROLED::createTimeToStay() {
 	}
 
 	//Pour sommer a 1
-	int cumIndex = 0;
-	double cumSum   = 0;
+	int cumIndex  = 0;
+	double cumSum = 0;
 	while( cumIndex + mu - 2 < 0 ) {
 		cumSum += gaussienne[cumIndex];
 		cumIndex++;

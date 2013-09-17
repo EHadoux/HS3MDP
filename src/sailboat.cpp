@@ -45,7 +45,7 @@ double* SAILBOAT::createTimeToStay() {
 	int maxToStay        = GetMaxToStay();
 	double *timeToStay   = new double[maxToStay];
 	double gaussienne[5] = {0.05, 0.25, 0.40, 0.25, 0.05};
-	int mu               = Random(maxToStay / 2);
+	int mu               = Random(maxToStay);
 
 	for( int i = 0; i < maxToStay; i++ ) {
 		if( (mu - 2) <= i && i <= (mu + 2) )
