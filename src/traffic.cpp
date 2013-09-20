@@ -166,47 +166,24 @@ TRAFFIC::~TRAFFIC() {
 
 bool TRAFFIC::Step(STATE& state, int action, int& observation, double& reward) const
 {
-	ENVIRONMENT_STATE& env_state = safe_cast<ENVIRONMENT_STATE&>(state);
-	int stateIndex = env_state.stateIndex;
-	int MDPIndex = env_state.MDPIndex;
-	int timeToStay = env_state.timeToStay;
-
-	reward = GetReward(MDPIndex, stateIndex, action);
-	double p = rand_01();
-	double cumsum = _transitions[MDPIndex][stateIndex][action][0];
-	int i = 0;
-	while( cumsum <= p ) {
-		i++;
-		cumsum += _transitions[MDPIndex][stateIndex][action][i];
-	}
-
-	env_state.stateIndex = i;
-	observation = i;
+	ENVIRONMENT_STATE& State = safe_cast<ENVIRONMENT_STATE&>(state);
+	int stateIndex           = State.stateIndex;
+	int MDPIndex             = State.MDPIndex;
+	int timeToStay           = State.timeToStay;
+	reward                   = GetReward(MDPIndex, stateIndex, action);
+	observation              = discrete_rand(_transitions[MDPIndex][stateIndex][action], NumObservations);
+	State.stateIndex         = observation;
 	assert(_transitions[MDPIndex][stateIndex][action][observation] > 0);
 
 	if( timeToStay > 0 )
-		env_state.timeToStay = timeToStay - 1;
+		State.timeToStay = timeToStay - 1;
 	else {
-		p = rand_01();
-		cumsum = _MDPTransitions[MDPIndex][0];
-		i = 0;
-		while( cumsum <= p ) {
-			i++;
-			cumsum += _MDPTransitions[MDPIndex][i];
-		}
-		int newMDP = i;
+		int newMDP = discrete_rand(_MDPTransitions[MDPIndex], GetNumMDP());
+		State.MDPIndex = newMDP;
 		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
-		env_state.MDPIndex = newMDP;
 
-		p = rand_01();
-		cumsum = _timeToStay[MDPIndex][newMDP][0];
-		i = 0;
-		while( cumsum <= p ) {
-			i++;
-			cumsum += _timeToStay[MDPIndex][newMDP][i];
-		}
-		env_state.timeToStay = i;
-		assert(_timeToStay[MDPIndex][newMDP][i] > 0);
+		State.timeToStay = discrete_rand(_timeToStay[MDPIndex][newMDP], GetMaxToStay());
+		assert(_timeToStay[MDPIndex][newMDP][State.timeToStay] > 0);
 	}
 
 	assert(GetTransition(MDPIndex, stateIndex, action, observation) > 0);

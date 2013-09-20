@@ -19,7 +19,7 @@ ENVIRONMENT::ENVIRONMENT(int numActions, int numObservations, int numMDP, int ma
 	_copy               = false;
 	random_device rd;
 	_gen 				= mt19937_64(rd());
-	_dis 				= uniform_real_distribution<>();
+	_dis				= uniform_real_distribution<>();
 }
 
 ENVIRONMENT::ENVIRONMENT(const ENVIRONMENT& other)
@@ -30,7 +30,7 @@ ENVIRONMENT::ENVIRONMENT(const ENVIRONMENT& other)
 	_maxToStay          = other._maxToStay;
 	_copy               = true;
 	_gen 				= other._gen;
-	_dis 				= other._dis;
+	_dis				= other._dis;
 }
 
 ENVIRONMENT::~ENVIRONMENT() {}
@@ -192,6 +192,11 @@ void ENVIRONMENT::ToPOMDP( string filename ) const {
 						f << "R: " << a << " : " << h * GetNumMDP() * GetNumObservations() + m * GetNumObservations() + o << " : * : * " << GetReward(m, o, a) << endl;
 	f << endl;
 	f.close();
+}
+
+int ENVIRONMENT::discrete_rand(const double* array, const int size) const {
+	discrete_distribution<> d(array, array + size);
+	return d(_gen);
 }
 
 double ENVIRONMENT::rand_01() const {

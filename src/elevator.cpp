@@ -165,10 +165,10 @@ int ELEVATOR::GetAction(int action, int elevatorNumber) const {
 
 bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) const
 {
-	ENVIRONMENT_STATE& env_state = safe_cast<ENVIRONMENT_STATE&>(state);
-	int stateIndex = env_state.stateIndex;
-	int MDPIndex = env_state.MDPIndex;
-	int timeToStay = env_state.timeToStay;
+	ENVIRONMENT_STATE& State = safe_cast<ENVIRONMENT_STATE&>(state);
+	int stateIndex = State.stateIndex;
+	int MDPIndex = State.MDPIndex;
+	int timeToStay = State.timeToStay;
 	int numFloors = GetNumFloors();
 	int numElevators = GetNumElevators();
 	int currentAction, newfloor;
@@ -242,39 +242,25 @@ bool ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) 
 		}
 	}
 
-	observation = ToObservation(floorIndex, pickup, dropoff);
-	env_state.stateIndex = observation;
-	NewModeAndTTS(env_state, timeToStay, MDPIndex);
+	observation      = ToObservation(floorIndex, pickup, dropoff);
+	State.stateIndex = observation;
+	NewModeAndTTS(State, timeToStay, MDPIndex);
 
 	assert(GetTransition(MDPIndex, stateIndex, action, observation) > 0);
 
 	return false;
 }
 
-void ELEVATOR::NewModeAndTTS(ENVIRONMENT_STATE& env_state, int timeToStay, int MDPIndex) const {
+void ELEVATOR::NewModeAndTTS(ENVIRONMENT_STATE& State, int timeToStay, int MDPIndex) const {
 	if( timeToStay > 0 )
-		env_state.timeToStay = timeToStay - 1;
+		State.timeToStay = timeToStay - 1;
 	else {
-		double p = rand_01();
-		double cumsum = _MDPTransitions[MDPIndex][0];
-		int i = 0;
-		while( cumsum <= p ) {
-			i++;
-			cumsum += _MDPTransitions[MDPIndex][i];
-		}
-		int newMDP = i;
+		int newMDP     = discrete_rand(_MDPTransitions[MDPIndex], GetNumMDP());
+		State.MDPIndex = newMDP;
 		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
-		env_state.MDPIndex = newMDP;
 
-		p = rand_01();
-		cumsum = _timeToStay[MDPIndex][newMDP][0];
-		i = 0;
-		while( cumsum <= p ) {
-			i++;
-			cumsum += _timeToStay[MDPIndex][newMDP][i];
-		}
-		env_state.timeToStay = i;
-		assert(_timeToStay[MDPIndex][newMDP][i] > 0);
+		State.timeToStay = discrete_rand(_timeToStay[MDPIndex][newMDP], GetMaxToStay());
+		assert(_timeToStay[MDPIndex][newMDP][State.timeToStay] > 0);
 	}
 }
 

@@ -64,11 +64,11 @@ int MONO_ELEVATOR::ToObservation(int floorIndex, vector<bool> pickup, vector<boo
 
 bool MONO_ELEVATOR::Step(STATE& state, int action, int& observation, double& reward) const
 {
-	ENVIRONMENT_STATE& env_state = safe_cast<ENVIRONMENT_STATE&>(state);
-	int stateIndex = env_state.stateIndex;
-	int MDPIndex = env_state.MDPIndex;
-	int timeToStay = env_state.timeToStay;
-	int numFloors = GetNumFloors();
+	ENVIRONMENT_STATE& State = safe_cast<ENVIRONMENT_STATE&>(state);
+	int stateIndex           = State.stateIndex;
+	int MDPIndex             = State.MDPIndex;
+	int timeToStay           = State.timeToStay;
+	int numFloors            = GetNumFloors();
 	int floorIndex;
 	vector<bool> pickup, dropoff;
 	FromObservation(stateIndex, floorIndex, pickup, dropoff);
@@ -137,9 +137,9 @@ bool MONO_ELEVATOR::Step(STATE& state, int action, int& observation, double& rew
 		}
 	}
 
-	observation = ToObservation(floorIndex, pickup, dropoff);
-	env_state.stateIndex = observation;
-	NewModeAndTTS(env_state, timeToStay, MDPIndex);
+	observation      = ToObservation(floorIndex, pickup, dropoff);
+	State.stateIndex = observation;
+	NewModeAndTTS(State, timeToStay, MDPIndex);
 
 	assert(GetTransition(MDPIndex, stateIndex, action, observation) > 0);
 

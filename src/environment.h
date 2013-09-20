@@ -51,6 +51,7 @@ protected:
 	bool TestTransitionsSumToOne() const;
 	bool TestMDPSumToOne() const;
 	bool TestTimeToStaySumToOne() const;
+	int discrete_rand(const double* array, const int size) const;
 	double rand_01() const;
 
 private:

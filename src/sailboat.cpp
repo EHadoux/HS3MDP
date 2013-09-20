@@ -164,26 +164,12 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 	if( timeToStay > 0 )
 		sailboatState.timeToStay = timeToStay - 1;
 	else {
-		p             = rand_01();
-		double cumsum = _MDPTransitions[MDPIndex][0];
-		i          = 0;
-		while( cumsum <= p ) {
-			i++;
-			cumsum += _MDPTransitions[MDPIndex][i];
-		}
-		int newMDP = i;
-		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
+		int newMDP             = discrete_rand(_MDPTransitions[MDPIndex], GetNumMDP());
 		sailboatState.MDPIndex = newMDP;
+		assert(_MDPTransitions[MDPIndex][newMDP] > 0);
 
-		p      = rand_01();
-		cumsum = _timeToStay[MDPIndex][newMDP][0];
-		i      = 0;
-		while( cumsum <= p ) {
-			i++;
-			cumsum += _timeToStay[MDPIndex][newMDP][i];
-		}
-		sailboatState.timeToStay = i;
-		assert(_timeToStay[MDPIndex][newMDP][i] > 0);
+		sailboatState.timeToStay = discrete_rand(_timeToStay[MDPIndex][newMDP], GetMaxToStay());
+		assert(_timeToStay[MDPIndex][newMDP][sailboatState.timeToStay] > 0);
 	}
 
 	assert(GetTransition(MDPIndex, stateIndex, action, observation) > 0);
