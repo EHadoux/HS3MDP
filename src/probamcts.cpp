@@ -25,10 +25,9 @@ void PROBA_MCTS::InitialiseRoot() {
 
 PROBA_VNODE* PROBA_MCTS::ExpandNode(const STATE* state)
 {
-	const ENVIRONMENT& simulator = safe_cast<const ENVIRONMENT&>(Simulator);
-	PROBA_VNODE* vnode           = PROBA_VNODE::Create();
+	PROBA_VNODE* vnode = PROBA_VNODE::Create();
 	vnode->Value.Set(0, 0);
-	simulator.Prior(state, History, vnode, Status);
+	Simulator.Prior(state, History, vnode, Status);
 
 	if (Params.Verbose >= 2)
 	{
@@ -56,9 +55,6 @@ bool PROBA_MCTS::Update(int action, int observation) {
 	beliefs->Copy(rootBeliefs, simulator);
 	beliefs->GetState()->stateIndex = observation;
 
-	// Find matching vnode from the rest of the tree
-	QNODE& qnode       = Root->Child(action);
-	PROBA_VNODE* vnode = safe_cast<PROBA_VNODE*>(qnode.Child(observation));
 	double sum         = 0, pmh, pmm, pssam, msum, phmm;
 
 	for( int mprime = 0; mprime < numMDP; mprime++ ) {
@@ -93,23 +89,19 @@ bool PROBA_MCTS::Update(int action, int observation) {
 		cout << endl;
 	}
 
-	// Find a state to initialise prior (only requires fully observed state)
-	ENVIRONMENT_STATE* state = 0;
-
-	if( vnode && vnode->Beliefs()->GetState() != 0 ) {
-		state = vnode->Beliefs()->CreateSample(simulator);
-	}
-	else {
-		state = beliefs->CreateSample(simulator);
-	}
-
 	// Delete old tree and create new root
 	PROBA_VNODE::Free(Root, simulator);
-	PROBA_VNODE* newRoot = ExpandNode(state);
+	PROBA_VNODE* newRoot = ExpandNode(beliefs->GetState());
 	newRoot->Beliefs()->Free(simulator);
 	delete newRoot->Beliefs();
-	simulator.FreeState(state);
 	newRoot->Beliefs(beliefs);
 	Root = newRoot;
 	return true;
 }
+
+void PROBA_MCTS::AddSample(VNODE* node, const STATE& state)
+{
+	_unused(node);
+	_unused(state);
+}
+

@@ -16,6 +16,7 @@ public:
 
 private:
 	PROBA_VNODE* ExpandNode(const STATE* state);
+	void AddSample(VNODE* node, const STATE& state);
 };
 
 #endif

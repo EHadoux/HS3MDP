@@ -72,7 +72,7 @@ protected:
     double SimulateQ(STATE& state, QNODE& qnode, int action);
     void AddRave(VNODE* vnode, double totalReward);
     virtual VNODE* ExpandNode(const STATE* state);
-    void AddSample(VNODE* node, const STATE& state);
+    virtual void AddSample(VNODE* node, const STATE& state);
     void AddTransforms(BELIEF_STATE* beliefs);
     STATE* CreateTransform() const;
     void Resample(BELIEF_STATE& beliefs);

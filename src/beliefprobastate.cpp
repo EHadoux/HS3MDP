@@ -30,9 +30,9 @@ void BELIEF_PROBA_STATE::Free(const SIMULATOR& simulator) {
 }
 
 ENVIRONMENT_STATE* BELIEF_PROBA_STATE::CreateSample(const SIMULATOR& simulator) const {
-	const ENVIRONMENT& env       = safe_cast<const ENVIRONMENT&>(simulator);
-	ENVIRONMENT_STATE *env_state = env.Copy(*_uniqueState);
-	int i                        = 0, maxToStay = env.GetMaxToStay(), numMDP = env.GetNumMDP();
+	const ENVIRONMENT& env   = safe_cast<const ENVIRONMENT&>(simulator);
+	ENVIRONMENT_STATE *State = env.Copy(*_uniqueState);
+	int i                    = 0, maxToStay = env.GetMaxToStay(), numMDP = env.GetNumMDP();
 
 	mt19937_64 gen;
 	discrete_distribution<> dist(MH, MH + maxToStay * numMDP);
@@ -41,13 +41,13 @@ ENVIRONMENT_STATE* BELIEF_PROBA_STATE::CreateSample(const SIMULATOR& simulator) 
 	assert(MH[i] != 0);
 	assert(i < (maxToStay * numMDP));
 
-	env_state->MDPIndex   = i / maxToStay;
-	env_state->timeToStay = i % maxToStay;
-	env_state->stateIndex = _uniqueState->stateIndex;
+	State->MDPIndex   = i / maxToStay;
+	State->timeToStay = i % maxToStay;
+	State->stateIndex = _uniqueState->stateIndex;
 
-	assert(env_state->MDPIndex >= 0 && env_state->MDPIndex < numMDP);
+	assert(State->MDPIndex >= 0 && State->MDPIndex < numMDP);
 
-	return env_state;
+	return State;
 }
 
 void BELIEF_PROBA_STATE::AddSample(STATE* state) {

@@ -63,7 +63,6 @@ MCTS::~MCTS()
 
 bool MCTS::Update(int action, int observation)
 {
-
 	int oldObs = 0;
 	if( Params.ShowDistribution ) {
 		if( History.Size() > 0 )
