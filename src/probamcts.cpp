@@ -18,7 +18,7 @@ void PROBA_MCTS::InitialiseRoot() {
 	int numMDP                    = env_sim.GetNumMDP(), maxToStay = env_sim.GetMaxToStay();
 
 	PRoot->SetState(startState);
-	PRoot->MH.resize(numMDP * maxToStay);
+	PRoot->MH = new double[numMDP * maxToStay];
 	for( int i = 0; i < numMDP; i++ )
 		PRoot->MH[i * maxToStay + 0] = 1.0 / numMDP;
 }
@@ -52,7 +52,7 @@ bool PROBA_MCTS::Update(int action, int observation) {
 	History.Add(action, observation);
 	BELIEF_PROBA_STATE *beliefs     = new BELIEF_PROBA_STATE();
 	BELIEF_PROBA_STATE *rootBeliefs = static_cast<BELIEF_PROBA_STATE*>(Root->Beliefs());
-	beliefs->MH.resize(numMDP * maxToStay);
+	beliefs->MH                     = new double[numMDP * maxToStay];
 	beliefs->Copy(rootBeliefs, simulator);
 	beliefs->GetState()->stateIndex = observation;
 

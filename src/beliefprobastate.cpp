@@ -12,11 +12,18 @@ using namespace UTILS;
 
 BELIEF_PROBA_STATE::BELIEF_PROBA_STATE() {
 	_uniqueState = 0;
+	MH = 0;
 }
 
-BELIEF_PROBA_STATE::~BELIEF_PROBA_STATE() {}
+BELIEF_PROBA_STATE::~BELIEF_PROBA_STATE() {
+	if( MH )
+		delete[] MH;
+}
 
 void BELIEF_PROBA_STATE::Free(const SIMULATOR& simulator) {
+	if( MH )
+		delete[] MH;
+	MH = 0;
 	if( _uniqueState )
 		simulator.FreeState(_uniqueState);
 	_uniqueState = 0;
@@ -28,7 +35,7 @@ ENVIRONMENT_STATE* BELIEF_PROBA_STATE::CreateSample(const SIMULATOR& simulator) 
 	int i                        = 0, maxToStay = env.GetMaxToStay(), numMDP = env.GetNumMDP();
 
 	mt19937_64 gen;
-	discrete_distribution<> dist(MH.begin(), MH.end());
+	discrete_distribution<> dist(MH, MH + maxToStay * numMDP);
 	i = dist(gen);
 
 	assert(MH[i] != 0);
