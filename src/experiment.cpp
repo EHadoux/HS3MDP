@@ -70,7 +70,7 @@ void EXPERIMENT::Run()
 	bool outOfParticles = false;
 	int t;
 
-	for (t = 0; t < ExpParams.NumSteps / ExpParams.RunProcesses; t++)
+	for (t = 0; t < ExpParams.NumSteps; t++)
 	{
 		int observation;
 		double reward;
@@ -100,7 +100,7 @@ void EXPERIMENT::Run()
 		if (outOfParticles)
 			break;
 
-		if (timer.elapsed() > ExpParams.TimeOut / ExpParams.RunProcesses)
+		if (timer.elapsed() > ExpParams.TimeOut)
 		{
 			cout << "Timed out after " << t << " steps in "
 				<< Results.Time.GetTotal() << "seconds" << endl;
@@ -160,7 +160,7 @@ void EXPERIMENT::Run()
 bool EXPERIMENT::MultiRun()
 {
 	bool timedout = false;
-	for (int n = 0; n < ExpParams.NumRuns; n++)
+	for (int n = 0; n < ExpParams.NumRuns / ExpParams.RunProcesses; n++)
 	{
 		cout << "Starting run " << n + 1 << " with "
 			<< SearchParams.NumSimulations << " simulations... " << endl;
