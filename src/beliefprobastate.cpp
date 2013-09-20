@@ -32,11 +32,11 @@ void BELIEF_PROBA_STATE::Free(const SIMULATOR& simulator) {
 ENVIRONMENT_STATE* BELIEF_PROBA_STATE::CreateSample(const SIMULATOR& simulator) const {
 	const ENVIRONMENT& env   = safe_cast<const ENVIRONMENT&>(simulator);
 	ENVIRONMENT_STATE *State = env.Copy(*_uniqueState);
-	int i                    = 0, maxToStay = env.GetMaxToStay(), numMDP = env.GetNumMDP();
+	int maxToStay            = env.GetMaxToStay(), numMDP = env.GetNumMDP();
 
-	mt19937_64 gen;
+	mt19937_64 gen(rand());
 	discrete_distribution<> dist(MH, MH + maxToStay * numMDP);
-	i = dist(gen);
+	int i = dist(gen);
 
 	assert(MH[i] != 0);
 	assert(i < (maxToStay * numMDP));

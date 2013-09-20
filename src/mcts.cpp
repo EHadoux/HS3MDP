@@ -189,7 +189,7 @@ void MCTS::RolloutSearch()
 	for (int i = 0; i < Params.NumSimulations; i++)
 	{
 		int action = legal[i % legal.size()];
-		STATE* state = Root->Beliefs()->CreateSample(Simulator);
+		STATE* state = BeliefState()->CreateSample(Simulator);
 		Simulator.Validate(*state);
 
 		int observation;
@@ -453,7 +453,7 @@ STATE* MCTS::CreateTransform() const
 	int stepObs;
 	double stepReward;
 
-	STATE* state = Root->Beliefs()->CreateSample(Simulator);
+	STATE* state = BeliefState()->CreateSample(Simulator);
 	Simulator.Step(*state, History.Back().Action, stepObs, stepReward);
 	if (Simulator.LocalMove(*state, History, stepObs, Status))
 		return state;

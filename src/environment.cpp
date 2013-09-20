@@ -17,8 +17,7 @@ ENVIRONMENT::ENVIRONMENT(int numActions, int numObservations, int numMDP, int ma
 	_startingStateIndex = Random(numObservations);
 	_maxToStay          = maxToStay;
 	_copy               = false;
-	random_device rd;
-	_gen 				= mt19937_64(rd());
+	_gen 				= mt19937_64(rand());
 	_dis				= uniform_real_distribution<>();
 }
 
