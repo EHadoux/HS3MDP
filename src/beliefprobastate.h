@@ -30,6 +30,7 @@ public:
 
 private:
 	ENVIRONMENT_STATE* _uniqueState;
+	mutable mt19937_64 _gen;
 };
 
 #endif

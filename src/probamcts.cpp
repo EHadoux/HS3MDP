@@ -19,6 +19,8 @@ void PROBA_MCTS::InitialiseRoot() {
 
 	PRoot->SetState(startState);
 	PRoot->MH = new double[numMDP * maxToStay];
+	for( int i = 0; i < numMDP * maxToStay; i++ )
+		PRoot->MH[i] = 0;
 	for( int i = 0; i < numMDP; i++ )
 		PRoot->MH[i * maxToStay + 0] = 1.0 / numMDP;
 }

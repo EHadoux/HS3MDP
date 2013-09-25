@@ -13,6 +13,7 @@ using namespace UTILS;
 BELIEF_PROBA_STATE::BELIEF_PROBA_STATE() {
 	_uniqueState = 0;
 	MH = 0;
+	_gen = mt19937_64(rand());
 }
 
 BELIEF_PROBA_STATE::~BELIEF_PROBA_STATE() {
@@ -34,9 +35,8 @@ ENVIRONMENT_STATE* BELIEF_PROBA_STATE::CreateSample(const SIMULATOR& simulator) 
 	ENVIRONMENT_STATE *State = env.Copy(*_uniqueState);
 	int maxToStay            = env.GetMaxToStay(), numMDP = env.GetNumMDP();
 
-	mt19937_64 gen(rand());
 	discrete_distribution<> dist(MH, MH + maxToStay * numMDP);
-	int i = dist(gen);
+	int i = dist(_gen);
 
 	assert(MH[i] != 0);
 	assert(i < (maxToStay * numMDP));
