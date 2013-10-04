@@ -55,6 +55,7 @@ bool PROBA_MCTS::Update(int action, int observation) {
 	BELIEF_PROBA_STATE *rootBeliefs = static_cast<BELIEF_PROBA_STATE*>(Root->Beliefs());
 	beliefs->MH                     = new double[numMDP * maxToStay];
 	beliefs->Copy(rootBeliefs, simulator);
+	rootBeliefs->GetState()->stateIndex = observation;
 	beliefs->GetState()->stateIndex = observation;
 
 	double sum         = 0, pmh, pmm, pssam, msum, phmm;

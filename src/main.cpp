@@ -147,6 +147,7 @@ int main(int argc, char* argv[])
 	}
 	else if (problem == "controled")
 	{
+		UTILS::RandomSeed(expParams.RunSeed);
 		real      = new CONTROLED(size, number, numMDP, maxToStay);
 		simulator = new CONTROLED(safe_cast<const CONTROLED&>(*real));
 	}
