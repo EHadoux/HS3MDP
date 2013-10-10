@@ -153,10 +153,12 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 			} break;
 	}
 	assert(i < cote * cote);
-	reward = ((i / cote) + 1) * ((i % cote) + 1);
+	reward = -1;
 
-	if( reward == cote * cote )
+	if( (((i / cote) + 1) * ((i % cote) + 1)) == cote * cote ) {
+	  reward = 100;
 		ret = true;
+	}
 
 	sailboatState.stateIndex = i;
 	observation              = i;
