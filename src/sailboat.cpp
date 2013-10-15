@@ -16,8 +16,8 @@
 using namespace std;
 using namespace UTILS;
 
-SAILBOAT::SAILBOAT(int numStates, int maxToStay)
-: ENVIRONMENT(2, numStates, 4, maxToStay)
+SAILBOAT::SAILBOAT(int numStates, int maxToStay, bool original)
+: ENVIRONMENT(2, numStates, 4, maxToStay, original)
 {
 	_cote           = sqrt(numStates);
 	int numMDP      = GetNumMDP();
@@ -99,9 +99,8 @@ SAILBOAT::~SAILBOAT() {
 
 ENVIRONMENT_STATE* SAILBOAT::CreateStartState() const {
 	ENVIRONMENT_STATE* state = ENVIRONMENT::CreateStartState();
-	state->stateIndex        = 0;
-
-	cout << state->stateIndex << endl;
+	if( !isCopy() || useStructure() )
+		state->stateIndex    = 0;
 
 	return state;
 }

@@ -16,7 +16,7 @@ public:
 class ENVIRONMENT : public SIMULATOR {
 
 public:
-	ENVIRONMENT(int numActions, int numObservations, int numMDP, int maxToStay);
+	ENVIRONMENT(int numActions, int numObservations, int numMDP, int maxToStay, bool original);
 	ENVIRONMENT(const ENVIRONMENT& other);
 	virtual ~ENVIRONMENT();
 
@@ -47,6 +47,7 @@ public:
 
 protected:
 	bool isCopy() const { return _copy; }
+	bool useStructure() const { return !_original; }
 	int* _startingStateIndex;
 	bool TestTransitionsSumToOne() const;
 	bool TestMDPSumToOne() const;
@@ -58,7 +59,8 @@ private:
 	mutable MEMORY_POOL<ENVIRONMENT_STATE> MemoryPool;
 	int _maxToStay;
 	int _numMDP;
-	int _copy;
+	bool _copy;
+	bool _original;
 	mutable mt19937_64 _gen;
 	mutable uniform_real_distribution<> _dis;
 };

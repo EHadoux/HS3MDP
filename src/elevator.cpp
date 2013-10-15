@@ -19,8 +19,8 @@
 using namespace std;
 using namespace UTILS;
 
-ELEVATOR::ELEVATOR(int numFloors, int numElevators, int maxToStay)
-: ENVIRONMENT(pow(3, numElevators), pow(numFloors * pow(2, numFloors), numElevators) * pow(2, numFloors), 3, maxToStay)
+ELEVATOR::ELEVATOR(int numFloors, int numElevators, int maxToStay, bool original)
+: ENVIRONMENT(pow(3, numElevators), pow(numFloors * pow(2, numFloors), numElevators) * pow(2, numFloors), 3, maxToStay, original)
 {
 	_numFloors = numFloors;
 	_numElevators = numElevators;
@@ -102,7 +102,8 @@ ELEVATOR::~ELEVATOR() {
 
 ENVIRONMENT_STATE* ELEVATOR::CreateStartState() const {
 	ENVIRONMENT_STATE* state = ENVIRONMENT::CreateStartState();
-	state->stateIndex        = 0;
+	if( !isCopy() || useStructure() )
+		state->stateIndex    = 0;
 
 	return state;
 }

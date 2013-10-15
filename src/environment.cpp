@@ -11,7 +11,7 @@
 using namespace std;
 using namespace UTILS;
 
-ENVIRONMENT::ENVIRONMENT(int numActions, int numObservations, int numMDP, int maxToStay)
+ENVIRONMENT::ENVIRONMENT(int numActions, int numObservations, int numMDP, int maxToStay, bool original)
 : SIMULATOR(numActions, numObservations, 0.9) {
 	_numMDP             = numMDP;
 	_startingStateIndex = new int(Random(numObservations));
@@ -19,6 +19,7 @@ ENVIRONMENT::ENVIRONMENT(int numActions, int numObservations, int numMDP, int ma
 	_copy               = false;
 	_gen 				= mt19937_64(rand());
 	_dis				= uniform_real_distribution<>();
+	_original			= original;
 }
 
 ENVIRONMENT::ENVIRONMENT(const ENVIRONMENT& other)
@@ -30,6 +31,7 @@ ENVIRONMENT::ENVIRONMENT(const ENVIRONMENT& other)
 	_copy               = true;
 	_gen 				= other._gen;
 	_dis				= other._dis;
+	_original			= other._original;
 }
 
 ENVIRONMENT::~ENVIRONMENT() {
@@ -43,7 +45,7 @@ ENVIRONMENT_STATE* ENVIRONMENT::Allocate() const {
 
 ENVIRONMENT_STATE* ENVIRONMENT::CreateStartState() const {
 	ENVIRONMENT_STATE* state = MemoryPool.Allocate();
-	if( !isCopy() )
+	if( !isCopy() || !useStructure() )
 		*_startingStateIndex = Random(GetNumObservations());
 	state->stateIndex        = *_startingStateIndex;
 	state->MDPIndex          = Random(GetNumMDP());

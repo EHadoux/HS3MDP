@@ -8,7 +8,7 @@ using namespace std;
 
 class SAILBOAT : public ENVIRONMENT {
 public:
-	SAILBOAT(int numStates, int maxToStay = 5);
+	SAILBOAT(int numStates, int maxToStay, bool original);
 	SAILBOAT(const SAILBOAT& other);
 	~SAILBOAT();
 

@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 	SIMULATOR::KNOWLEDGE knowledge;
 	string problem, outputfile;
 	int size, number, numMDP, maxToStay = 5;
-	bool freeSim = false;
+	bool freeSim = false, original = false;
 
 	options_description desc("Allowed options");
 	desc.add_options()
@@ -69,6 +69,7 @@ int main(int argc, char* argv[])
 		("show", "show the environment and quit")
 		("mytest", "test the environment and quit")
 		("optimal", value<bool>(&expParams.Optimal), "run optimal policy")
+		("original", value<bool>(&original), "no structure exploit")
 		("topomdp", "create the pomdp file associated with this environment")
 		("autoexploration", value<bool>(&expParams.AutoExploration), "Automatically assign UCB exploration constant")
 		("exploration", value<double>(&searchParams.ExplorationConstant), "Manual value for UCB exploration constant")
@@ -119,6 +120,7 @@ int main(int argc, char* argv[])
 
 	SIMULATOR* real      = 0;
 	SIMULATOR* simulator = 0;
+	UTILS::RandomSeed(expParams.RunSeed);
 
 	if (problem == "battleship")
 	{
@@ -147,27 +149,26 @@ int main(int argc, char* argv[])
 	}
 	else if (problem == "controled")
 	{
-		UTILS::RandomSeed(expParams.RunSeed);
-		real      = new CONTROLED(size, number, numMDP, maxToStay);
+		real      = new CONTROLED(size, number, numMDP, maxToStay, original);
 		simulator = new CONTROLED(safe_cast<const CONTROLED&>(*real));
 	}
 	else if( problem == "sailboat" )
 	{
-		real      = new SAILBOAT(size, maxToStay);
+		real      = new SAILBOAT(size, maxToStay, original);
 		simulator = new SAILBOAT(safe_cast<const SAILBOAT&>(*real));
 	}
 	else if( problem == "traffic" )
 	{
-		real      = new TRAFFIC(maxToStay);
+		real      = new TRAFFIC(maxToStay, original);
 		simulator = new TRAFFIC(safe_cast<const TRAFFIC&>(*real));
 	}
 	else if( problem == "elevator" )
 	{
 		if( number > 1 ) {
-			real      = new ELEVATOR(4, number, maxToStay);
+			real      = new ELEVATOR(4, number, maxToStay, original);
 			simulator = new ELEVATOR(safe_cast<const ELEVATOR&>(*real));
 		} else {
-			real      = new MONO_ELEVATOR(size, maxToStay);
+			real      = new MONO_ELEVATOR(size, maxToStay, original);
 			simulator = new MONO_ELEVATOR(safe_cast<const MONO_ELEVATOR&>(*real));
 		}
 	}
