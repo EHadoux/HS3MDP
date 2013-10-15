@@ -37,8 +37,6 @@ SAILBOAT::SAILBOAT(int numStates, int maxToStay)
 		_MDPTransitions[m][(m+1)%numMDP]                       = 0.1;
 
 	}
-
-	_startingStateIndex = 0;
 }
 
 double* SAILBOAT::createTimeToStay() {
@@ -97,6 +95,15 @@ SAILBOAT::~SAILBOAT() {
 		delete[] _timeToStay;
 		delete[] _MDPTransitions;
 	}
+}
+
+ENVIRONMENT_STATE* SAILBOAT::CreateStartState() const {
+	ENVIRONMENT_STATE* state = ENVIRONMENT::CreateStartState();
+	state->stateIndex        = 0;
+
+	cout << state->stateIndex << endl;
+
+	return state;
 }
 
 bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) const

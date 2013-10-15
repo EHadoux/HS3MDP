@@ -39,8 +39,6 @@ ELEVATOR::ELEVATOR(int numFloors, int numElevators, int maxToStay)
 
 		_MDPTransitions[m][m] = 0.10;
 	}
-
-	_startingStateIndex = 0;
 }
 
 double* ELEVATOR::createTimeToStay() {
@@ -100,6 +98,13 @@ ELEVATOR::~ELEVATOR() {
 		delete[] _timeToStay;
 		delete[] _MDPTransitions;
 	}
+}
+
+ENVIRONMENT_STATE* ELEVATOR::CreateStartState() const {
+	ENVIRONMENT_STATE* state = ENVIRONMENT::CreateStartState();
+	state->stateIndex        = 0;
+
+	return state;
 }
 
 void ELEVATOR::FromObservation(int observation, vector<int>& floorIndex, vector<bool>& pickup, vector<vector<bool> >& dropoff) const {

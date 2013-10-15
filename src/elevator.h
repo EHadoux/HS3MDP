@@ -16,6 +16,7 @@ public:
 	virtual bool Step(STATE& state, int action, int& observation, double& reward) const;
 	void NewModeAndTTS(ENVIRONMENT_STATE& env_state, int timeToStay, int MDPIndex) const;
 
+	ENVIRONMENT_STATE* CreateStartState() const;
 	virtual double GetTransition(int mdp, int oldObs, int action, int newObs) const;
 	double GetMDPTransition(int oldmdp, int newmdp) const;
 	double GetTimeToStay(int oldmdp, int newmdp, int h) const;

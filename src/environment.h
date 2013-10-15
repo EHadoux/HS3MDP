@@ -21,7 +21,7 @@ public:
 	virtual ~ENVIRONMENT();
 
 	ENVIRONMENT_STATE* Copy(const STATE& state) const;
-	ENVIRONMENT_STATE* CreateStartState() const;
+	virtual ENVIRONMENT_STATE* CreateStartState() const;
 	ENVIRONMENT_STATE* Allocate() const;
 	void FreeState(STATE* state) const;
 
@@ -32,7 +32,7 @@ public:
 	virtual void DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const;
 	virtual void DisplayAction(int action, std::ostream& ostr) const;
 
-	int GetStartingObservation() const { return _startingStateIndex; }
+	int GetStartingObservation() const { return *_startingStateIndex; }
 	int GetNumMDP() const { return _numMDP; }
 	int GetMaxToStay() const { return _maxToStay; }
 
@@ -47,7 +47,7 @@ public:
 
 protected:
 	bool isCopy() const { return _copy; }
-	int _startingStateIndex;
+	int* _startingStateIndex;
 	bool TestTransitionsSumToOne() const;
 	bool TestMDPSumToOne() const;
 	bool TestTimeToStaySumToOne() const;

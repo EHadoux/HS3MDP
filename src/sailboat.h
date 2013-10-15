@@ -14,6 +14,7 @@ public:
 
 	bool Step(STATE& state, int action, int& observation, double& reward) const;
 
+	ENVIRONMENT_STATE* CreateStartState() const;
 	double GetTransition(int mdp, int oldObs, int action, int newObs) const;
 	double GetMDPTransition(int oldmdp, int newmdp) const;
 	double GetTimeToStay(int oldmdp, int newmdp, int h) const;
