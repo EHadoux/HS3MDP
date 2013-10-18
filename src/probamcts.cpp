@@ -70,9 +70,13 @@ bool PROBA_MCTS::Update(int action, int observation) {
 
 			for( int m = 0; m < numMDP; m++ ) {
 				pmm   = simulator.GetMDPTransition(m,mprime);
+				cout << "PMM:" << pmm << endl;
 				pssam = simulator.GetTransition(m, oldObs, action, observation);
+				cout << "PSSAM: " << pssam << endl;
 				pmh   = rootBeliefs->MH[m * maxToStay + 0];
+				cout << "PMH: " << pmh << endl;
 				phmm  = simulator.GetTimeToStay(m, mprime, hprime);
+				cout << "PHMM: " << phmm << endl;
 				msum  += pmm * pssam * pmh * phmm;
 			}
 

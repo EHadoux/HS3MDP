@@ -152,7 +152,7 @@ void ENVIRONMENT::TestConstructor() const {
 
 void ENVIRONMENT::ToPOMDP( string filename ) const {
 	ofstream f(filename.c_str());
-	double MDPTransition = 0, timeToStay = 0;
+	double MDPTransition = 0, timeToStay = 0, sum = 0;
 	int numMDP           = GetNumMDP(), maxToStay = GetMaxToStay(), numObs = GetNumObservations();
 
 	f << "discount: " << Discount << endl;
@@ -165,6 +165,7 @@ void ENVIRONMENT::ToPOMDP( string filename ) const {
 		for( int h = 0; h < maxToStay; h++ )
 			for( int m = 0; m < numMDP; m++ )
 				for( int o = 0; o < numObs; o++ ) {
+					sum = 0;
 					for( int hprime = 0; hprime < maxToStay; hprime++ )
 						for( int mprime = 0; mprime < numMDP; mprime++ ) {
 							MDPTransition = 0, timeToStay = 0;
@@ -178,10 +179,12 @@ void ENVIRONMENT::ToPOMDP( string filename ) const {
 							}
 
 							for( int oprime = 0; oprime < numObs; oprime++ ) {
+								sum += GetTransition(m, o, a, oprime) * MDPTransition * timeToStay;
 								f << GetTransition(m, o, a, oprime) * MDPTransition * timeToStay << " ";
 							}
 						}
 					f << endl;
+					assert(abs(sum - 1.0) < 1e-10);
 				}
 		f << endl;
 	}

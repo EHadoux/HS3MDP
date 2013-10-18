@@ -102,8 +102,10 @@ ELEVATOR::~ELEVATOR() {
 
 ENVIRONMENT_STATE* ELEVATOR::CreateStartState() const {
 	ENVIRONMENT_STATE* state = ENVIRONMENT::CreateStartState();
-	if( !isCopy() || useStructure() )
+	if( !isCopy() || useStructure() ) {
 		state->stateIndex    = 0;
+		*_startingStateIndex = 0;
+	}
 
 	return state;
 }
