@@ -164,7 +164,7 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
 	reward = -1;
 
 	if( (((i / cote) + 1) * ((i % cote) + 1)) == cote * cote ) {
-	  reward = 100;
+	  reward = 10000;
 		ret = true;
 	}
 
