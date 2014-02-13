@@ -42,6 +42,7 @@ public:
 	virtual double GetReward(int mdp, int obs, int action) const = 0;
 
 	void ToPOMDP(string filename) const;
+	void ToPOMDPX(string filename) const;
 
 	void TestConstructor() const;
 

@@ -71,6 +71,7 @@ int main(int argc, char* argv[])
 		("optimal", value<bool>(&expParams.Optimal), "run optimal policy")
 		("original", value<bool>(&original), "no structure exploit")
 		("topomdp", "create the pomdp file associated with this environment")
+		("topomdpx", "create the pomdpx file associated with this environment")
 		("autoexploration", value<bool>(&expParams.AutoExploration), "Automatically assign UCB exploration constant")
 		("exploration", value<double>(&searchParams.ExplorationConstant), "Manual value for UCB exploration constant")
 		("usetransforms", value<bool>(&searchParams.UseTransforms), "Use transforms")
@@ -188,6 +189,10 @@ int main(int argc, char* argv[])
 	}
 	if( vm.count("topomdp") ) {
 		safe_cast<ENVIRONMENT*>(real)->ToPOMDP(outputfile);
+		freeSim = true;
+	}
+	if( vm.count("topomdpx") ) {
+		safe_cast<ENVIRONMENT*>(real)->ToPOMDPX(outputfile);
 		freeSim = true;
 	}
 	if( freeSim ) {
