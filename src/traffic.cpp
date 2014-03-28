@@ -170,7 +170,7 @@ bool TRAFFIC::Step(STATE& state, int action, int& observation, double& reward) c
 	int stateIndex           = State.stateIndex;
 	int MDPIndex             = State.MDPIndex;
 	int timeToStay           = State.timeToStay;
-	reward                   = GetReward(MDPIndex, stateIndex, action);
+	reward                   = GetReward(MDPIndex, stateIndex, action, 0);
 	observation              = discrete_rand(_transitions[MDPIndex][stateIndex][action], NumObservations);
 	State.stateIndex         = observation;
 	assert(_transitions[MDPIndex][stateIndex][action][observation] > 0);
@@ -191,8 +191,11 @@ bool TRAFFIC::Step(STATE& state, int action, int& observation, double& reward) c
 	return false;
 }
 
-double TRAFFIC::GetReward(int mdp, int obs, int action) const {
-	return _rewards[mdp][obs][action];
+double TRAFFIC::GetReward(int mdp, int obs, int action, int obsprime) const {
+	_unused(mdp);
+	_unused(action);
+	_unused(obsprime);
+	return _rewards[0][obs][0];
 }
 
 double TRAFFIC::GetTransition(int mdp, int oldObs, int action, int newObs) const {
@@ -205,6 +208,36 @@ double TRAFFIC::GetMDPTransition(int oldmdp, int newmdp) const {
 
 double TRAFFIC::GetTimeToStay(int oldmdp, int newmdp, int h) const {
 	return _timeToStay[oldmdp][newmdp][h];
+}
+
+void TRAFFIC::rewardFunctionPOMDP(ostream &f) const {
+	for( int o = 0; o < GetNumObservations(); o++ )
+		for( int h = 0; h < GetMaxToStay(); h++ )
+			for( int m = 0; m < GetNumMDP(); m++ ) {
+				float r = GetReward(0, o, 0, 0);
+				if( r != 0 ) {
+					f << "R: * : " << m + GetNumMDP() * (h + o * GetMaxToStay());
+					f << " : * : * " << r << endl;
+				}
+			}
+	f << endl;
+}
+
+void TRAFFIC::rewardFunctionPOMDPX(ostream &f) const {
+	f << "\t<RewardFunction>" << endl;
+	f << "\t\t<Func>" << endl << "\t\t\t<Var>reward</Var>" << endl;
+	f << "\t\t\t<Parent>s_0</Parent>" << endl;
+	f << "\t\t\t<Parameter type=\"TBL\">" << endl;
+	for( int o = 0; o < GetNumObservations(); o++ ) {
+		float r = GetReward(0, o, 0, 0);
+		if( r == 0 ) continue;
+		f << "\t\t\t\t<Entry>" << endl;
+		f << "\t\t\t\t\t<Instance> s" << o << " </Instance>" << endl;
+		f << "\t\t\t\t\t<ValueTable> " << r << " ";
+		f << "</ValueTable>" << endl << "\t\t\t\t</Entry>" << endl;
+	}
+	f << "\t\t\t</Parameter>" << endl << "\t\t</Func>" << endl;
+	f << "\t</RewardFunction>" << endl;
 }
 
 ostream& TRAFFIC::toString( ostream &flux ) const

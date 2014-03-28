@@ -164,7 +164,7 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
     assert(i < cote * cote);
     reward = 0;
 
-    if( (((i / cote) + 1) * ((i % cote) + 1)) == cote * cote ) {
+    if( i == (cote * cote - 1) ) {
         reward = 1;
         ret = true;
     }
@@ -188,11 +188,13 @@ bool SAILBOAT::Step(STATE& state, int action, int& observation, double& reward) 
     return ret;
 }
 
-double SAILBOAT::GetReward(int mdp, int obs, int action) const {
-    _unused(mdp);
-    _unused(action);
-    _unused(obs);
-    assert(false);
+double SAILBOAT::GetReward(int mdp, int obs, int action, int obsprime) const {
+	_unused(mdp);
+	_unused(obs);
+	_unused(action);
+	if( obsprime == (GetCote() * GetCote() - 1) )
+		return 1;
+	return 0;
 }
 
 double SAILBOAT::GetTransition(int mdp, int oldObs, int action, int newObs) const {
@@ -283,7 +285,7 @@ double SAILBOAT::GetTimeToStay(int oldmdp, int newmdp, int h) const {
     return _timeToStay[oldmdp][newmdp][h];
 }
 
-void SAILBOAT::DisplayState(const STATE& state, std::ostream& ostr) const
+void SAILBOAT::DisplayState(const STATE& state, ostream& ostr) const
 {
     const ENVIRONMENT_STATE& sailboatState = safe_cast<const ENVIRONMENT_STATE&>(state);
 
@@ -299,15 +301,47 @@ void SAILBOAT::DisplayState(const STATE& state, std::ostream& ostr) const
     ostr << " " << sailboatState.timeToStay << " step to stay." << endl;
 }
 
-void SAILBOAT::DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const
+void SAILBOAT::DisplayObservation(const STATE& state, int observation, ostream& ostr) const
 {
     _unused(state);
     ostr << "State: " << observation / GetCote() << " " << observation % GetCote() << " observed." << endl;
 }
 
-void SAILBOAT::DisplayAction(int action, std::ostream& ostr) const
+void SAILBOAT::DisplayAction(int action, ostream& ostr) const
 {
     ostr << "Action: " << (action == N_S ? "N_S" : "W_E") << " observed." << endl;
+}
+
+void SAILBOAT::discountPOMDP(ostream &f) const {
+	f << "discount: " << 1 << endl;
+}
+
+void SAILBOAT::rewardFunctionPOMDP(ostream &f) const {
+	f << "R: * : * : * : " << GetCote() * GetCote() - 1 << " 1" << endl;
+}
+
+void SAILBOAT::discountPOMDPX(ostream &f) const {
+	f << "\t<Discount> " << 1 << " </Discount>" << endl;
+}
+
+void SAILBOAT::initialStatePOMDPX(ostream &f) const {
+	f << "\t\t\t<Var>s_0</Var>" << endl << "\t\t\t<Parent>null</Parent>" << endl;
+	f << "\t\t\t<Parameter type=\"TBL\">" << endl << "\t\t\t\t<Entry>" << endl;
+	f << "\t\t\t\t\t<Instance> s0 </Instance>" << endl;
+	f << "\t\t\t\t\t<ProbTable> 1.0 </ProbTable>" << endl << "\t\t\t\t</Entry>" << endl;
+	f << "\t\t\t</Parameter>" << endl << "\t\t</CondProb>" << endl;
+}
+
+void SAILBOAT::rewardFunctionPOMDPX(ostream &f) const {
+	f << "\t<RewardFunction>" << endl;
+	f << "\t\t<Func>" << endl << "\t\t\t<Var>reward</Var>" << endl;
+	f << "\t\t\t<Parent>obs</Parent>" << endl;
+	f << "\t\t\t<Parameter type=\"TBL\">" << endl;
+	f << "\t\t\t\t<Entry>" << endl;
+	f << "\t\t\t\t\t<Instance> o" << GetCote() * GetCote() - 1 << " </Instance>" << endl;
+	f << "\t\t\t\t\t<ValueTable> 1 </ValueTable>" << endl << "\t\t\t\t</Entry>" << endl;
+	f << "\t\t\t</Parameter>" << endl << "\t\t</Func>" << endl;
+	f << "\t</RewardFunction>" << endl;
 }
 
 ostream& SAILBOAT::toString( ostream &flux ) const

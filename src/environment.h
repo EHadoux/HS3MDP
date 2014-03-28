@@ -39,10 +39,23 @@ public:
 	virtual double GetTransition(int mdp, int oldObs, int action, int newObs) const = 0;
 	virtual double GetMDPTransition(int oldmdp, int newmdp) const = 0;
 	virtual double GetTimeToStay(int oldmdp, int newmdp, int h) const = 0;
-	virtual double GetReward(int mdp, int obs, int action) const = 0;
+	virtual double GetReward(int mdp, int obs, int action, int obsprime) const = 0;
 
-	void ToPOMDP(string filename) const;
-	void ToPOMDPX(string filename) const;
+	void ToPOMDP(string filename, bool sparse) const;
+	virtual void discountPOMDP(ostream &f) const;
+	virtual void headerToPOMDP(ostream &f) const;
+	virtual void stateTransitionPOMDP(ostream &f, bool sparse) const;
+	virtual void observationFunctionPOMDP(ostream &f) const;
+	virtual void rewardFunctionPOMDP(ostream &f) const;
+
+	void ToPOMDPX(string filename, bool sparse) const;
+	virtual void discountPOMDPX(ostream &f) const;
+	virtual void headerToPOMDPX(ostream &f) const;
+	virtual void initialBeliefStatePOMDPX(ostream &f) const;
+	virtual void stateTransitionPOMDPX(ostream &f, bool sparse) const;
+	virtual void observationFunctionPOMDPX(ostream &f) const;
+	virtual void initialStatePOMDPX(ostream &f) const;
+	virtual void rewardFunctionPOMDPX(ostream &f) const;
 
 	void TestConstructor() const;
 

@@ -18,12 +18,18 @@ public:
 	double GetTransition(int mdp, int oldObs, int action, int newObs) const;
 	double GetMDPTransition(int oldmdp, int newmdp) const;
 	double GetTimeToStay(int oldmdp, int newmdp, int h) const;
-	double GetReward(int mdp, int obs, int action) const;
+	double GetReward(int mdp, int obs, int action, int obsprime) const;
 	int GetCote() const { return _cote; }
 
-	void DisplayState(const STATE& state, std::ostream& ostr) const;
-	void DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const;
-	void DisplayAction(int action, std::ostream& ostr) const;
+	void DisplayState(const STATE& state, ostream& ostr) const;
+	void DisplayObservation(const STATE& state, int observation, ostream& ostr) const;
+	void DisplayAction(int action, ostream& ostr) const;
+
+	void rewardFunctionPOMDP(ostream &f) const;
+	void discountPOMDP(ostream &f) const;
+	void discountPOMDPX(ostream &f) const;
+	void rewardFunctionPOMDPX(ostream &f) const;
+	void initialStatePOMDPX(ostream &f) const;
 
 	ostream& toString( ostream &flux ) const;
 

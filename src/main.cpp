@@ -72,6 +72,7 @@ int main(int argc, char* argv[])
 		("original", value<bool>(&original), "no structure exploit")
 		("topomdp", "create the pomdp file associated with this environment")
 		("topomdpx", "create the pomdpx file associated with this environment")
+		("sparse", "define if the exported model has to be sparse")
 		("autoexploration", value<bool>(&expParams.AutoExploration), "Automatically assign UCB exploration constant")
 		("exploration", value<double>(&searchParams.ExplorationConstant), "Manual value for UCB exploration constant")
 		("usetransforms", value<bool>(&searchParams.UseTransforms), "Use transforms")
@@ -188,11 +189,11 @@ int main(int argc, char* argv[])
 		freeSim = true;
 	}
 	if( vm.count("topomdp") ) {
-		safe_cast<ENVIRONMENT*>(real)->ToPOMDP(outputfile);
+		safe_cast<ENVIRONMENT*>(real)->ToPOMDP(outputfile, vm.count("sparse"));
 		freeSim = true;
 	}
 	if( vm.count("topomdpx") ) {
-		safe_cast<ENVIRONMENT*>(real)->ToPOMDPX(outputfile);
+		safe_cast<ENVIRONMENT*>(real)->ToPOMDPX(outputfile, vm.count("sparse"));
 		freeSim = true;
 	}
 	if( freeSim ) {

@@ -17,7 +17,10 @@ public:
 	double GetTransition(int mdp, int oldObs, int action, int newObs) const;
 	double GetMDPTransition(int oldmdp, int newmdp) const;
 	double GetTimeToStay(int oldmdp, int newmdp, int h) const;
-	double GetReward(int mdp, int obs, int action) const;
+	double GetReward(int mdp, int obs, int action, int obsprime) const;
+
+	void rewardFunctionPOMDP(ostream &f) const;
+	void rewardFunctionPOMDPX(ostream &f) const;
 
 	ostream& toString( ostream &flux ) const;
 

@@ -171,7 +171,7 @@ bool CONTROLED::Step(STATE& state, int action, int& observation, double& reward)
 	int MDPIndex             = State.MDPIndex;
 	int timeToStay           = State.timeToStay;
 
-	reward                   = GetReward(MDPIndex, stateIndex, action);
+	reward                   = GetReward(MDPIndex, stateIndex, action, 0);
 	observation              = discrete_rand(_transitions[MDPIndex][stateIndex][action], NumObservations);
 	State.stateIndex         = observation;
 	assert(_transitions[MDPIndex][stateIndex][action][observation] > 0);
@@ -192,7 +192,8 @@ bool CONTROLED::Step(STATE& state, int action, int& observation, double& reward)
 	return false;
 }
 
-double CONTROLED::GetReward(int mdp, int obs, int action) const {
+double CONTROLED::GetReward(int mdp, int obs, int action, int obsprime) const {
+	_unused(obsprime);
 	return _rewards[mdp][obs][action];
 }
 

@@ -20,7 +20,7 @@ public:
 	virtual double GetTransition(int mdp, int oldObs, int action, int newObs) const;
 	double GetMDPTransition(int oldmdp, int newmdp) const;
 	double GetTimeToStay(int oldmdp, int newmdp, int h) const;
-	double GetReward(int mdp, int obs, int action) const;
+	double GetReward(int mdp, int obs, int action, int obsprime) const;
 
 	int GetNumFloors() const { return _numFloors; }
 	int GetNumElevators() const { return _numElevators; }

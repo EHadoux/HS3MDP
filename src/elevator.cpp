@@ -272,10 +272,11 @@ void ELEVATOR::NewModeAndTTS(ENVIRONMENT_STATE& State, int timeToStay, int MDPIn
 	}
 }
 
-double ELEVATOR::GetReward(int mdp, int obs, int action) const {
+double ELEVATOR::GetReward(int mdp, int obs, int action, int obsprime) const {
 	_unused(mdp);
 	_unused(obs);
 	_unused(action);
+	_unused(obsprime);
 	assert(false);
 }
 
