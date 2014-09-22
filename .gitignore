@@ -26,3 +26,5 @@ src/pomcp
 Makefile
 Makefile.in
 config.status
+compile
+nbproject
