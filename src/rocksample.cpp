@@ -241,7 +241,7 @@ bool ROCKSAMPLE::Step(STATE& state, int action,
 }
 
 bool ROCKSAMPLE::LocalMove(STATE& state, const HISTORY& history,
-    int stepObs, const STATUS& status) const
+    int stepObs, const STATUS&) const
 {
     ROCKSAMPLE_STATE& rockstate = safe_cast<ROCKSAMPLE_STATE&>(state);
     int rock = Random(NumRocks);
@@ -266,8 +266,8 @@ bool ROCKSAMPLE::LocalMove(STATE& state, const HISTORY& history,
     return true;
 }
 
-void ROCKSAMPLE::GenerateLegal(const STATE& state, const HISTORY& history,
-    vector<int>& legal, const STATUS& status) const
+void ROCKSAMPLE::GenerateLegal(const STATE& state, const HISTORY&,
+    vector<int>& legal, const STATUS&) const
 {
 
     const ROCKSAMPLE_STATE& rockstate =
@@ -294,7 +294,7 @@ void ROCKSAMPLE::GenerateLegal(const STATE& state, const HISTORY& history,
 }
 
 void ROCKSAMPLE::GeneratePreferred(const STATE& state, const HISTORY& history,
-    vector<int>& actions, const STATUS& status) const
+    vector<int>& actions, const STATUS&) const
 {
 
 	static const bool UseBlindPolicy = false;
@@ -439,8 +439,7 @@ int ROCKSAMPLE::SelectTarget(const ROCKSAMPLE_STATE& rockstate) const
     return bestRock;
 }
 
-void ROCKSAMPLE::DisplayBeliefs(const BELIEF_STATE& beliefState,
-    std::ostream& ostr) const
+void ROCKSAMPLE::DisplayBeliefs(const BELIEF_STATE&, std::ostream&) const
 {
 }
 
@@ -473,7 +472,7 @@ void ROCKSAMPLE::DisplayState(const STATE& state, std::ostream& ostr) const
     ostr << endl;
 }
 
-void ROCKSAMPLE::DisplayObservation(const STATE& state, int observation, std::ostream& ostr) const
+void ROCKSAMPLE::DisplayObservation(const STATE&, int observation, std::ostream& ostr) const
 {
     switch (observation)
     {

@@ -14,7 +14,12 @@ rocksample.cpp \
 simulator.cpp \
 tag.cpp \
 testsimulator.cpp \
-utils.cpp
+utils.cpp \
+pomdp.cpp \
+hs3mdp.cpp \
+sparsehs3mdp.cpp \
+trafficlight.cpp \
+sailboat.cpp
 
 noinst_HEADERS = \
 battleship.h \
@@ -33,7 +38,12 @@ simulator.h \
 statistic.h \
 tag.h \
 testsimulator.h \
-utils.h
+utils.h \
+pomdp.h \
+hs3mdp.h \
+sparsehs3mdp.h \
+trafficlight.h \
+sailboat.h
 
 pomcp_LDFLAGS = $(BOOST_LDFLAGS)
 

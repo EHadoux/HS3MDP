@@ -5,31 +5,25 @@ using namespace std;
 
 EXPERIMENT::PARAMS::PARAMS()
 :   NumRuns(1000),
-    NumSteps(100000),
-    SimSteps(1000),
-    TimeOut(3600),
-    MinDoubles(0),
-    MaxDoubles(20),
-    TransformDoubles(-4),
-    TransformAttempts(1000),
-    Accuracy(0.01),
-    UndiscountedHorizon(1000),
-    AutoExploration(true)
-{
+NumSteps(100000),
+SimSteps(1000),
+TimeOut(3600),
+MinDoubles(0),
+MaxDoubles(20),
+TransformDoubles(-4),
+TransformAttempts(1000),
+Accuracy(0.01),
+UndiscountedHorizon(1000),
+AutoExploration(true) {
 }
 
 EXPERIMENT::EXPERIMENT(const SIMULATOR& real,
-    const SIMULATOR& simulator, const string& outputFile,
-    EXPERIMENT::PARAMS& expParams, MCTS::PARAMS& searchParams)
-:   Real(real),
-    Simulator(simulator),
-    OutputFile(outputFile.c_str()),
-    ExpParams(expParams),
-    SearchParams(searchParams)
-{
-    if (ExpParams.AutoExploration)
-    {
-        if (SearchParams.UseRave)
+                       const SIMULATOR& simulator, const string& outputFile,
+                       EXPERIMENT::PARAMS& expParams, MCTS::PARAMS& searchParams) :
+Real(real), Simulator(simulator), ExpParams(expParams), SearchParams(searchParams),
+OutputFile(outputFile.c_str()) {
+    if ( ExpParams.AutoExploration ) {
+        if ( SearchParams.UseRave )
             SearchParams.ExplorationConstant = 0;
         else
             SearchParams.ExplorationConstant = simulator.GetRewardRange();
@@ -37,8 +31,7 @@ EXPERIMENT::EXPERIMENT(const SIMULATOR& real,
     MCTS::InitFastUCB(SearchParams.ExplorationConstant);
 }
 
-void EXPERIMENT::Run()
-{
+void EXPERIMENT::Run() {
     boost::timer timer;
 
     MCTS mcts(Simulator, SearchParams);
@@ -51,11 +44,10 @@ void EXPERIMENT::Run()
     int t;
 
     STATE* state = Real.CreateStartState();
-    if (SearchParams.Verbose >= 1)
+    if ( SearchParams.Verbose >= 1 )
         Real.DisplayState(*state, cout);
 
-    for (t = 0; t < ExpParams.NumSteps; t++)
-    {
+    for ( t = 0; t < ExpParams.NumSteps; t++ ) {
         int observation;
         double reward;
         int action = mcts.SelectAction();
@@ -66,37 +58,32 @@ void EXPERIMENT::Run()
         discountedReturn += reward * discount;
         discount *= Real.GetDiscount();
 
-        if (SearchParams.Verbose >= 1)
-        {
+        if ( SearchParams.Verbose >= 1 ) {
             Real.DisplayAction(action, cout);
             Real.DisplayState(*state, cout);
             Real.DisplayObservation(*state, observation, cout);
             Real.DisplayReward(reward, cout);
         }
 
-        if (terminal)
-        {
+        if ( terminal ) {
             cout << "Terminated" << endl;
             break;
         }
         outOfParticles = !mcts.Update(action, observation, reward);
-        if (outOfParticles)
+        if ( outOfParticles )
             break;
 
-        if (timer.elapsed() > ExpParams.TimeOut)
-        {
+        if ( timer.elapsed() > ExpParams.TimeOut ) {
             cout << "Timed out after " << t << " steps in "
-                << Results.Time.GetTotal() << "seconds" << endl;
+                    << Results.Time.GetTotal() << "seconds" << endl;
             break;
         }
     }
 
-    if (outOfParticles)
-    {
+    if ( outOfParticles ) {
         cout << "Out of particles, finishing episode with SelectRandom" << endl;
         HISTORY history = mcts.GetHistory();
-        while (++t < ExpParams.NumSteps)
-        {
+        while ( ++t < ExpParams.NumSteps ) {
             int observation;
             double reward;
 
@@ -111,16 +98,14 @@ void EXPERIMENT::Run()
             discountedReturn += reward * discount;
             discount *= Real.GetDiscount();
 
-            if (SearchParams.Verbose >= 1)
-            {
+            if ( SearchParams.Verbose >= 1 ) {
                 Real.DisplayAction(action, cout);
                 Real.DisplayState(*state, cout);
                 Real.DisplayObservation(*state, observation, cout);
                 Real.DisplayReward(reward, cout);
             }
 
-            if (terminal)
-            {
+            if ( terminal ) {
                 cout << "Terminated" << endl;
                 break;
             }
@@ -133,29 +118,25 @@ void EXPERIMENT::Run()
     Results.UndiscountedReturn.Add(undiscountedReturn);
     Results.DiscountedReturn.Add(discountedReturn);
     cout << "Discounted return = " << discountedReturn
-        << ", average = " << Results.DiscountedReturn.GetMean() << endl;
+            << ", average = " << Results.DiscountedReturn.GetMean() << endl;
     cout << "Undiscounted return = " << undiscountedReturn
-        << ", average = " << Results.UndiscountedReturn.GetMean() << endl;
+            << ", average = " << Results.UndiscountedReturn.GetMean() << endl;
 }
 
-void EXPERIMENT::MultiRun()
-{
-    for (int n = 0; n < ExpParams.NumRuns; n++)
-    {
+void EXPERIMENT::MultiRun() {
+    for ( int n = 0; n < ExpParams.NumRuns; n++ ) {
         cout << "Starting run " << n + 1 << " with "
-            << SearchParams.NumSimulations << " simulations... " << endl;
+                << SearchParams.NumSimulations << " simulations... " << endl;
         Run();
-        if (Results.Time.GetTotal() > ExpParams.TimeOut)
-        {
+        if ( Results.Time.GetTotal() > ExpParams.TimeOut ) {
             cout << "Timed out after " << n << " runs in "
-                << Results.Time.GetTotal() << "seconds" << endl;
+                    << Results.Time.GetTotal() << "seconds" << endl;
             break;
         }
     }
 }
 
-void EXPERIMENT::DiscountedReturn()
-{
+void EXPERIMENT::DiscountedReturn() {
     cout << "Main runs" << endl;
     OutputFile << "Simulations\tRuns\tUndiscounted return\tUndiscounted error\tDiscounted return\tDiscounted error\tTime\n";
 
@@ -163,11 +144,10 @@ void EXPERIMENT::DiscountedReturn()
     ExpParams.SimSteps = Simulator.GetHorizon(ExpParams.Accuracy, ExpParams.UndiscountedHorizon);
     ExpParams.NumSteps = Real.GetHorizon(ExpParams.Accuracy, ExpParams.UndiscountedHorizon);
 
-    for (int i = ExpParams.MinDoubles; i <= ExpParams.MaxDoubles; i++)
-    {
+    for ( int i = ExpParams.MinDoubles; i <= ExpParams.MaxDoubles; i++ ) {
         SearchParams.NumSimulations = 1 << i;
         SearchParams.NumStartStates = 1 << i;
-        if (i + ExpParams.TransformDoubles >= 0)
+        if ( i + ExpParams.TransformDoubles >= 0 )
             SearchParams.NumTransforms = 1 << (i + ExpParams.TransformDoubles);
         else
             SearchParams.NumTransforms = 1;
@@ -177,35 +157,33 @@ void EXPERIMENT::DiscountedReturn()
         MultiRun();
 
         cout << "Simulations = " << SearchParams.NumSimulations << endl
-            << "Runs = " << Results.Time.GetCount() << endl
-            << "Undiscounted return = " << Results.UndiscountedReturn.GetMean()
-            << " +- " << Results.UndiscountedReturn.GetStdErr() << endl
-            << "Discounted return = " << Results.DiscountedReturn.GetMean()
-            << " +- " << Results.DiscountedReturn.GetStdErr() << endl
-            << "Time = " << Results.Time.GetMean() << endl;
+                << "Runs = " << Results.Time.GetCount() << endl
+                << "Undiscounted return = " << Results.UndiscountedReturn.GetMean()
+                << " +- " << Results.UndiscountedReturn.GetStdErr() << endl
+                << "Discounted return = " << Results.DiscountedReturn.GetMean()
+                << " +- " << Results.DiscountedReturn.GetStdErr() << endl
+                << "Time = " << Results.Time.GetMean() << endl;
         OutputFile << SearchParams.NumSimulations << "\t"
-            << Results.Time.GetCount() << "\t"
-            << Results.UndiscountedReturn.GetMean() << "\t"
-            << Results.UndiscountedReturn.GetStdErr() << "\t"
-            << Results.DiscountedReturn.GetMean() << "\t"
-            << Results.DiscountedReturn.GetStdErr() << "\t"
-            << Results.Time.GetMean() << endl;
+                << Results.Time.GetCount() << "\t"
+                << Results.UndiscountedReturn.GetMean() << "\t"
+                << Results.UndiscountedReturn.GetStdErr() << "\t"
+                << Results.DiscountedReturn.GetMean() << "\t"
+                << Results.DiscountedReturn.GetStdErr() << "\t"
+                << Results.Time.GetMean() << endl;
     }
 }
 
-void EXPERIMENT::AverageReward()
-{
+void EXPERIMENT::AverageReward() {
     cout << "Main runs" << endl;
     OutputFile << "Simulations\tSteps\tAverage reward\tAverage time\n";
 
     SearchParams.MaxDepth = Simulator.GetHorizon(ExpParams.Accuracy, ExpParams.UndiscountedHorizon);
     ExpParams.SimSteps = Simulator.GetHorizon(ExpParams.Accuracy, ExpParams.UndiscountedHorizon);
 
-    for (int i = ExpParams.MinDoubles; i <= ExpParams.MaxDoubles; i++)
-    {
+    for ( int i = ExpParams.MinDoubles; i <= ExpParams.MaxDoubles; i++ ) {
         SearchParams.NumSimulations = 1 << i;
         SearchParams.NumStartStates = 1 << i;
-        if (i + ExpParams.TransformDoubles >= 0)
+        if ( i + ExpParams.TransformDoubles >= 0 )
             SearchParams.NumTransforms = 1 << (i + ExpParams.TransformDoubles);
         else
             SearchParams.NumTransforms = 1;
@@ -215,15 +193,15 @@ void EXPERIMENT::AverageReward()
         Run();
 
         cout << "Simulations = " << SearchParams.NumSimulations << endl
-            << "Steps = " << Results.Reward.GetCount() << endl
-            << "Average reward = " << Results.Reward.GetMean()
-            << " +- " << Results.Reward.GetStdErr() << endl
-            << "Average time = " << Results.Time.GetMean() / Results.Reward.GetCount() << endl;
+                << "Steps = " << Results.Reward.GetCount() << endl
+                << "Average reward = " << Results.Reward.GetMean()
+                << " +- " << Results.Reward.GetStdErr() << endl
+                << "Average time = " << Results.Time.GetMean() / Results.Reward.GetCount() << endl;
         OutputFile << SearchParams.NumSimulations << "\t"
-            << Results.Reward.GetCount() << "\t"
-            << Results.Reward.GetMean() << "\t"
-            << Results.Reward.GetStdErr() << "\t"
-            << Results.Time.GetMean() / Results.Reward.GetCount() << endl;
+                << Results.Reward.GetCount() << "\t"
+                << Results.Reward.GetMean() << "\t"
+                << Results.Reward.GetStdErr() << "\t"
+                << Results.Time.GetMean() / Results.Reward.GetCount() << endl;
     }
 }
 

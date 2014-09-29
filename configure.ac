@@ -21,7 +21,7 @@ if test "x$optimize" = "xyes"
 then
 	CXXFLAGS="-O3 -g -std=c++11"
 else
-	CXXFLAGS="-g -std=c++11"
+	CXXFLAGS="-O0 -g -std=c++11"
 fi
 
 AC_ARG_ENABLE([assert],

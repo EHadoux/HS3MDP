@@ -8,6 +8,8 @@
 #include "coord.h"
 #include "memorypool.h"
 #include <algorithm>
+#include <vector>
+#include <random>
 
 #define LargeInteger 1000000
 #define Infinity 1e+10
@@ -68,6 +70,7 @@ inline bool Contains(std::vector<T>& vec, const T& item)
 }
 
 void UnitTest();
+std::vector<double>* GaussianWeights(int maximum, std::mt19937 gen);
 
 }
 

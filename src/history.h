@@ -25,7 +25,7 @@ public:
     {
         if (history.History.size() != History.size())
             return false;
-        for (int i = 0; i < History.size(); ++i)
+        for (unsigned int i = 0; i < History.size(); ++i)
             if (history.History[i].Action != History[i].Action
              || history.History[i].Observation != History[i].Observation)
                 return false;
@@ -59,13 +59,13 @@ public:
     
     ENTRY& operator[](int t)
     {
-        assert(t >= 0 && t < History.size());
+        assert(t >= 0 && (unsigned int)t < History.size());
         return History[t];
     }
 
     const ENTRY& operator[](int t) const
     {
-        assert(t >= 0 && t < History.size());
+        assert(t >= 0 && (unsigned int)t < History.size());
         return History[t];
     }
 
@@ -83,7 +83,7 @@ public:
 
     void Display(std::ostream& ostr) const
     {
-        for (int t = 0; t < History.size(); ++t)
+        for (unsigned int t = 0; t < History.size(); ++t)
         {
             ostr << "a=" << History[t].Action <<  " ";
             if (History[t].Observation >= 0)

@@ -61,7 +61,6 @@ STATE* BATTLESHIP::CreateStartState() const
     }
     bsstate->NumRemaining = 0;
 
-    bool found;
     bsstate->Ships.clear();
     for (int length = MaxLength; length >= 2; --length)
     {
@@ -139,7 +138,7 @@ bool BATTLESHIP::Step(STATE& state, int action,
 }
 
 bool BATTLESHIP::LocalMove(STATE& state, const HISTORY& history,
-    int stepObs, const STATUS& status) const
+    int, const STATUS&) const
 {
     BATTLESHIP_STATE& bsstate = safe_cast<BATTLESHIP_STATE&>(state);
     bool refreshDiagonals = history.Size() &&
@@ -158,6 +157,8 @@ bool BATTLESHIP::LocalMove(STATE& state, const HISTORY& history,
         case 2:
             success = SwitchThreeShips(bsstate);
             break;
+        default:
+            success = false;
     }
     if (!success)
         return false;
@@ -297,7 +298,7 @@ bool BATTLESHIP::SwitchThreeShips(BATTLESHIP_STATE& bsstate) const
     return true;
 }
 
-void BATTLESHIP::GenerateLegal(const STATE& state, const HISTORY& history,
+void BATTLESHIP::GenerateLegal(const STATE& state, const HISTORY&,
     vector<int>& legal, const STATUS& status) const
 {
     const BATTLESHIP_STATE& bsstate = safe_cast<const BATTLESHIP_STATE&>(state);
@@ -425,7 +426,7 @@ void BATTLESHIP::DisplayState(const STATE& state, ostream& ostr) const
     ostr << "NumRemaining = " << bsstate.NumRemaining << endl;
 }
 
-void BATTLESHIP::DisplayObservation(const STATE& state, int observation, ostream& ostr) const
+void BATTLESHIP::DisplayObservation(const STATE&, int observation, ostream&) const
 {
     if (observation)
         cout << "Hit\n";
