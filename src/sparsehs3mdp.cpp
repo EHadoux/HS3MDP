@@ -6,15 +6,13 @@ using namespace std;
 
 SPARSE_HS3MDP::SPARSE_HS3MDP(int numActions, int numObservations, int numModes, int maxDuration,
                              double discount, int seed) :
-POMDP(numObservations * numModes * maxDuration, numActions, numObservations, discount, seed) {
-    NumModes         = numModes;
-    MaxDuration      = maxDuration;
-    RewardDefault    = 0;
+HS3MDP(numActions, numObservations, numModes, maxDuration, discount, seed) {
+    RewardDefault = 0;
 }
 
 SPARSE_HS3MDP::SPARSE_HS3MDP(const SPARSE_HS3MDP& orig) :
-POMDP(orig),
-InModeTransitionProbabilites(orig.InModeTransitionProbabilites),
+HS3MDP(orig),
+InModeTransitionProbabilities(orig.InModeTransitionProbabilities),
 InModeRewards(orig.InModeRewards),
 ModeTransitionProbabilities(orig.ModeTransitionProbabilities),
 DurationProbabilities(orig.DurationProbabilities),
@@ -35,7 +33,7 @@ SPARSE_HS3MDP::~SPARSE_HS3MDP() {
             delete m;
         }
 
-        for( auto m : InModeTransitionProbabilites ) {
+        for( auto m : InModeTransitionProbabilities ) {
             for( auto s : *m ) {
                 for( auto a : *s ) {
                     delete get<0>(*a);
@@ -70,7 +68,7 @@ SPARSE_HS3MDP::~SPARSE_HS3MDP() {
 }
 
 double SPARSE_HS3MDP::GetInModeTransitionProbability(int m, int s, int a, int sprime) const {
-    auto sparsemap = InModeTransitionProbabilites.at(m)->at(s)->at(a);
+    auto sparsemap = InModeTransitionProbabilities.at(m)->at(s)->at(a);
     auto map       = get<2>(*sparsemap);
     auto it        = map->find(sprime);
     if( it == map->end() )
@@ -87,33 +85,11 @@ double SPARSE_HS3MDP::GetDurationProbability(int m, int mprime, int h) const {
     return DurationProbabilities.at(m)->at(mprime)->at(h);    
 }
 
-HS3MDP_STATE* SPARSE_HS3MDP::CreateStartState() const {
-    HS3MDP_STATE* hs3mdpstate = MemoryPool.Allocate();
-    uniform_int_distribution<> states(0, NumObservations - 1);
-    hs3mdpstate->HS3MDPState  = states(Gen);
-    hs3mdpstate->Mode         = 0;
-    hs3mdpstate->Duration     = 0;
-    hs3mdpstate->POMDPState   = hs3mdpstate->HS3MDPState;
-
-    return hs3mdpstate;
-}
-
-HS3MDP_STATE* SPARSE_HS3MDP::Copy(const STATE& state) const {
-    const HS3MDP_STATE& hs3mdpstate = safe_cast<const HS3MDP_STATE&>(state);
-    HS3MDP_STATE* newstate          = MemoryPool.Allocate();
-    newstate->POMDPState            = hs3mdpstate.POMDPState;
-    newstate->HS3MDPState           = hs3mdpstate.HS3MDPState;
-    newstate->Mode                  = hs3mdpstate.Mode;
-    newstate->Duration              = hs3mdpstate.Duration;
-
-    return newstate;
-}
-
 bool SPARSE_HS3MDP::Step(STATE& state, int action, int& observation, double& reward) const {
     HS3MDP_STATE& hs3mdpstate = safe_cast<HS3MDP_STATE&>(state);
     int index = hs3mdpstate.HS3MDPState, mode = hs3mdpstate.Mode, duration = hs3mdpstate.Duration;
 
-    auto tmap                = InModeTransitionProbabilites.at(mode)->at(index)->at(action);
+    auto tmap                = InModeTransitionProbabilities.at(mode)->at(index)->at(action);
     auto tvector             = get<1>(*tmap);
     discrete_distribution<int> transitions(tvector->begin(), tvector->end());
     hs3mdpstate.HS3MDPState  = get<0>(*tmap)->at(transitions(Gen));

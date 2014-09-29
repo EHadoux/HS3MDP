@@ -42,8 +42,6 @@ protected:
     vector<vector<double>*>                   ModeTransitionProbabilities;
     vector<vector<vector<double>*>*>          DurationProbabilities;
     vector<vector<vector<vector<double>*>*>*> InModeRewardProbabilities;
-    
-private:
     mutable MEMORY_POOL<HS3MDP_STATE> MemoryPool;
 } ;
 

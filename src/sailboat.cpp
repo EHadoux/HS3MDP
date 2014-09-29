@@ -13,7 +13,7 @@ SPARSE_HS3MDP(2, gridSize, 4, maxDuration, discount, seed) {
     SideSize      = sqrt(gridSize);
     RewardDefault = 0;
 
-    InModeTransitionProbabilites.reserve(NumModes);
+    InModeTransitionProbabilities.reserve(NumModes);
     ModeTransitionProbabilities.reserve(NumModes);
     InModeRewards.reserve(NumModes);
     DurationProbabilities.reserve(NumModes);
@@ -21,18 +21,18 @@ SPARSE_HS3MDP(2, gridSize, 4, maxDuration, discount, seed) {
     for( int m = 0; m < NumModes; m++ ) {
         DurationProbabilities.push_back(new vector<vector<double>*>(NumModes, NULL));
         ModeTransitionProbabilities.push_back(new vector<double>(NumModes, 0));
-        InModeTransitionProbabilites.push_back(new vector<vector<SPARSEMAP*>*>(NumObservations, NULL));
+        InModeTransitionProbabilities.push_back(new vector<vector<SPARSEMAP*>*>(NumObservations, NULL));
         InModeRewards.push_back(new vector<map<int, double>*>(NumObservations, NULL));
         for( int o = 0; o < NumObservations; o++ ) {
             InModeRewards.at(m)->at(o) = new map<int, double>();
-            InModeTransitionProbabilites.at(m)->at(o) = new vector<SPARSEMAP*>(NumActions, NULL);
+            InModeTransitionProbabilities.at(m)->at(o) = new vector<SPARSEMAP*>(NumActions, NULL);
 
             for( int a = 0; a < NumActions; a++ ) {
                 auto indexv = new vector<int>();
                 auto probav = new vector<double>();
                 auto indexm = new map<int, int>();
                 SPARSEMAP* sparsemap = new SPARSEMAP(indexv, probav, indexm);
-                InModeTransitionProbabilites.at(m)->at(o)->at(a) = sparsemap;
+                InModeTransitionProbabilities.at(m)->at(o)->at(a) = sparsemap;
 
                 int x = o % SideSize, y = o / SideSize;
 
