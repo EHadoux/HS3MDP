@@ -34,15 +34,22 @@ public:
     double GetDurationProbability(int m, int mprime, int h) const {
         return DurationProbabilities.at(m)->at(mprime)->at(h);
     }
+    bool IsStructureAdapted() const { return StructureAdapted; }
+    void UseStructure() { StructureAdapted = true; }
+    
+    static int GetStartingHS3MDPStateIndex() { return HS3MDP::StartingHS3MDPStateIndex; }
     
 protected:
-    int NumModes, MaxDuration;
+    int  NumModes, MaxDuration;
+    bool StructureAdapted;
     vector<vector<vector<vector<double>*>*>*> InModeTransitionProbabilites;
     vector<vector<vector<double>*>*>          InModeRewards;
     vector<vector<double>*>                   ModeTransitionProbabilities;
     vector<vector<vector<double>*>*>          DurationProbabilities;
     vector<vector<vector<vector<double>*>*>*> InModeRewardProbabilities;
     mutable MEMORY_POOL<HS3MDP_STATE> MemoryPool;
+    
+    static int StartingHS3MDPStateIndex;
 } ;
 
 #endif	/* HS3MDP_H */

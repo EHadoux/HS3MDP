@@ -1,11 +1,17 @@
 #include "hs3mdp.h"
 #include <random>
 
+int HS3MDP::StartingHS3MDPStateIndex = 0;
+
 HS3MDP::HS3MDP(int numActions, int numObservations, int numModes, int maxDuration,
                double discount, int seed) :
 POMDP(numObservations * numModes * maxDuration, numActions, numObservations, discount, seed) {
     NumModes         = numModes;
     MaxDuration      = maxDuration;
+    StructureAdapted = false;
+
+    uniform_int_distribution<> states(0, NumObservations - 1);
+    HS3MDP::StartingHS3MDPStateIndex = states(Gen);
 }
 
 HS3MDP::HS3MDP(const HS3MDP& orig) :
@@ -17,6 +23,7 @@ DurationProbabilities(orig.DurationProbabilities),
 InModeRewardProbabilities(orig.InModeRewardProbabilities) {
     NumModes         = orig.NumModes;
     MaxDuration      = orig.MaxDuration;
+    StructureAdapted = orig.StructureAdapted;
 }
 
 HS3MDP::~HS3MDP() {
@@ -57,12 +64,15 @@ HS3MDP::~HS3MDP() {
 }
 
 HS3MDP_STATE* HS3MDP::CreateStartState() const {
-    HS3MDP_STATE* hs3mdpstate = MemoryPool.Allocate();
-    uniform_int_distribution<> states(0, NumObservations - 1);
-    hs3mdpstate->HS3MDPState  = states(Gen);
-    hs3mdpstate->Mode         = 0;
-    hs3mdpstate->Duration     = 0;
-    hs3mdpstate->POMDPState   = hs3mdpstate->HS3MDPState;
+    HS3MDP_STATE* hs3mdpstate     = MemoryPool.Allocate();
+    if( !IsStructureAdapted() ) {
+        uniform_int_distribution<>  states(0, NumObservations - 1);
+        hs3mdpstate->HS3MDPState  = states(Gen);
+    } else
+        hs3mdpstate->HS3MDPState  = HS3MDP::GetStartingHS3MDPStateIndex();
+    hs3mdpstate->Mode             = 0;
+    hs3mdpstate->Duration         = 0;
+    hs3mdpstate->POMDPState       = hs3mdpstate->HS3MDPState;
 
     return hs3mdpstate;
 }

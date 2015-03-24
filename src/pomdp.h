@@ -44,6 +44,8 @@ public:
     void SetRMin(double rmin) { RMin = rmin; }
     void SetRMax(double rmax) { RMax = rmax; }
     bool IsCopy() const { return Copied; }
+    
+    mt19937& GetGen() { return Gen; };
 
 protected:
     int             NumStates;
