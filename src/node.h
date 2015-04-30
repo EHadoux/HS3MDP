@@ -56,8 +56,8 @@ public:
 
 private:
 
-    COUNT Count;
-    double Total;
+    COUNT Count  = 0;
+    double Total = 0;
 };
 
 //-----------------------------------------------------------------------------

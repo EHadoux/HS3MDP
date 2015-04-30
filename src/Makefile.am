@@ -19,7 +19,8 @@ pomdp.cpp \
 hs3mdp.cpp \
 sparsehs3mdp.cpp \
 trafficlight.cpp \
-sailboat.cpp
+sailboat.cpp \
+consensus.cpp
 
 noinst_HEADERS = \
 battleship.h \
@@ -43,7 +44,8 @@ pomdp.h \
 hs3mdp.h \
 sparsehs3mdp.h \
 trafficlight.h \
-sailboat.h
+sailboat.h \
+consensus.h
 
 pomcp_LDFLAGS = $(BOOST_LDFLAGS)
 

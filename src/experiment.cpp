@@ -1,5 +1,6 @@
 #include "experiment.h"
 #include "boost/timer.hpp"
+#include "consensus.h"
 
 using namespace std;
 
@@ -121,6 +122,10 @@ void EXPERIMENT::Run() {
             << ", average = " << Results.DiscountedReturn.GetMean() << endl;
     cout << "Undiscounted return = " << undiscountedReturn
             << ", average = " << Results.UndiscountedReturn.GetMean() << endl;
+    
+    for( auto t : safe_cast<const CONSENSUS&>(Real).getTrace() )
+        cout << get<0>(t)->to_s() << " " << get<1>(t) << " " << (get<2>(t) == NULL ? "NULL" : get<2>(t)->to_s()) << " " << get<3>(t)->to_s() << endl;
+    safe_cast<const CONSENSUS&>(Real).clearTrace();
 }
 
 void EXPERIMENT::MultiRun() {

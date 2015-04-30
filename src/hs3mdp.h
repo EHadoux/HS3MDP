@@ -1,5 +1,5 @@
 #ifndef HS3MDP_H
-#define	HS3MDP_H
+#define HS3MDP_H
 
 #include "pomdp.h"
 #include <vector>

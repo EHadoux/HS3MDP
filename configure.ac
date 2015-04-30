@@ -14,14 +14,14 @@ AX_BOOST_PROGRAM_OPTIONS
 AC_ARG_ENABLE([optimize],
     AS_HELP_STRING(
         [--enable-optimize], 
-        [set CXXFLAGS to -O3 -g (default is yes)]),
+        [set CXXFLAGS to -O2 -s (default is no)]),
     [optimize=$enableval],
-    [optimize=yes])
+    [optimize=no])
 if test "x$optimize" = "xyes"
 then
-	CXXFLAGS="-O3 -g -std=c++11"
+	CXXFLAGS="-O2 -s -std=c++11"
 else
-	CXXFLAGS="-O0 -g -std=c++11"
+	CXXFLAGS="-O1 -g -std=c++11"
 fi
 
 AC_ARG_ENABLE([assert],

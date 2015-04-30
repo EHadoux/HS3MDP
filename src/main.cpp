@@ -1,3 +1,4 @@
+#include "consensus.h"
 #include "sailboat.h"
 #include "trafficlight.h"
 #include "battleship.h"
@@ -37,7 +38,8 @@ int main(int argc, char* argv[]) {
     SIMULATOR::KNOWLEDGE knowledge;
     string problem, outputfile, policy;
     int size, number, maxDuration, seed;
-    double discount;
+    double discount, bernoulli;
+    bool meanmodel, show, shortest;
 
     options_description desc("Allowed options");
     desc.add_options()
@@ -72,6 +74,10 @@ int main(int argc, char* argv[]) {
             ("discount", value<double>(&discount)->default_value(0.9), "Discount factor")
             ("maxDuration", value<int>(&maxDuration)->default_value(1), "Duration maximum (default 1 = HM-MDP)")
             ("seed", value<int>(&seed)->default_value(time(0)), "Seed of the mt19973 generator")
+            ("bernoulli", value<double>(&bernoulli)->default_value(0.5), "Bernoulli value for consensus")
+            ("meanmodel", value<bool>(&meanmodel)->default_value(false), "Mean model for simulator for consensus")
+            ("show", value<bool>(&show)->default_value(false), "Shows the model and quit")
+            ("shortest", value<bool>(&shortest)->default_value(false), "Shortest sequence for consensus")
             ;
 
     variables_map vm;
@@ -118,17 +124,89 @@ int main(int argc, char* argv[]) {
     } else if( problem == "sailboat" ) {
         real      = new SAILBOAT(size, maxDuration, discount, seed);
         simulator = new SAILBOAT(safe_cast<const SAILBOAT&>(*real));
+    } else if( problem == "consensus" ) {
+        auto r1  = new Rule;
+        r1->premises = {UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, POS, UNDEF, UNDEF};       
+        auto alt1 = new vector<PRED_MODIF>{ADD, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE};
+        auto alt2 = new vector<PRED_MODIF>(9, NONE);
+        r1->acts.push_back(alt1);
+        r1->acts.push_back(alt2);
+        
+        auto r2  = new Rule;
+        r2->premises = {UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, POS, UNDEF};       
+        alt1 = new vector<PRED_MODIF>{NONE, NONE, NONE, NONE, NONE, NONE, ADD, NONE, NONE};
+        alt2 = new vector<PRED_MODIF>(9, NONE);
+        r2->acts.push_back(alt1);
+        r2->acts.push_back(alt2);
+        
+        auto r3  = new Rule;
+        r3->premises = vector<PRED_STATE>(9, UNDEF);       
+        alt1 = new vector<PRED_MODIF>{NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, ADD};
+        alt2 = new vector<PRED_MODIF>{NONE, NONE, NONE, NONE, ADD, NONE, NONE, NONE, NONE};
+        r3->acts.push_back(alt1);
+        r3->acts.push_back(alt2);
+        
+        auto r4  = new Rule;
+        r4->premises = {UNDEF, UNDEF, UNDEF, POS, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF};
+        alt1 = new vector<PRED_MODIF>{ADD, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE};
+        alt2 = new vector<PRED_MODIF>{NONE, NONE, ADD, NONE, NONE, NONE, NONE, NONE, NONE};
+        r4->acts.push_back(alt1);
+        r4->acts.push_back(alt2);
+        
+        auto t1 = new vector<Rule*>();
+        t1->push_back(r1);
+        t1->push_back(r2);
+        t1->push_back(r3);
+        t1->push_back(r4);
+                          
+        r1  = new Rule;
+        r1->premises = {POS, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF};       
+        alt1 = new vector<PRED_MODIF>{NONE, ADD, NONE, NONE, NONE, NONE, NONE, NONE, NONE};
+        alt2 = new vector<PRED_MODIF>(9, NONE);
+        r1->acts.push_back(alt1);
+        r1->acts.push_back(alt2);
+        
+        r2  = new Rule;
+        r2->premises = vector<PRED_STATE>(9, UNDEF);       
+        alt1 = new vector<PRED_MODIF>{NONE, NONE, NONE, ADD, NONE, NONE, NONE, NONE, NONE};
+        alt2 = new vector<PRED_MODIF>{NONE, NONE, NONE, NONE, NONE, NONE, NONE, ADD, NONE};
+        r2->acts.push_back(alt1);
+        r2->acts.push_back(alt2);
+        
+        r3  = new Rule;
+        r3->premises = {UNDEF, UNDEF, UNDEF, UNDEF, POS, UNDEF, UNDEF, UNDEF, UNDEF};
+        alt1 = new vector<PRED_MODIF>{NONE, NONE, NONE, NONE, NONE, ADD, NONE, NONE, NONE};
+        alt2 = new vector<PRED_MODIF>(9, NONE);
+        r3->acts.push_back(alt2);
+        r3->acts.push_back(alt1);
+        
+        auto t2 = new vector<Rule*>();
+        t2->push_back(r1);
+        t2->push_back(r2);
+        t2->push_back(r3);
+        
+        auto atks = multimap<int, int>();
+        atks.emplace(0, 1);
+        atks.emplace(3, 4);
+        atks.emplace(4, 5);
+        atks.emplace(6, 5);
+        atks.emplace(7, 6);
+        atks.emplace(8, 7);
+        
+        real      = new CONSENSUS(9, atks, vector<int>{3,2}, vector<vector<Rule*>*>{t1,t2}, 
+                maxDuration, discount, seed, bernoulli, meanmodel, shortest);
+        simulator = new CONSENSUS(safe_cast<const CONSENSUS&>(*real));
     } else {
         cout << "Unknown problem" << endl;
         exit(1);
     }
 
-    cout << "Used seed: " << seed << endl;
-
-    simulator->SetKnowledge(knowledge);
-    EXPERIMENT experiment(*real, *simulator, outputfile, expParams, searchParams);
-    experiment.DiscountedReturn();
-
+    if(!show) {
+        cout << "Used seed: " << seed << endl;        
+        simulator->SetKnowledge(knowledge);
+        EXPERIMENT experiment(*real, *simulator, outputfile, expParams, searchParams);
+        experiment.DiscountedReturn();
+    }
     delete real;
     delete simulator;
     return 0;
