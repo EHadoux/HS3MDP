@@ -237,18 +237,43 @@ bool CONSENSUS::Step(STATE& state, int action, int& observation, double& reward)
                 compatible = false;
                 break;
             }
-        }
+        }        
         if( compatible ) {
             //cout << r->to_s() << endl;
-            applicable.push_back(r);
+            bool m = false;
+            for( auto act: r->acts )
+                for( int i = 0; i < NumOfArgs ; i++ )
+                    switch(act->at(i)) {
+                        case ADD:
+                        if(!s.Public[i])
+                            m = true;
+                        break;
+                        case REMOVE:
+                            if(s.Public[i])
+                                m = true;
+                            break;
+                        default: break;
+                    }
+            
+            if(m)
+                applicable.push_back(r);
         }
     }
-
-    unsigned int r = Random(applicable.size() + 1);
-    auto probavect = AllModesProbabilities[1 - s.SoloModes[action]]->at(action)->at(r);
+        
+    unsigned int r = 0;
+    vector<double> *probavect;
+    int alt;
+    if( applicable.size() > 0 ) {
+        r = Random(applicable.size());
+        probavect = AllModesProbabilities[1 - s.SoloModes[action]]->at(action)->at(r);
+    } else {
+        probavect = AllModesProbabilities[1 - s.SoloModes[action]]->at(action)->back();
+    }
+    
     discrete_distribution<int> act(probavect->begin(), probavect->end());
-    int alt = act(Gen);
-    if( r != applicable.size() ) {
+    alt = act(Gen);
+    
+    if( applicable.size() != 0 ) {
         auto modif = applicable[r]->acts[alt];
         /*for( int i = 0; i < NumOfArgs; i++ ) {
             switch(modif->at(i)) {
@@ -278,6 +303,12 @@ bool CONSENSUS::Step(STATE& state, int action, int& observation, double& reward)
                 default: break;
             }
         }
+        /*if(!modified) {
+            applicable.clear();
+            probavect = AllModesProbabilities[1 - s.SoloModes[action]]->at(action)->back();
+            discrete_distribution<int> act(probavect->begin(), probavect->end());
+            alt = act(Gen);
+        }*/
     }
 
     if( team == s.LastTeam )
@@ -303,7 +334,7 @@ bool CONSENSUS::Step(STATE& state, int action, int& observation, double& reward)
     
     s.Duration--;
     if( s.Duration == 0 ) {
-        if( Bernoulli(0.3) )
+        if( Bernoulli(0.5) )
             s.Duration = MaxDuration / 3;
         else {
             if( Bernoulli(0) )
@@ -311,7 +342,11 @@ bool CONSENSUS::Step(STATE& state, int action, int& observation, double& reward)
             else
                 s.Duration = MaxDuration / 3.0 * 2;
         }
-        discrete_distribution<int> mode(s.SoloModes.begin(), s.SoloModes.end());
+        
+        vector<int> advModes;
+        for(unsigned int i = 0; i < s.SoloModes.size(); i++ )
+            advModes.push_back((Teams.at(i) == s.LastTeam ? 0 : s.SoloModes[i]));
+        discrete_distribution<int> mode(advModes.begin(), advModes.end());
         int changingAgent = mode(Gen);
         s.SoloModes[changingAgent] = 0;        
     }
@@ -319,10 +354,10 @@ bool CONSENSUS::Step(STATE& state, int action, int& observation, double& reward)
     if( !IsCopy() ) {
         //cout << applicable.size() << " " << r << " " << alt << endl;
         ending = new CONSENSUS_STATE(s);
-        Trace.push_back(make_tuple(starting, action, (r==applicable.size() ? NULL : applicable[r]), ending));
+        Trace.push_back(make_tuple(starting, action, (applicable.size() == 0 ? NULL : applicable[r]), ending));
     }
         
-    return (r == applicable.size() && alt == 1 && (Bernoulli(_Bernoulli) || s.SoloModes[action] == 0));
+    return (applicable.size() == 0 && alt == 1);
 }
 
 bool CONSENSUS::checkAttacked(int i, vector<bool> &status) const {

@@ -126,74 +126,99 @@ int main(int argc, char* argv[]) {
         simulator = new SAILBOAT(safe_cast<const SAILBOAT&>(*real));
     } else if( problem == "consensus" ) {
         auto r1  = new Rule;
-        r1->premises = {UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, POS, UNDEF, UNDEF};       
-        auto alt1 = new vector<PRED_MODIF>{ADD, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE};
-        auto alt2 = new vector<PRED_MODIF>(9, NONE);
+        r1->premises = {UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF};       
+        auto alt1 = new vector<PRED_MODIF>(9, NONE); alt1->at(0) = ADD;
+        auto alt2 = new vector<PRED_MODIF>(9, NONE); alt2->at(4) = ADD;
         r1->acts.push_back(alt1);
         r1->acts.push_back(alt2);
         
         auto r2  = new Rule;
-        r2->premises = {UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, POS, UNDEF};       
-        alt1 = new vector<PRED_MODIF>{NONE, NONE, NONE, NONE, NONE, NONE, ADD, NONE, NONE};
-        alt2 = new vector<PRED_MODIF>(9, NONE);
+        r2->premises = {UNDEF, POS, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF};       
+        alt1 = new vector<PRED_MODIF>(9, NONE); alt1->at(6) = ADD;
+        alt2 = new vector<PRED_MODIF>(9, NONE); alt2->at(2) = ADD;
         r2->acts.push_back(alt1);
         r2->acts.push_back(alt2);
         
         auto r3  = new Rule;
-        r3->premises = vector<PRED_STATE>(9, UNDEF);       
-        alt1 = new vector<PRED_MODIF>{NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE, ADD};
-        alt2 = new vector<PRED_MODIF>{NONE, NONE, NONE, NONE, ADD, NONE, NONE, NONE, NONE};
+        r3->premises = {UNDEF, UNDEF, UNDEF, POS, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF};       
+        alt1 = new vector<PRED_MODIF>(9, NONE); alt1->at(8) = ADD;
+        alt2 = new vector<PRED_MODIF>(9, NONE); alt2->at(2) = ADD;
         r3->acts.push_back(alt1);
         r3->acts.push_back(alt2);
         
         auto r4  = new Rule;
-        r4->premises = {UNDEF, UNDEF, UNDEF, POS, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF};
-        alt1 = new vector<PRED_MODIF>{ADD, NONE, NONE, NONE, NONE, NONE, NONE, NONE, NONE};
-        alt2 = new vector<PRED_MODIF>{NONE, NONE, ADD, NONE, NONE, NONE, NONE, NONE, NONE};
+        r4->premises = {UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, POS, UNDEF, UNDEF, UNDEF};       
+        alt1 = new vector<PRED_MODIF>(9, NONE); alt1->at(2) = ADD;
+        alt2 = new vector<PRED_MODIF>(9, NONE); alt2->at(8) = ADD;
         r4->acts.push_back(alt1);
         r4->acts.push_back(alt2);
+        
+        auto r5  = new Rule;
+        r5->premises = {UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, POS, POS, UNDEF, UNDEF};       
+        alt1 = new vector<PRED_MODIF>(9, NONE); alt1->at(8) = ADD;
+        alt2 = new vector<PRED_MODIF>(9, NONE); alt2->at(8) = ADD;
+        r5->acts.push_back(alt1);
+        r5->acts.push_back(alt2);
         
         auto t1 = new vector<Rule*>();
         t1->push_back(r1);
         t1->push_back(r2);
         t1->push_back(r3);
         t1->push_back(r4);
+        t1->push_back(r5);
                           
         r1  = new Rule;
-        r1->premises = {POS, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF};       
-        alt1 = new vector<PRED_MODIF>{NONE, ADD, NONE, NONE, NONE, NONE, NONE, NONE, NONE};
-        alt2 = new vector<PRED_MODIF>(9, NONE);
+        r1->premises = {UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF};       
+        alt1 = new vector<PRED_MODIF>(9, NONE); alt1->at(3) = ADD;
+        alt2 = new vector<PRED_MODIF>(9, NONE); alt2->at(7) = ADD;
         r1->acts.push_back(alt1);
         r1->acts.push_back(alt2);
         
         r2  = new Rule;
-        r2->premises = vector<PRED_STATE>(9, UNDEF);       
-        alt1 = new vector<PRED_MODIF>{NONE, NONE, NONE, ADD, NONE, NONE, NONE, NONE, NONE};
-        alt2 = new vector<PRED_MODIF>{NONE, NONE, NONE, NONE, NONE, NONE, NONE, ADD, NONE};
+        r2->premises = {POS, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF};       
+        alt1 = new vector<PRED_MODIF>(9, NONE); alt1->at(3) = ADD;
+        alt2 = new vector<PRED_MODIF>(9, NONE); alt2->at(1) = ADD;
         r2->acts.push_back(alt1);
         r2->acts.push_back(alt2);
         
         r3  = new Rule;
-        r3->premises = {UNDEF, UNDEF, UNDEF, UNDEF, POS, UNDEF, UNDEF, UNDEF, UNDEF};
-        alt1 = new vector<PRED_MODIF>{NONE, NONE, NONE, NONE, NONE, ADD, NONE, NONE, NONE};
-        alt2 = new vector<PRED_MODIF>(9, NONE);
-        r3->acts.push_back(alt2);
+        r3->premises = {UNDEF, UNDEF, UNDEF, UNDEF, POS, UNDEF, UNDEF, UNDEF, UNDEF};       
+        alt1 = new vector<PRED_MODIF>(9, NONE); alt1->at(5) = ADD;
+        alt2 = new vector<PRED_MODIF>(9, NONE); alt2->at(5) = ADD;
         r3->acts.push_back(alt1);
+        r3->acts.push_back(alt2);
+        
+        r4  = new Rule;
+        r4->premises = {UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, POS, UNDEF, UNDEF};       
+        alt1 = new vector<PRED_MODIF>(9, NONE); alt1->at(5) = ADD;
+        alt2 = new vector<PRED_MODIF>(9, NONE); alt2->at(1) = ADD;
+        r4->acts.push_back(alt1);
+        r4->acts.push_back(alt2);
+        
+        r5  = new Rule;
+        r5->premises = {UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, UNDEF, POS};       
+        alt1 = new vector<PRED_MODIF>(9, NONE); alt1->at(7) = ADD;
+        alt2 = new vector<PRED_MODIF>(9, NONE); alt2->at(7) = ADD;
+        r5->acts.push_back(alt1);
+        r5->acts.push_back(alt2);
         
         auto t2 = new vector<Rule*>();
         t2->push_back(r1);
         t2->push_back(r2);
         t2->push_back(r3);
+        t2->push_back(r4);
+        t2->push_back(r5);
         
         auto atks = multimap<int, int>();
         atks.emplace(0, 1);
-        atks.emplace(3, 4);
+        atks.emplace(1, 2);
+        atks.emplace(3, 2);
         atks.emplace(4, 5);
         atks.emplace(6, 5);
-        atks.emplace(7, 6);
-        atks.emplace(8, 7);
+        atks.emplace(5, 8);
+        atks.emplace(8 ,7);
         
-        real      = new CONSENSUS(9, atks, vector<int>{3,2}, vector<vector<Rule*>*>{t1,t2}, 
+        real      = new CONSENSUS(9, atks, vector<int>{3,4}, vector<vector<Rule*>*>{t1,t2}, 
                 maxDuration, discount, seed, bernoulli, meanmodel, shortest);
         simulator = new CONSENSUS(safe_cast<const CONSENSUS&>(*real));
     } else {
