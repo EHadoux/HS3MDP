@@ -13,6 +13,7 @@ STRUCTURED_BELIEF_STATE::~STRUCTURED_BELIEF_STATE() {
 }
 
 HS3MDP_STATE* STRUCTURED_BELIEF_STATE::CreateSample(const SIMULATOR& simulator) const {
+    std::cout << "test" << std::endl;
     const HS3MDP& Simulator = safe_cast<const HS3MDP&>(simulator);
     HS3MDP_STATE *State     = Simulator.Copy(*_uniqueState);
    
