@@ -98,6 +98,13 @@ public:
     }
     
     bool LocalMove(STATE&, const HISTORY& history, int stepObs, const STATUS&) const;
+    
+    CONSENSUS_STATE& getCurrent() const { return _current; }
+    void assignCurrent(STATE* s) const {
+        CONSENSUS_STATE *cs = safe_cast<CONSENSUS_STATE*>(s);
+        cs->Public.assign(_current.Public.begin(), _current.Public.end());
+        cs->LastTeam = _current.LastTeam;
+    }
 
 private:
     bool MeanModel, Shortest;
@@ -114,6 +121,8 @@ private:
     mutable MEMORY_POOL<CONSENSUS_STATE> MemoryPool;
 
     bool checkAttacked(int i, vector<bool> &status) const;
+    
+    mutable CONSENSUS_STATE _current;
 } ;
 
 #endif	/* CONSENSUS_H */

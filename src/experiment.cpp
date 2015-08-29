@@ -53,7 +53,8 @@ void EXPERIMENT::Run() {
         double reward;
         int action = mcts.SelectAction();
         terminal = Real.Step(*state, action, observation, reward);
-
+        safe_cast<const CONSENSUS&>(Simulator).getCurrent() = safe_cast<const CONSENSUS&>(Real).getCurrent();
+        
         Results.Reward.Add(reward);
         undiscountedReturn += reward;
         discountedReturn += reward * discount;

@@ -1,5 +1,6 @@
 #include "mcts.h"
 #include "testsimulator.h"
+#include "consensus.h"
 #include <math.h>
 
 #include <algorithm>
@@ -102,6 +103,7 @@ void MCTS::RolloutSearch() {
     for ( int i = 0; i < Params.NumSimulations; i++ ) {
         int action = legal[i % legal.size()];
         STATE* state = Root->Beliefs().CreateSample(Simulator);
+        safe_cast<const CONSENSUS&>(Simulator).assignCurrent(state);
         Simulator.Validate(*state);
 
         int observation;
@@ -130,6 +132,8 @@ void MCTS::UCTSearch() {
 
     for ( int n = 0; n < Params.NumSimulations; n++ ) {
         STATE* state = Root->Beliefs().CreateSample(Simulator);
+        safe_cast<const CONSENSUS&>(Simulator).assignCurrent(state);
+
         Simulator.Validate(*state);
         Status.Phase = SIMULATOR::STATUS::TREE;
         if ( Params.Verbose >= 2 ) {
@@ -342,6 +346,8 @@ STATE* MCTS::CreateTransform() const {
     double stepReward;
 
     STATE* state = Root->Beliefs().CreateSample(Simulator);
+    safe_cast<const CONSENSUS&>(Simulator).assignCurrent(state);
+    
     Simulator.Step(*state, History.Back().Action, stepObs, stepReward);
     if ( Simulator.LocalMove(*state, History, stepObs, Status) )
         return state;

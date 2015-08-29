@@ -70,13 +70,22 @@ Atks(atks){
         }
         cout << endl;
     }
+    
+    _current.Public.assign(NumOfArgs, false);
+    _current.LastTeam     = -1;
+    _current.SoloModes.assign(NumOfAgents, 1);
+    _current.Mode         = 0;
+    _current.Duration     = MaxDuration;
+    _current.HS3MDPState  = 0;
+    _current.POMDPState   = 0;
 }
 
 CONSENSUS::CONSENSUS(const CONSENSUS& orig) :
 HS3MDP(orig),
 Teams(orig.Teams),
 Goals(orig.Goals),
-Atks(orig.Atks) {
+Atks(orig.Atks),
+_current(orig._current) {
     NumOfArgs   = orig.NumOfArgs;
     //NumOfAtks   = orig.NumOfAtks;
     NumOfAgents = orig.NumOfAgents;
@@ -165,8 +174,8 @@ CONSENSUS_STATE* CONSENSUS::CreateStartState() const {
     state->Mode            = 0;
     state->Duration        = MaxDuration;
     state->HS3MDPState     = 0;
-    state->POMDPState      = 0;
-
+    state->POMDPState      = 0;   
+    
     return state;
 }
 
@@ -354,6 +363,7 @@ bool CONSENSUS::Step(STATE& state, int action, int& observation, double& reward)
     if( !IsCopy() ) {
         //cout << applicable.size() << " " << r << " " << alt << endl;
         ending = new CONSENSUS_STATE(s);
+        _current = *ending;
         Trace.push_back(make_tuple(starting, action, (applicable.size() == 0 ? NULL : applicable[r]), ending));
     }
         
