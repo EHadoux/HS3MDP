@@ -346,9 +346,9 @@ STATE* MCTS::CreateTransform() const {
     double stepReward;
 
     STATE* state = Root->Beliefs().CreateSample(Simulator);
+    Simulator.Step(*state, History.Back().Action, stepObs, stepReward);    
     safe_cast<const CONSENSUS&>(Simulator).assignCurrent(state);
     
-    Simulator.Step(*state, History.Back().Action, stepObs, stepReward);
     if ( Simulator.LocalMove(*state, History, stepObs, Status) )
         return state;
     Simulator.FreeState(state);

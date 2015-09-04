@@ -385,5 +385,6 @@ bool CONSENSUS::checkAttacked(int i, vector<bool> &status) const {
 }
 
 bool CONSENSUS::LocalMove(STATE&, const HISTORY& history, int stepObs, const STATUS&) const {    
-    return stepObs == history.Back().Observation;
+    //return stepObs == history.Back().Observation;
+    return true;
 }
