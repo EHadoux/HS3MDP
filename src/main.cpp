@@ -37,7 +37,7 @@ int main(int argc, char* argv[]) {
     EXPERIMENT::PARAMS expParams;
     SIMULATOR::KNOWLEDGE knowledge;
     string problem, outputfile, policy;
-    int size, number, maxDuration, seed;
+    int size, number, maxDuration, seed, tt1, tt2;
     double discount, bernoulli;
     bool meanmodel, show, shortest;
 
@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
             ("runs", value<int>(&expParams.NumRuns), "number of runs")
             ("accuracy", value<double>(&expParams.Accuracy), "accuracy level used to determine horizon")
             ("horizon", value<int>(&expParams.UndiscountedHorizon), "horizon to use when not discounting")
-            ("num steps", value<int>(&expParams.NumSteps), "number of steps to run when using average reward")
+            ("numsteps", value<int>(&expParams.NumSteps), "number of steps to run when using average reward")
             ("verbose", value<int>(&searchParams.Verbose), "verbosity level")
             ("autoexploration", value<bool>(&expParams.AutoExploration), "Automatically assign UCB exploration constant")
             ("exploration", value<double>(&searchParams.ExplorationConstant), "Manual value for UCB exploration constant")
@@ -78,6 +78,8 @@ int main(int argc, char* argv[]) {
             ("meanmodel", value<bool>(&meanmodel)->default_value(false), "Mean model for simulator for consensus")
             ("show", value<bool>(&show)->default_value(false), "Shows the model and quit")
             ("shortest", value<bool>(&shortest)->default_value(false), "Shortest sequence for consensus")
+            ("t1", value<int>(&tt1), "Number of agents for team 1")
+            ("t2", value<int>(&tt2), "Number of agents for team 2")
             ;
 
     variables_map vm;
@@ -218,7 +220,7 @@ int main(int argc, char* argv[]) {
         atks.emplace(5, 8);
         atks.emplace(8 ,7);
         
-        real      = new CONSENSUS(9, atks, vector<int>{3,4}, vector<vector<Rule*>*>{t1,t2}, 
+        real      = new CONSENSUS(9, atks, vector<int>{tt1,tt2}, vector<vector<Rule*>*>{t1,t2}, 
                 maxDuration, discount, seed, bernoulli, meanmodel, shortest);
         simulator = new CONSENSUS(safe_cast<const CONSENSUS&>(*real));
     } else {

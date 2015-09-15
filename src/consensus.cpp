@@ -327,7 +327,7 @@ bool CONSENSUS::Step(STATE& state, int action, int& observation, double& reward)
         auto status = vector<bool>(s.Public);
         for( int i : Goals ) {
             auto goal = s.Public[i] && !checkAttacked(i, status);
-            if( goal )
+            if( goal && applicable.size() == 0 && alt == 1 )
                 reward += 10;
         }
     }
@@ -385,6 +385,31 @@ bool CONSENSUS::checkAttacked(int i, vector<bool> &status) const {
 }
 
 bool CONSENSUS::LocalMove(STATE&, const HISTORY& history, int stepObs, const STATUS&) const {    
-    //return stepObs == history.Back().Observation;
-    return true;
+    return stepObs == history.Back().Observation;
+    //return true;
+}
+
+void CONSENSUS::GenerateLegal(const STATE& state , const HISTORY& , std::vector<int>& actions, const STATUS& ) const {
+    const CONSENSUS_STATE &s = safe_cast<const CONSENSUS_STATE&>(state);
+    int lt = s.LastTeam, count = 0;
+    std::vector<int> same;
+    
+    if( lt == -1 ) {
+        for(auto p : Teams)
+            actions.push_back(p.first);
+        return;
+    }
+    
+    for(auto p : Teams) {
+        if(p.second != lt)
+            count++;
+        else
+            same.push_back(p.first);
+    }
+    for(auto p : Teams) {
+        if(p.second != lt) 
+            for(int i = 0; i < count; i++)
+                actions.push_back(p.first);
+    }
+    actions.push_back(same[Random(same.size())]);
 }

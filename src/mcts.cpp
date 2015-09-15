@@ -102,8 +102,8 @@ void MCTS::RolloutSearch() {
 
     for ( int i = 0; i < Params.NumSimulations; i++ ) {
         int action = legal[i % legal.size()];
-        STATE* state = Root->Beliefs().CreateSample(Simulator);
-        safe_cast<const CONSENSUS&>(Simulator).assignCurrent(state);
+        STATE* state = Root->Beliefs().CreateSample(Simulator);        
+        //safe_cast<const CONSENSUS&>(Simulator).assignCurrent(state);
         Simulator.Validate(*state);
 
         int observation;
@@ -132,7 +132,6 @@ void MCTS::UCTSearch() {
 
     for ( int n = 0; n < Params.NumSimulations; n++ ) {
         STATE* state = Root->Beliefs().CreateSample(Simulator);
-        safe_cast<const CONSENSUS&>(Simulator).assignCurrent(state);
 
         Simulator.Validate(*state);
         Status.Phase = SIMULATOR::STATUS::TREE;
@@ -347,7 +346,8 @@ STATE* MCTS::CreateTransform() const {
 
     STATE* state = Root->Beliefs().CreateSample(Simulator);
     Simulator.Step(*state, History.Back().Action, stepObs, stepReward);    
-    safe_cast<const CONSENSUS&>(Simulator).assignCurrent(state);
+    
+    //safe_cast<const CONSENSUS&>(Simulator).assignCurrent(state);
     
     if ( Simulator.LocalMove(*state, History, stepObs, Status) )
         return state;

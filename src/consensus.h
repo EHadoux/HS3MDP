@@ -36,7 +36,7 @@ public:
         s << "], [";
         for( int p : SoloModes )
             s << p << ", ";
-        s << "]";
+        s << "] " << LastTeam;
         return s.str();
     }
 } ;
@@ -105,6 +105,8 @@ public:
         cs->Public.assign(_current.Public.begin(), _current.Public.end());
         cs->LastTeam = _current.LastTeam;
     }
+    
+    void GenerateLegal(const STATE&, const HISTORY&, std::vector<int>& actions, const STATUS&) const;
 
 private:
     bool MeanModel, Shortest;
